@@ -36,6 +36,20 @@
 
 
             <div class="slds-m-top_large slds-align_absolute-center">
+                <lightning-record-edit-form
+                    object-api-name="AdminChecklist__c">
+
+                    <lightning-input-field
+                        field-name="OpportunityAdmin__c"
+                        data-id="lookUpQuote_OpportunityAdmin">
+
+                    </lightning-input-field>
+
+                </lightning-record-edit-form>
+            </div>
+
+
+            <div class="slds-m-top_large slds-align_absolute-center">
                 <lightning-button
                     variant="brand"
                     label="Search"
@@ -55,11 +69,46 @@
 
             <div class="slds-align_absolute-center">
                 <div class="slds-float_left slds-m-top_medium slds-box slds-box_xx-small">
-                    <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
+                    <div class="slds-text-heading_x-small slds-align_absolute-center">
                         Who, What, When
                     </div>
     
-                    <div class="slds-clearfix">
+                    <div class="slds-clearfix slds-m-top_medium slds-box slds-box_xx-small">
+                        <div class="slds-align_absolute-center slds-m-top_small">
+                            <div>
+                                <div class="slds-float_left">
+                                    <lightning-record-edit-form
+                                        object-api-name="AdminChecklist__c">
+                    
+                                        <lightning-input-field
+                                            field-name="OpportunityAdmin__c"
+                                            data-id="whoWhat_OpportunityAdmin">
+                    
+                                        </lightning-input-field>
+                    
+                                    </lightning-record-edit-form>
+                                </div>
+
+                                <div class="slds-float_left slds-m-top_small slds-m-left_medium slds-text-heading_xsmall">
+                                    or
+                                </div>
+                
+                                <div class="slds-float_left slds-m-left_medium slds-m-top_small">
+                                    <lightning-button
+                                        variant="brand"
+                                        label="New"
+                                        data-id="quote_saveButton">
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slds-align_absolute-center slds-text-heading_xsmall">
+                            Find the group with the same Opportunity or make a new group for a new Opportunity.
+                        </div>
+                    </div>
+
+                    <div class="slds-clearfix slds-m-top_small">
                         <div class="slds-float_left slds-m-right_large">
                             <lightning-record-edit-form
                                 object-api-name="AdminChecklist__c">
@@ -102,9 +151,33 @@
                             </lightning-record-edit-form>
                         </div>
                     </div>
-    
+
     
                     <div class="slds-clearfix slds-m-top_medium">
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="Chassis_Year__c"
+                                    data-id="whoWhat_Chassis_Year">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="Chassis_VIN__c"
+                                    data-id="whoWhat_Chassis_VIN">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        </div>
+                        
                         <div class="slds-float_left slds-m-right_large">
                             <lightning-record-edit-form
                                 object-api-name="AdminChecklist__c">
@@ -129,30 +202,6 @@
 
                             </lightning-record-edit-form>
                         </div>
-    
-                        <div class="slds-float_left slds-m-right_large">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="Chassis_Year__c"
-                                    data-id="whoWhat_Chassis_Year">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
-
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="Chassis_VIN__c"
-                                    data-id="whoWhat_Chassis_VIN">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
-                        </div>
                     </div>
 
 
@@ -161,8 +210,8 @@
                             object-api-name="AdminChecklist__c">
 
                             <lightning-input-field
-                                field-name="Body_Name__c"
-                                data-id="whoWhat_Body_Name">
+                                field-name="Body_Series_Name__c"
+                                data-id="whoWhat_Body_Series_Name">
 
                             </lightning-input-field>
 
@@ -171,6 +220,470 @@
                 </div>
             </div>
 
+
+            <div class="slds-m-top_large slds-clearfix slds-box slds-box_xx-small">
+                <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
+                    Finances
+                </div>
+
+                <div class="slds-float_left">
+                    <div class="slds-clearfix">
+                        <div class="slds-float_left slds-m-right_small">
+                        <!--
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="Chassis_Cost__c"
+                                    data-id="finances_Chassis_Cost">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        -->
+
+                            <lightning-input
+                                label="Chassis_Cost"
+                                data-id="finances_Chassis_Cost">
+                            </lightning-input>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                        <!--
+                            <p>Include Description / Purchase Order Description etc. here for each of these . . .</p>
+                        -->
+                            <lightning-textarea
+                                label="Chassis_Description">
+                                Include Description / Purchase Order Description etc. here for each of these . . .
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Body_Cost__c"
+                                data-id="finances_Body_Cost">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="PO_Freight_Transport__c"
+                                data-id="finances_PO_Freight_Transport">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="PO_AOrder__c"
+                                data-id="finances_PO_AOrder">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="PO_BOrder__c"
+                                data-id="finances_PO_BOrder">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="PO_COrder__c"
+                                data-id="finances_PO_COrder">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="PO_Other_1__c"
+                                data-id="finances_PO_Other_1">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="PO_Other_2__c"
+                                data-id="finances_PO_Other_2">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="PO_Other_3__c"
+                                data-id="finances_PO_Other_3">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="Subtotal before profit is the sum of all the Costs/PO's only"></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                Subtotal Before Profit:
+                            </div>
+
+                            <b style="color: green;">
+                                $
+                                <lightning-formatted-rich-text
+                                    value="0.00"
+                                    data-id="finances_Subtotal_Before_Profit">
+                                </lightning-formatted-rich-text>
+                            </b>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="slds-float_left slds-m-top_medium slds-m-left_medium slds-border_left">
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Profit_Amount__c"
+                                data-id="finances_Profit_Amount">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx_small">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Profit %:
+                        </div>
+                        
+                        <b style="color: blue;">
+                            <lightning-formatted-rich-text
+                                value="0"
+                                data-id="finances_Profit_Percent">
+                            </lightning-formatted-rich-text>
+                            %
+                        </b>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Dealer_Pack__c"
+                                data-id="finances_Dealer_Pack">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Gross After Comission:
+                        </div>
+
+                        <b style="color: green;">
+                            $
+                            <lightning-formatted-rich-text
+                                value="0.00"
+                                data-id="finances_Gross_Amount">
+                            </lightning-formatted-rich-text>
+                        </b>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx_small">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Gross After Comission %:
+                        </div>
+                        
+                        <b style="color: blue;">
+                            <lightning-formatted-rich-text
+                                value="0"
+                                data-id="finances_Gross_Percent">
+                            </lightning-formatted-rich-text>
+                            %
+                        </b>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_medium slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="Subtotal after profit is the sum of all the Costs/PO's with the Profit_Amount. It is the official Sales Price before Fees are applied, and is used to determine the 12% F.E.T."></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                Subtotal After Profit:
+                            </div>
+
+                            <b style="color: green;">
+                                $
+                                <lightning-formatted-rich-text
+                                    value="0.00"
+                                    data-id="finances_Subtotal_After_Profit">
+                                </lightning-formatted-rich-text>
+                            </b>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="12% of the Subtotal is the Federal Excise Tax (F.E.T.) amount applied"></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                12% F.E.T.:
+                            </div>
+
+                            <b style="color: green;">
+                                $
+                                <lightning-formatted-rich-text
+                                    value="0.00"
+                                    data-id="finances_12_FET">
+                                </lightning-formatted-rich-text>
+                            </b>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Minus_Tire_FET__c"
+                                data-id="finances_Minus_Tire_FET">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Total F.E.T.:
+                        </div>
+
+                        <b style="color: green;">
+                            $
+                            <lightning-formatted-rich-text
+                                value="0.00"
+                                data-id="finances_Total_FET">
+                            </lightning-formatted-rich-text>
+                        </b>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Extended_Warranty__c"
+                                data-id="finances_Extended_Warranty">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Other_Fees__c"
+                                data-id="finances_Other_Fees">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Documentation_Fee__c"
+                                data-id="finances_Documentation_Fee">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-record-edit-form
+                            object-api-name="AdminChecklist__c">
+
+                            <lightning-input-field
+                                field-name="Deposit__c"
+                                data-id="finances_Deposit">
+
+                            </lightning-input-field>
+
+                        </lightning-record-edit-form>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_medium slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="Sum of the Subtotal, Total F.E.T., Fees, etc. minus the Deposit and the Trade In Billing Amount. The Trade In Billing Amount is the amount of the Trade In credited toward this Sale."></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                Total:
+                            </div>
+
+                            <b style="color: green;">
+                                $
+                                <lightning-formatted-rich-text
+                                    value="0.00"
+                                    data-id="finances_Total">
+                                </lightning-formatted-rich-text>
+                            </b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="slds-align_absolute-center">
+                <div class="slds-float_left slds-m-top_large slds-box slds-box_xx-small">
+                    <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
+                        Trade In
+                    </div>
+    
+                    <div class="slds-clearfix">
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="TradeIn_Make__c"
+                                    data-id="tradeIn_Make">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="TradeIn_Model__c"
+                                    data-id="tradeIn_Model">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        </div>
+                    
+                        <div class="slds-float_left">
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="TradeIn_Year__c"
+                                    data-id="tradeIn_Year">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        </div>
+                    </div>
+    
+                    <div>
+                        <div>
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="TradeIn_Unit_Number__c"
+                                    data-id="tradeIn_Unit_Number">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        </div>
+                    </div>
+    
+    
+                    <div class="slds-clearfix">
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="TradeIn_Actual_Cash_Value__c"
+                                    data-id="tradeIn_Actual_Cash_Value">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        </div>
+    
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="TradeIn_Billing_Amount__c"
+                                    data-id="tradeIn_Billing_Amount">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
             <div class="slds-align_absolute-center">
@@ -344,297 +857,29 @@
             </div>
 
 
-            <div class="slds-align_absolute-center">
-                <div class="slds-float_left slds-m-top_large slds-box slds-box_xx-small">
-                    <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
-                        Trade In
-                    </div>
-    
-                    <div class="slds-clearfix">
-                        <div class="slds-float_left slds-m-right_large">
-                            <lightning-input
-                                label="Make"
-                                type="text">
-                            </lightning-input>
-
-                            <lightning-input
-                                class="slds-m-top_xx-small"
-                                label="Model"
-                                type="text">
-                            </lightning-input>
-                        </div>
-    
-                        <div class="slds-float_left">
-                            <lightning-input
-                                label="Year"
-                                type="text">
-                            </lightning-input>
-                        </div>
-                    </div>
-    
-    
-                    <div>
-                        <div>
-                            <lightning-input
-                                label="Unit Number"
-                                type="text">
-                            </lightning-input>
-                        </div>
-                    </div>
-    
-    
-                    <div class="slds-clearfix">
-                        <div class="slds-float_left slds-m-right_large">
-                            <lightning-input
-                                label="ACV"
-                                type="text">
-                            </lightning-input>
-                        </div>
-    
-                        <div class="slds-float_left slds-m-right_large">
-                            <lightning-input
-                                label="Billing Amount"
-                                type="text">
-                            </lightning-input>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div class="slds-m-top_large slds-clearfix slds-box slds-box_xx-small">
-                <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
-                    Finances
-                </div>
-
-                <div class="slds-float_left">
-                    <div>
-                        <lightning-input
-                            label="Chassis Cost"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-top_small">
-                        <lightning-input
-                            label="Body Cost"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-top_small">
-                        <lightning-input
-                            label="LPO: A-Order"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-top_small">
-                        <lightning-input
-                            label="LPO: Freight"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-top_small">
-                        <lightning-input
-                            label="Auto Drive Away"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-top_small">
-                        <lightning-input
-                            label="LPO: Other"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-top_small">
-                        <lightning-input
-                            label="LPO: Other"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-top_small">
-                        <lightning-input
-                            label="LPO: Other"
-                            type="text">
-                        </lightning-input>
-                    </div>
-                </div>
-
-
-
-                <div class="slds-float_left slds-m-top_medium slds-m-left_medium slds-border_left">
-                    <div class="slds-m-left_small">
-                        <lightning-input
-                            label="Truck Gross %"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-left_small slds-m-top_xx-small">
-                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
-                            Truck Gross:
-                        </div>
-
-                        <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00">
-                            </lightning-formatted-rich-text>
-                        </b>
-                    </div>
-
-
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input
-                            label="Dealer Pack $"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-left_small slds-m-top_xx-small">
-                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
-                            Gross After Comission:
-                        </div>
-
-                        <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00">
-                            </lightning-formatted-rich-text>
-                        </b>
-                    </div>
-
-                    <div class="slds-m-left_small slds-m-top_xx_small">
-                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
-                            Gross After Comission %:
-                        </div>
-                        
-                        <b style="color: blue;">
-                            <lightning-formatted-rich-text
-                                value="0">
-                            </lightning-formatted-rich-text>
-                            %
-                        </b>
-                    </div>
-                </div>
-
-
-                <div class="slds-float_left slds-m-top_medium slds-m-left_medium slds-border_left">
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
-                            Subtotal:
-                        </div>
-
-                        <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00">
-                            </lightning-formatted-rich-text>
-                        </b>
-                    </div>
-
-                    
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input
-                            label="12% F.E.T."
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-left_small slds-m-top_xx-small">
-                        <lightning-input
-                            label="Minus Tire F.E.T."
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-left_small slds-m-top_xx-small">
-                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
-                            Total F.E.T.:
-                        </div>
-
-                        <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00">
-                            </lightning-formatted-rich-text>
-                        </b>
-                    </div>
-
-
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input
-                            label="Extended Warranties"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input
-                            label="Other"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input
-                            label="Documentation Fee"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input
-                            label="Down Payment"
-                            type="text">
-                        </lightning-input>
-                    </div>
-
-
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
-                            Total:
-                        </div>
-
-                        <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00">
-                            </lightning-formatted-rich-text>
-                        </b>
-                    </div>
-                </div>
-            </div>
-
-
             <div class="slds-m-top_large slds-clearfix slds-align_absolute-center">
                 <div>
                     <div class="slds-float_left slds-m-right_medium slds-m-top_small">
                         <lightning-button
                             variant="brand"
-                            label="Save">
+                            label="Save"
+                            data-id="quote_saveButton">
                         </lightning-button>
                     </div>
     
                     <div class="slds-float_left slds-m-right_medium slds-m-top_small">
                         <lightning-button
                             variant="brand"
-                            label="Print">
+                            label="Print"
+                            data-id="quote_printButton">
                         </lightning-button>
                     </div>
     
                     <div class="slds-float_left slds-m-top_small">
                         <lightning-button
                             variant="brand"
-                            label="Clone">
+                            label="Clone"
+                            data-id="quote_cloneButton">
                         </lightning-button>
                     </div>
                 </div>
