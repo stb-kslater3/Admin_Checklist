@@ -1,0 +1,389 @@
+<apex:page controller="AdminChecklist_Controller" renderAs="pdf">
+    <apex:stylesheet value="{!$Resource.AdminChecklist_CSS}"/>
+
+    <apex:pageBlock>
+        <div id="Title">
+            <h1>Admin Checklist</h1>
+        </div>
+
+        <div class="SectionDiv">
+            <div>
+                <div class="Medium_Box">
+                    <b>Salesman:</b> {!salesman}
+                </div>
+
+                <div class="Medium_Box">
+                    <b>Customer:</b> {!customer}
+                </div>
+
+                <div class="Medium_Box">
+                    <b>Date:</b> {!last_modified}
+                </div>
+            </div>
+
+            
+            <div>
+                <div class="Medium_Box">
+                    <b>Chassis Make:</b> {!chassis_make}
+                </div>
+
+                <div class="Medium_Box">
+                    <b>Chassis Model:</b> {!chassis_model}
+                </div>
+            </div>
+
+
+            <div>
+                <div class="Medium_Box">
+                    <b>Chassis Year:</b> {!chassis_year}
+                </div>
+
+                <div class="Medium_Box">
+                    <b>Chassis Vin:</b> {!chassis_vin}
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="SectionDiv">
+            <table>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="Bold">
+                                    Cost
+                                </td>
+    
+                                <td class="Bold">
+                                    Description
+                                </td>
+                            </tr>
+    
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po1_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po1_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po2_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po2_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po3_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po3_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po4_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po4_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po5_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po5_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po6_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po6_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po7_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po7_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po8_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po8_description}
+                                </td>
+                            </tr>
+            
+                            <tr>
+                                <td class="DataCell MediumCell">
+                                    {!po9_cost}
+                                </td>
+            
+                                <td class="DataCell DescriptionCell">
+                                    {!po9_description}
+                                </td>
+                            </tr>
+    
+                            <tr>
+                                <td colspan="100">
+                                    <b>Subtotal Before Profit:</b>  {!subtotal_before_profit}
+                                </td>
+                            </tr> 
+                        </table>
+                    </td>
+
+                    <td>
+                        <div>
+                            <b>Profit Amount:</b> {!profit_amount}
+                        </div>
+
+                        <div>
+                            <b>Profit Percent:</b> {!profit_percent}
+                        </div>
+
+
+                        <div style="margin-top: 10px">
+                            <b>Dealer Pack:</b> {!dealer_pack}
+                        </div>
+
+
+                        <div style="margin-top: 10px">
+                            <b>Gross After Comission:</b> {!gross_after_com_amount}
+                        </div>
+
+                        <div>
+                            <b>Gross After Comission %:</b> {!gross_after_com_percent}
+                        </div>
+
+
+                        <div style="margin-top: 10px">
+                            <b>Subtotal After Profit:</b> {!subtotal_after_profit}
+                        </div>
+
+
+                        <div style="margin-top: 10px">
+                            <b>F.E.T. Applies:</b> {!fet_applies}
+                        </div>
+
+                        <div>
+                            <b>12% F.E.T.:</b> {!fet_12_percent}
+                        </div>
+
+                        <div>
+                            <b>Minus Tire F.E.T.:</b> {!minus_tire_fet}
+                        </div>
+
+                        <div>
+                            <b>Total F.E.T.:</b> {!total_fet}
+                        </div>
+
+
+                        <div style="margin-top: 10px">
+                            <b>Extended Warranty:</b> {!extended_warranty}
+                        </div>
+
+                        <div style="margin-top: 10px">
+                            <b>Other Fees:</b> {!other_fees}
+                        </div>
+
+                        <div style="margin-top: 10px">
+                            <b>Documentation Fee:</b> {!documentation_fee}
+                        </div>
+
+                        <div style="margin-top: 10px">
+                            <b>Deposit:</b> {!deposit}
+                        </div>
+
+                        <div style="margin-top: 10px">
+                            <b>Total:</b> {!total}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+        <div class="SectionDiv">
+            <table style="border:1px solid black;">
+                <tr>
+                    <th colspan="100">
+                        <h3 style="border-bottom: 2px solid black">
+                            Trade In
+                        </h3>
+                    </th>
+                </tr>
+
+                <tr>
+                    <td class="Bold">
+                        Make
+                    </td>
+
+                    <td class="Bold">
+                        Model
+                    </td>
+
+                    <td class="Bold">
+                        Year
+                    </td>
+
+                    <td class="Bold">
+                        Unit Number
+                    </td>
+
+                    <td class="Bold">
+                        ACV
+                    </td>
+
+                    <td class="Bold">
+                        Billing Amount
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="DataCell MediumCell">
+                        {!trade_in_make}
+                    </td>
+
+                    <td class="DataCell MediumCell">
+                        {!trade_in_model}
+                    </td>
+                    
+                    <td class="DataCell MediumCell">
+                        {!trade_in_year}
+                    </td>
+
+                    <td class="DataCell MediumCell">
+                        {!trade_in_unit_number}
+                    </td>
+                    
+                    <td class="DataCell MediumCell">
+                        {!trade_in_actual_cash_value}
+                    </td>
+                    
+                    <td class="DataCell MediumCell">
+                        {!trade_in_billing_amount}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+        <div class="SectionDiv">
+            <table style="border: 1px solid black;">
+                <tr>
+                    <th colspan="100">
+                        <h3 style="border-bottom: 2px solid black">
+                            F. E. T. Tire Tax Credits
+                        </h3>
+                    </th>
+                </tr>
+
+                <tr>
+                    <td class="Bold">
+                        <!--
+                            Placeholder
+                        -->
+                    </td>
+
+                    <td class="Bold DescriptionCell">
+                        Description
+                    </td>
+
+                    <td class="Bold">
+                        Size
+                    </td>
+
+                    <td class="Bold">
+                        Cost
+                    </td>
+
+                    <td class="Bold">
+                        Quantity
+                    </td>
+
+                    <td class="Bold">
+                        Total
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="Bold">
+                        Front
+                    </td>
+
+                    <td class="DataCell DescriptionCell">
+                        {!fet_front_description}
+                    </td>
+
+                    <td class="DataCell SizeCell">
+                        {!fet_front_size}
+                    </td>
+
+                    <td class="DataCell CostCell">
+                        {!fet_front_cost}
+                    </td>
+
+                    <td class="DataCell QuantityCell">
+                        {!fet_front_quantity}
+                    </td>
+
+                    <td class="DataCell TotalCell">
+                        . . .
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="Bold">
+                        Rear
+                    </td>
+
+                    <td class="DataCell DescriptionCell">
+                        {!fet_rear_description}
+                    </td>
+
+                    <td class="DataCell SizeCell">
+                        {!fet_rear_size}
+                    </td>
+
+                    <td class="DataCell CostCell">
+                        {!fet_rear_cost}
+                    </td>
+
+                    <td class="DataCell QuantityCell">
+                        {!fet_rear_quantity}
+                    </td>
+
+                    <td class="DataCell TotalCell">
+                        . . .
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </apex:pageBlock>
+</apex:page>

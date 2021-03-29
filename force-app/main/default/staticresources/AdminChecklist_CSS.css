@@ -1,0 +1,74 @@
+
+#Title {
+    text-align: center;
+}
+
+
+.SectionDiv {
+    width: 700px;
+    margin: auto;
+    margin-top: 15px;
+}
+
+
+.Bold {
+    font-weight: bold;
+}
+
+.Medium_Box {
+    display: inline-block;
+    width: 190px;
+    margin: 5px;
+}
+
+
+.MediumCell {
+    width: 100px;
+}
+
+.DataCell {
+    border: 1px solid black;
+}
+
+.DescriptionCell {
+    width: 250px;
+}
+
+.SizeCell {
+    width: 100px;
+}
+
+.CostCell {
+    width: 100px;
+}
+
+.QuantityCell {
+    width: 40px;
+}
+
+.TotalCell {
+    width: 100px;
+}
+
+
+
+div {
+    /*border: 1px solid blue;*/
+}
+
+table {
+    margin: auto;
+}
+
+h3 {
+    margin: 2.5px;
+}
+
+th {
+    text-align: center;
+}
+
+td {
+    text-align: center;
+    /*border: 1px solid red;*/
+}
