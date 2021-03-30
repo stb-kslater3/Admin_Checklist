@@ -5,10 +5,10 @@ import Id from '@salesforce/user/Id';
 
 import queryFromString from '@salesforce/apex/ApexDataInterface.queryFromString';
 import updateRecordFromId from '@salesforce/apex/ApexDataInterface.updateRecordFromId';
-import insertRecord from '@salesforce/apex/ApexDataInterface.insertRecord';
 import getObjectDefaults from '@salesforce/apex/ApexDataInterface.getObjectDefaults';
 
 import createAdminGroup from '@salesforce/apex/AdminChecklist_Controller.createAdminGroup';
+import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
 import downloadAdmin from '@salesforce/apex/AdminChecklist_Controller.downloadAdmin';
 
 
@@ -584,6 +584,21 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
+    // Needed by Save Button and Clone Button so sticking Insert itself into 1 place
+    makeInsert(fieldValues) {
+        insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: fieldValues }).then(newId => {
+            if(newId) {
+                this.adminChosen = newId;
+
+                this.toastHandler.displaySuccess('AdminChecklist Inserted!', '');
+            }else {
+                this.toastHandler.displayChoice('Failed to insert Admin Checklist', 'Something went wrong', 'error', 'sticky');
+            }
+        }).catch(err => {
+            this.toastHandler.displayError('Error in call to insertRecord for AdminCheclist__c!', 'An error occured, see console log for more details', err);
+        });
+    }
+
     handleClick_SaveQuote() {
         //console.log('Clicked Save Quote');
 
@@ -606,15 +621,7 @@ export default class Admin_checklist extends LightningElement {
                 this.toastHandler.displayError('Error in call to updateRecordFromId for AdminChecklist__c!', 'An error occured, see console log for more details', err);
             });
         }else {
-            insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: fieldValues }).then(isSuccess => {
-                if(isSuccess) {
-                    this.toastHandler.displaySuccess('AdminChecklist Inserted!', '');
-                }else {
-                    this.toastHandler.displayChoice('Failed to insert Admin Checklist', 'Something went wrong', 'error', 'sticky');
-                }
-            }).catch(err => {
-                this.toastHandler.displayError('Error in call to insertRecord for AdminCheclist__c!', 'An error occured, see console log for more details', err);
-            });
+            this.makeInsert(fieldValues);
         }
     }
 
@@ -671,6 +678,20 @@ export default class Admin_checklist extends LightningElement {
 
     handleClick_CloneQuote() {
         //console.log('Clicked Clone Quote');
+
+        // First do an insert or update with the current record
+        this.handleClick_SaveQuote();
+
+        // Then set field values and call insert which will save it again but create a new AdminChecklist this time
+        // and set the current adminChosen to the new version
+        let fieldValues = {};
+
+        this.appendFieldValuePairs(this.whoWhat_elements, fieldValues);
+        this.appendFieldValuePairs(this.finances_elements, fieldValues);
+        this.appendFieldValuePairs(this.tradeIn_elements, fieldValues);
+        this.appendFieldValuePairs(this.fetCredit_elements, fieldValues);
+
+        this.makeInsert(fieldValues);
     }
 
 

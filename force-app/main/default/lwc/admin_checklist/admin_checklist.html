@@ -65,21 +65,25 @@
                 </template>
 
                 <template if:true={hasSearchResults}>
-                    <template for:each={searchResults} for:item="record">
-                        <div key={record.id} class="slds-m-top_small" onclick={handleSearchSelection} data-id={record.id}>
-                            <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
-                                <p>Created: {record.created}</p>
-                                <br/>
-                                <p>Last Modified: {record.lastModified}</p>
-                                <br/>
-                                <p>Salesman: {record.salesman}</p>
-                                <br/>
-                                <p>Customer Name: {record.customer}</p>
-                                <br/>
-                                <p>OpportunityAdmin (Group): {record.opportunityAdmin}</p>
-                            </lightning-card>
+                    <div style="height: 500px" class="slds-scrollable_y">
+                        <div class="search_result">
+                            <template for:each={searchResults} for:item="record">
+                                <div key={record.id} class="slds-m-top_small undo_search_result" onclick={handleSearchSelection} data-id={record.id}>
+                                    <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
+                                        <p>Created: {record.created}</p>
+                                        <br/>
+                                        <p>Last Modified: {record.lastModified}</p>
+                                        <br/>
+                                        <p>Salesman: {record.salesman}</p>
+                                        <br/>
+                                        <p>Customer Name: {record.customer}</p>
+                                        <br/>
+                                        <p>OpportunityAdmin (Group): {record.opportunityAdmin}</p>
+                                    </lightning-card>
+                                </div>
+                            </template>
                         </div>
-                    </template>
+                    </div>
                 </template>
             </div>
         </div>

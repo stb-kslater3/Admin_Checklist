@@ -1,0 +1,16 @@
+
+.search_result :hover {
+    cursor: pointer;
+    border-radius: 5px;
+    border-right: 3px solid rgba(185, 183, 183, 0.603);
+    border-bottom: 3px solid rgba(185, 183, 183, 0.603);
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.undo_search_result :hover {
+    border-right: 0px solid rgba(185, 183, 183, 0.603);
+    border-bottom: 0px solid rgba(185, 183, 183, 0.603);
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
