@@ -1,0 +1,37 @@
+<template>
+    <div class="slds-box slds-box_xx-small slds-clearfix slds-theme_shade">
+        <div class="slds-align_absolute-center slds-text_heading-medium">
+            Admin
+        </div>
+
+        <template if:false={hasSearchResults}>
+            <div class="slds-align_absolute-center slds-text_heading-small">
+                Empty List of Admins
+            </div>
+        </template>
+
+        <template if:true={hasSearchResults}>
+            <div style="height: 500px" class="slds-scrollable_y">
+                <div class="search_result">
+                    <template for:each={searchResults} for:item="record">
+                        <div key={record.id} class="slds-m-top_small undo_search_result" onclick={handleSelection} data-id={record.id}>
+                            <a style="text-decoration: none; color: black;" target="_blank" href={adminLink}>
+                                <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
+                                    <p>Created: {record.created}</p>
+                                    <br/>
+                                    <p>Last Modified: {record.lastModified}</p>
+                                    <br/>
+                                    <p>Salesman: {record.salesman}</p>
+                                    <br/>
+                                    <p>Customer Name: {record.customer}</p>
+                                    <br/>
+                                    <p>OpportunityAdmin (Group): {record.opportunityAdmin}</p>
+                                </lightning-card>
+                            </a>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

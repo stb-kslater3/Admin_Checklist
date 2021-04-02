@@ -72,7 +72,7 @@ class Attribute_Handler {
     getAttribute(element, attribute) {
         let value = element[attribute];
 
-        if(this.attributeType === 'number' || this.attributeType === 'currency') {
+        if(this.attributeType === 'number' || this.attributeType === 'currency' || this.attributeType === 'percent') {
             return Number(value)
         }else {
             return value;
@@ -81,7 +81,21 @@ class Attribute_Handler {
 
 
     setAttribute(element, attribute, value) {
-        element[attribute] = value;
+        if(this.attributeType === 'currency') {
+            if(value) {
+                element[attribute] = value.toFixed(2);
+            }else {
+                element[attribute] = 0.00;
+            }
+        }else if(this.attributeType === 'percent') {
+            if(value) {
+                element[attribute] = value.toFixed(4);
+            }else {
+                element[attribute] = 0.00;
+            }
+        }else {
+            element[attribute] = value;
+        }
     }
 }
 
@@ -156,7 +170,9 @@ class LWC_Input_Element extends LWC_Element {
         // Note that I call the protype method so I need to bind this context to access my properties
         LWC_Element.prototype.initialize.call(this);
 
-        this.domElement.addEventListener('change', this.handleChange.bind(this));
+        this.domElement.addEventListener('focusout', (event) => {
+            this.handleChange(event)
+        });
     }
 
 
@@ -195,6 +211,8 @@ export default class Admin_checklist extends LightningElement {
 
     adminChosen;
 
+    groupChosen;
+
     hasSearchResults;
     searchResults;
 
@@ -212,6 +230,7 @@ export default class Admin_checklist extends LightningElement {
     arbitraryAttributeHandler;
     numberAttributeHandler;
     currencyAttributeHandler;
+    percentAttributeHandler;
 
 
     calculateTotalBeforeProfit() {
@@ -230,11 +249,19 @@ export default class Admin_checklist extends LightningElement {
         );
     }
 
+    calculateProfitAmount() {
+        this.finances_elements.finances_Profit_Amount.setAttribute(
+            'value',
+
+           this.finances_elements.finances_Profit_Percent.getAttribute('value') * this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value')
+        );
+    }
+
     calculateProfitPercent() {
         this.finances_elements.finances_Profit_Percent.setAttribute(
             'value',
             
-            Math.round( ((this.finances_elements.finances_Profit_Amount.getAttribute('value') / this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value') * 100) + Number.EPSILON) * 10 ) / 10
+            this.finances_elements.finances_Profit_Amount.getAttribute('value') / (this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value') + this.finances_elements.finances_Profit_Amount.getAttribute('value'))
         );
     }
 
@@ -249,7 +276,7 @@ export default class Admin_checklist extends LightningElement {
         this.finances_elements.finances_Gross_Percent.setAttribute(
             'value',
           
-            Math.round( ((this.finances_elements.finances_Gross_Amount.getAttribute('value') / this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value') * 100) + Number.EPSILON) * 10 ) / 10
+            this.finances_elements.finances_Gross_Amount.getAttribute('value') / (this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value') + this.finances_elements.finances_Profit_Amount.getAttribute('value'))
         );
     } 
 
@@ -257,8 +284,7 @@ export default class Admin_checklist extends LightningElement {
         this.finances_elements.finances_Subtotal_After_Profit.setAttribute(
             'value',
 
-            this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value') +
-            this.finances_elements.finances_Profit_Amount.getAttribute('value')
+            this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value') + this.finances_elements.finances_Profit_Amount.getAttribute('value')
         );
     }
 
@@ -339,6 +365,30 @@ export default class Admin_checklist extends LightningElement {
         this.calculateGrandTotalDue();
     }
 
+    // Don't recalculate profit percent, instead recalculate profit amount.
+    // The other one (makeFinancesCalculations) does the reverse
+    makeFinancesCalculationsAfterPercent() {
+        this.calculateTotalBeforeProfit();
+
+        this.calculateProfitAmount();
+
+        this.calculateGrossesAfterComission();
+
+        this.calculateTotalAfterProfit();
+
+        this.calculateFETTotals();
+
+        this.calculateFETFinances();
+
+        this.calculateGrandTotalDue();
+    }
+
+
+    handleInputFieldChange(event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
 
     handleDOMInput(event) {
         switch(event.target.getAttribute("data-id")) {
@@ -390,6 +440,16 @@ export default class Admin_checklist extends LightningElement {
             case 'finances_Profit_Amount':
                 this.makeFinancesCalculations();
                 
+                break;
+
+            case 'finances_Profit_Percent':
+                // If I am above 1 then divide by 100 so that it is easier for them to type it in
+                if((event.target.value - 1.0) > 0.001) {
+                    event.target.value /= 100.0;
+                }
+
+                this.makeFinancesCalculationsAfterPercent();
+
                 break;
 
             case 'finances_Dealer_Pack':
@@ -456,30 +516,37 @@ export default class Admin_checklist extends LightningElement {
 
 
     handleAdminChosen() {
-        let adminString = 
-            'SELECT OpportunityAdmin__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Body_Series_Name__c, PO1_Cost__c, PO1_Description__c, PO2_Cost__c, PO2_Description__c, PO3_Cost__c, PO3_Description__c, PO4_Cost__c, PO4_Description__c, PO5_Cost__c, PO5_Description__c, PO6_Cost__c, PO6_Description__c, PO7_Cost__c, PO7_Description__c, PO8_Cost__c, PO8_Description__c, PO9_Cost__c, PO9_Description__c, Profit_Amount__c, Dealer_Pack__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c' +
-            ' FROM AdminChecklist__c ' +
-            ' WHERE Id = \'' + this.adminChosen + '\'';
+        // Clear everything out to the defaults and then get the Admin and update
+        this.queryAdminChecklist_Defaults().then(() => {
+            this.initializeFromQuery(this.defaultAdminChecklist);
 
-        queryFromString({ queryString: adminString }).then(record => {
-            if(record.length > 0) {
-                this.initializeFromQuery(record[0]);
 
-                this.toastHandler.displayChoice('Admin Checklist Loaded!', '', 'info', 'sticky');
-            }else {
-                this.toastHandler.displayChoice('No Records Found!', 'Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0', 'error', 'sticky');
+            let adminString = 
+                'SELECT OpportunityAdmin__c, OpportunityAdmin__r.Name__c, Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, PO1_Cost__c, PO1_Description__c, PO2_Cost__c, PO2_Description__c, PO3_Cost__c, PO3_Description__c, PO4_Cost__c, PO4_Description__c, PO5_Cost__c, PO5_Description__c, PO6_Cost__c, PO6_Description__c, PO7_Cost__c, PO7_Description__c, PO8_Cost__c, PO8_Description__c, PO9_Cost__c, PO9_Description__c, Profit_Amount__c, Dealer_Pack__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c' +
+                ' FROM AdminChecklist__c ' +
+                ' WHERE Id = \'' + this.adminChosen + '\'';
 
-                console.log('Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0');
-        
-                this.thisReference.dispatchEvent(errorToast);
-            }
+            queryFromString({ queryString: adminString }).then(record => {
+                if(record.length > 0) {
+                    this.groupChosen = record[0].OpportunityAdmin__c;
+                    this.whoWhat_elements.whoWhat_GroupName.setAttribute('value', record[0].OpportunityAdmin__r.Name__c);
+
+                    this.initializeFromQuery(record[0]);
+
+                    this.toastHandler.displayChoice('Admin Checklist Loaded!', '', 'info', 'sticky');
+                }else {
+                    this.toastHandler.displayChoice('No Records Found!', 'Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0', 'error', 'sticky');
+
+                    console.log('Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0');
+            
+                    this.thisReference.dispatchEvent(errorToast);
+                }
+            }).catch(err => {
+                this.toastHandler.displayError('Error in call to queryFromString for handleAdminChosen!', 'See console log for more details', err);
+            });
         }).catch(err => {
-            this.toastHandler.displayError('Error in call to queryFromString for handleAdminChosen!', 'See console log for more details', err);
+            this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', 'Something went wrong, see console log for more info', err);
         });
-    }
-
-    handleAdminGroupChosen() {
-
     }
 
 
@@ -487,7 +554,7 @@ export default class Admin_checklist extends LightningElement {
         //console.log('Clicked Search Quote');
 
         let lookUpString =
-            'SELECT Name, Salesman__r.Name, OpportunityAdmin__r.Name, Customer_Name__c, LastModifiedDate, CreatedDate' +
+            'SELECT Name, Name__c, Salesman__r.Name, OpportunityAdmin__r.Name, OpportunityAdmin__r.Name__c, Customer_Name__c, LastModifiedDate, CreatedDate' +
             ' FROM AdminChecklist__c';
 
         let whereString = '';
@@ -536,13 +603,10 @@ export default class Admin_checklist extends LightningElement {
                 for(const recordIndex in records) {
                     //console.log(records[recordIndex]);
 
-                    //this.searchResults.push(records[recordIndex]);
                     this.searchResults.push({
                         index: recordIndex,
 
                         id: records[recordIndex].Id,
-
-                        name: records[recordIndex].Name,
 
                         created: records[recordIndex].CreatedDate.split('Z')[0].replace('T', ' ').split('.')[0],
 
@@ -550,10 +614,22 @@ export default class Admin_checklist extends LightningElement {
 
                         salesman: records[recordIndex].Salesman__r.Name,
 
-                        customer: records[recordIndex].Customer_Name__c,
-
-                        opportunityAdmin: records[recordIndex].OpportunityAdmin__r.Name
+                        customer: records[recordIndex].Customer_Name__c
                     });
+
+
+                    if(records[recordIndex].Name__c) {
+                        this.searchResults[recordIndex].name = records[recordIndex].Name__c + ' (' + records[recordIndex].Name + ')';
+                    }else {
+                        this.searchResults[recordIndex].name = records[recordIndex].Name;
+                    }
+
+
+                    if(records[recordIndex].OpportunityAdmin__r.Name__c) {
+                        this.searchResults[recordIndex].opportunityAdmin = records[recordIndex].OpportunityAdmin__r.Name__c + ' (' + records[recordIndex].OpportunityAdmin__r.Name + ')';
+                    }else {
+                        this.searchResults[recordIndex].opportunityAdmin = records[recordIndex].OpportunityAdmin__r.Name;
+                    }
                 }
             }else {
                 this.hasSearchResults = false;
@@ -577,6 +653,7 @@ export default class Admin_checklist extends LightningElement {
         //console.log('Clicked New Admin Group');
 
         createAdminGroup().then(resultId => {
+            this.groupChosen = resultId;
             this.whoWhat_elements.whoWhat_OpportunityAdmin.setAttribute('value', resultId);
         }).catch(err => {
             this.toastHandler.displayError('Error in call to createAdminGroup!', 'Problem occured while getting creating a new OpportunityAdmin', err);
@@ -623,11 +700,29 @@ export default class Admin_checklist extends LightningElement {
         }else {
             this.makeInsert(fieldValues);
         }
+
+
+        if(this.groupChosen) {
+            updateRecordFromId({ objectName: 'OpportunityAdmin__c', recordId: this.groupChosen, fieldValuePairs: {'Name__c': this.whoWhat_elements.whoWhat_GroupName.getAttribute('value')}}).then(isSuccess => {
+                if(isSuccess) {
+                    this.toastHandler.displaySuccess('OpportunityAdmin Updated with given Group!', '');
+                }else {
+                    this.toastHandler.displayChoice('Failed to update OpportunityAdmin Name', 'Something went wrong', 'error', 'sticky');
+                }
+            }).catch(err => {
+                this.toastHandler.displayError('Error in call to updateRecordFromId for the Name of the group chosen!', 'An error occured, see console log for more details', err);
+            });
+        }
     }
 
 
     handleClick_PrintQuote() {
         //console.log('Clicked Print Quote');
+
+
+        // Save Admin and Print to Pdf and save that file
+        this.handleClick_SaveQuote();
+
 
         let fieldValues = {};
 
@@ -637,6 +732,8 @@ export default class Admin_checklist extends LightningElement {
         this.appendFieldValuePairs(this.fetCredit_elements, fieldValues);
 
         fieldValues['Id'] = this.adminChosen;
+
+        fieldValues['date'] = this.whoWhat_elements.whoWhat_Date.getAttribute('value');
 
         fieldValues['subtotal_before_profit'] = this.finances_elements.finances_Subtotal_Before_Profit.getAttribute('value');
 
@@ -668,7 +765,14 @@ export default class Admin_checklist extends LightningElement {
 
             console.log(b);
 
-            saveBlob(b, 'Admin_' + this.whoWhat_elements.whoWhat_Body_Series_Name.getAttribute('value') + '.pdf');
+            let fileName = '';
+            if(this.whoWhat_elements.whoWhat_AdminName.getAttribute('value') && this.whoWhat_elements.whoWhat_AdminName.getAttribute('value') != '') {
+                fileName += this.whoWhat_elements.whoWhat_AdminName.getAttribute('value');
+            }else {
+                fileName += 'Admin_' + this.whoWhat_elements.whoWhat_Body_Series_Name.getAttribute('value')
+            }
+
+            saveBlob(b, fileName + '.pdf');
         }).catch(err => {
             this.toastHandler.displayError('Error in call to downloadAdmin for PrintQuote!', 'See console log for more details', err);
         });
@@ -708,11 +812,23 @@ export default class Admin_checklist extends LightningElement {
 
 
     updateValuesFromQuery(fieldObject, result) {
+        let needsEmptied;
+
         for(const key in fieldObject) {
+            needsEmptied = false;
+
             if(fieldObject[key].apiFieldName) {
                 if(result[fieldObject[key].apiFieldName] !== null && result[fieldObject[key].apiFieldName] !== undefined) {
                     fieldObject[key].setAttribute('value', result[fieldObject[key].apiFieldName]);
+                }else {
+                    needsEmptied = true;
                 }
+            }else {
+                needsEmptied = true;
+            }
+
+            if(needsEmptied) {
+                fieldObject[key].setAttribute('value', '');
             }
         }
     }
@@ -746,11 +862,19 @@ export default class Admin_checklist extends LightningElement {
             this.whoWhat_elements.whoWhat_OpportunityAdmin = new LWC_Input_Element('whoWhat_OpportunityAdmin', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
             this.whoWhat_elements.whoWhat_OpportunityAdmin.setApiFieldName('OpportunityAdmin__c');
 
+            this.whoWhat_elements.whoWhat_GroupName = new LWC_Input_Element('whoWhat_GroupName', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+
+            this.whoWhat_elements.whoWhat_AdminName = new LWC_Input_Element('whoWhat_AdminName', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_AdminName.setApiFieldName('Name__c');
+
             this.whoWhat_elements.whoWhat_Salesman = new LWC_Input_Element('whoWhat_Salesman', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
             this.whoWhat_elements.whoWhat_Salesman.setApiFieldName('Salesman__c');
 
             this.whoWhat_elements.whoWhat_Customer = new LWC_Input_Element('whoWhat_Customer', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
             this.whoWhat_elements.whoWhat_Customer.setApiFieldName('Customer_Name__c');
+
+            this.whoWhat_elements.whoWhat_Date = new LWC_Input_Element('whoWhat_Date', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Date.setApiFieldName('Date__c');
 
             this.whoWhat_elements.whoWhat_Chassis_Make = new LWC_Input_Element('whoWhat_Chassis_Make', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
             this.whoWhat_elements.whoWhat_Chassis_Make.setApiFieldName('Chassis_Make__c');
@@ -841,14 +965,14 @@ export default class Admin_checklist extends LightningElement {
             this.finances_elements.finances_Profit_Amount = new LWC_Input_Element('finances_Profit_Amount', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
             this.finances_elements.finances_Profit_Amount.setApiFieldName('Profit_Amount__c');
             
-            this.finances_elements.finances_Profit_Percent = new LWC_Element('finances_Profit_Percent', this.template,  this.numberAttributeHandler);
+            this.finances_elements.finances_Profit_Percent = new LWC_Input_Element('finances_Profit_Percent', this.template,  this.percentAttributeHandler, this.handleDOMInput.bind(this));
 
             this.finances_elements.finances_Dealer_Pack = new LWC_Input_Element('finances_Dealer_Pack', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
             this.finances_elements.finances_Dealer_Pack.setApiFieldName('Dealer_Pack__c');
 
             this.finances_elements.finances_Gross_Amount = new LWC_Element('finances_Gross_Amount', this.template,  this.currencyAttributeHandler);
 
-            this.finances_elements.finances_Gross_Percent = new LWC_Element('finances_Gross_Percent', this.template,  this.numberAttributeHandler);
+            this.finances_elements.finances_Gross_Percent = new LWC_Element('finances_Gross_Percent', this.template,  this.percentAttributeHandler);
 
 
 
@@ -949,6 +1073,7 @@ export default class Admin_checklist extends LightningElement {
         this.arbitraryAttributeHandler = new Attribute_Handler('arbitrary');
         this.numberAttributeHandler = new Attribute_Handler('number');
         this.currencyAttributeHandler = new Attribute_Handler('currency');
+        this.percentAttributeHandler = new Attribute_Handler('percent');
 
         this.toastHandler = new LWC_Toast(this);
 
@@ -1021,6 +1146,15 @@ export default class Admin_checklist extends LightningElement {
 
 
                 this.initializeFromQuery(this.defaultAdminChecklist);
+
+
+                let page_url = new URL(window.location.href);
+                let urlParamOppId = page_url.searchParams.get("c__AdminChosen");
+                if (urlParamOppId) {
+                    this.adminChosen = urlParamOppId;
+
+                    this.handleAdminChosen();
+                }
             }).catch(err => {
                 this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', 'Something went wrong, see console log for more info', err);
             });

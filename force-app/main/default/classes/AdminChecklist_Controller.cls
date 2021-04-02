@@ -16,6 +16,8 @@ public with sharing class AdminChecklist_Controller {
 
     public String chassis_vin {get; set;}
 
+    public String body_series {get; set;}
+
 
     public String po1_cost {get; set;}
     public String po1_description {get; set;}
@@ -137,12 +139,16 @@ public with sharing class AdminChecklist_Controller {
 
         if(thisAdmin != null) {
             salesman = thisAdmin.Salesman__r.Name;
-            last_modified = thisAdmin.LastModifiedDate.format('y-M-d');
         }else {
             salesman = '_';
-            last_modified = '_';
         }
         
+        if(adminData.containsKey('date')) {
+            last_modified = adminData.get('date');
+        }else {
+            last_modified = thisAdmin.LastModifiedDate.format('y-M-d');
+        }
+
         if(adminData.containsKey('Customer_Name__c')) {
             customer = adminData.get('Customer_Name__c');
         }else {
@@ -172,6 +178,13 @@ public with sharing class AdminChecklist_Controller {
             chassis_vin = adminData.get('Chassis_VIN__c');
         }else {
             chassis_vin = '_';
+        }
+
+
+        if(adminData.containsKey('Body_Series_Name__c')) {
+            body_series = adminData.get('Body_Series_Name__c');
+        }else {
+            body_series = '_';
         }
 
 
@@ -308,7 +321,8 @@ public with sharing class AdminChecklist_Controller {
 
 
         if(adminData.containsKey('profit_percent')) {
-            profit_percent = adminData.get('profit_percent') + '%';   
+            Decimal percentAmount = (Decimal.valueOf(adminData.get('profit_percent')) * 100.0).setScale(2);
+            profit_percent =  percentAmount.format() + '%';   
         }else {
             profit_percent = '_';
         }
@@ -328,7 +342,8 @@ public with sharing class AdminChecklist_Controller {
         }
 
         if(adminData.containsKey('gross_percent')) {
-            gross_after_com_percent = adminData.get('gross_percent') + '%';
+            Decimal percentAmount = (Decimal.valueOf(adminData.get('gross_percent')) * 100.0).setScale(2);
+            gross_after_com_percent =  percentAmount.format() + '%'; 
         }else {
             gross_after_com_percent = '_';
         }

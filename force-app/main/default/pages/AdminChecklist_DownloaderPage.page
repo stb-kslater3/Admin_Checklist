@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="Medium_Box">
-                    <b>Date:</b> {!last_modified}
+                    <b>Date (YYYY-MM-DD):</b> {!last_modified}
                 </div>
             </div>
 
@@ -40,6 +40,12 @@
 
                 <div class="Medium_Box">
                     <b>Chassis Vin:</b> {!chassis_vin}
+                </div>
+            </div>
+
+            <div>
+                <div class="Medium_Box">
+                    <b>Body Series:</b> {!body_series}
                 </div>
             </div>
         </div>

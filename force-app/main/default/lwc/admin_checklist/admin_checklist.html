@@ -2,7 +2,7 @@
     <div class="slds-align_absolute-center">
         <div class="slds-theme_shade slds-box">
             <div class="slds-text-heading_medium slds-align_absolute-center">
-                Look Up Quote
+                Look Up Admin
             </div>
 
 
@@ -21,16 +21,8 @@
                 </div>
 
                 <div class="slds-float_left">
-                    <lightning-record-edit-form
-                        object-api-name="AdminChecklist__c">
-
-                        <lightning-input-field
-                            field-name="Customer_Name__c"
-                            data-id="lookUpQuote_Customer">
-
-                        </lightning-input-field>
-
-                    </lightning-record-edit-form>
+                    <lightning-input variant="text" label="Customer Name" data-id="lookUpQuote_Customer">
+                    </lightning-input>
                 </div>
             </div>
 
@@ -94,17 +86,21 @@
     <div class="slds-align_absolute-center slds-m-top_xx-large">
         <div class="slds-theme_shade slds-box slds-clearfix">
             <div class="slds-text-heading_medium slds-align_absolute-center">
-                Estimate Quote
+                Admin
             </div>
 
             <div class="slds-align_absolute-center">
                 <div class="slds-float_left slds-m-top_medium slds-box slds-box_xx-small">
                     <div class="slds-text-heading_x-small slds-align_absolute-center">
-                        Who, What, When
+                        Admin Group
                     </div>
     
-                    <div class="slds-clearfix slds-m-top_medium slds-box slds-box_xx-small">
-                        <div class="slds-align_absolute-center slds-m-top_small">
+                    <div class="slds-clearfix slds-m-top_medium">
+                        <div class="slds-align_absolute-center slds-text-heading_xsmall">
+                            Find the group with the same Opportunity or make a new group for a new Opportunity.
+                        </div>
+
+                        <div class="slds-align_absolute-center slds-m-top_xsmall">
                             <div>
                                 <div class="slds-float_left">
                                     <lightning-record-edit-form
@@ -133,9 +129,30 @@
                             </div>
                         </div>
 
-                        <div class="slds-align_absolute-center slds-text-heading_xsmall">
-                            Find the group with the same Opportunity or make a new group for a new Opportunity.
+
+                        <div class="slds-align_absolute-center slds-border_top slds-m-top_medium slds-text-heading_xsmall">
+                            Name of the group.
                         </div>
+
+                        <div class="slds-align_absolute-center slds-m-top_xsmall">
+                            <lightning-input type="text" label="OpportunityAdmin Name" data-id="whoWhat_GroupName">
+                            </lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="slds-m-top_medium slds-align_absolute-center">
+                <div class="slds-float_left slds-m-top_medium slds-box slds-box_xx-small">
+                    <div class="slds-text-heading_x-small slds-align_absolute-center">
+                        Who, What, When
+                    </div>
+
+                    <div class="slds-align_absolute-center slds-m-top_xsmall">
+                        <lightning-input type="text" label="Admin Name" data-id="whoWhat_AdminName">
+                        </lightning-input>
                     </div>
 
                     <div class="slds-clearfix slds-m-top_small">
@@ -153,83 +170,39 @@
                         </div>
     
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="Customer_Name__c"
-                                    data-id="whoWhat_Customer">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Customer Name" data-id="whoWhat_Customer">
+                            </lightning-input>
                         </div>
+                    </div>
+
+                    <div class="slds-align_absolute-center">
+                        <lightning-input type="date" label="Date" data-id="whoWhat_Date">
+                        </lightning-input>
                     </div>
 
     
                     <div class="slds-clearfix slds-m-top_medium">
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
+                            <lightning-input label="Chassis Year" data-id="whoWhat_Chassis_Year">
+                            </lightning-input>
 
-                                <lightning-input-field
-                                    field-name="Chassis_Year__c"
-                                    data-id="whoWhat_Chassis_Year">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
-
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="Chassis_VIN__c"
-                                    data-id="whoWhat_Chassis_VIN">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Chassis VIN" data-id="whoWhat_Chassis_VIN">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
+                            <lightning-input label="Chassis Make" data-id="whoWhat_Chassis_Make">
+                            </lightning-input>
 
-                                <lightning-input-field
-                                    field-name="Chassis_Make__c"
-                                    data-id="whoWhat_Chassis_Make">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
-
-
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="Chassis_Model__c"
-                                    data-id="whoWhat_Chassis_Model">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Chassis Model" data-id="whoWhat_Chassis_Model">
+                            </lightning-input>
                         </div>
                     </div>
 
 
                     <div class="slds-align_absolute-center slds-m-right_medium">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Body_Series_Name__c"
-                                data-id="whoWhat_Body_Series_Name">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input label="Body Series" data-id="whoWhat_Body_Series_Name">
+                        </lightning-input>
                     </div>
                 </div>
             </div>
@@ -243,253 +216,109 @@
                 <div class="slds-float_left">
                     <div class="slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO1_Cost__c"
-                                    data-id="finances_PO1_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO1 Cost" data-id="finances_PO1_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO1_Description__c"
-                                    data-id="finances_PO1_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO1 Description" data-id="finances_PO1_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO2_Cost__c"
-                                    data-id="finances_PO2_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO2 Cost" data-id="finances_PO2_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO2_Description__c"
-                                    data-id="finances_PO2_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO2 Description" data-id="finances_PO2_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO3_Cost__c"
-                                    data-id="finances_PO3_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO3 Cost" data-id="finances_PO3_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO3_Description__c"
-                                    data-id="finances_PO3_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO3 Description" data-id="finances_PO3_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO4_Cost__c"
-                                    data-id="finances_PO4_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO4 Cost" data-id="finances_PO4_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO4_Description__c"
-                                    data-id="finances_PO4_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO4 Description" data-id="finances_PO4_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO5_Cost__c"
-                                    data-id="finances_PO5_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO5 Cost" data-id="finances_PO5_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO5_Description__c"
-                                    data-id="finances_PO5_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO5 Description" data-id="finances_PO5_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO6_Cost__c"
-                                    data-id="finances_PO6_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO6 Cost" data-id="finances_PO6_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO6_Description__c"
-                                    data-id="finances_PO6_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO6 Description" data-id="finances_PO6_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO7_Cost__c"
-                                    data-id="finances_PO7_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO7 Cost" data-id="finances_PO7_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO7_Description__c"
-                                    data-id="finances_PO7_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO7 Description" data-id="finances_PO7_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO8_Cost__c"
-                                    data-id="finances_PO8_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO8 Cost" data-id="finances_PO8_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO8_Description__c"
-                                    data-id="finances_PO8_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO8 Description" data-id="finances_PO8_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO9_Cost__c"
-                                    data-id="finances_PO9_Cost">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input type="number" formatter="currency" step=".01" label="PO9 Cost" data-id="finances_PO9_Cost">
+                            </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="PO9_Description__c"
-                                    data-id="finances_PO9_Description">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-textarea label="PO9 Description" data-id="finances_PO9_Description">
+                            </lightning-textarea>
                         </div>
                     </div>
 
@@ -502,11 +331,8 @@
                             </div>
 
                             <b style="color: green;">
-                                $
-                                <lightning-formatted-rich-text
-                                    value="0.00"
-                                    data-id="finances_Subtotal_Before_Profit">
-                                </lightning-formatted-rich-text>
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Subtotal_Before_Profit">
+                                </lightning-formatted-number>
                             </b>
                         </div>
                     </div>
@@ -515,44 +341,21 @@
 
                 <div class="slds-float_left slds-m-top_medium slds-m-left_medium slds-border_left">
                     <div class="slds-m-left_small slds-m-top_xx-small">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Profit_Amount__c"
-                                data-id="finances_Profit_Amount">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Profit Amount" data-id="finances_Profit_Amount">
+                        </lightning-input>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_xx_small">
-                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
-                            Profit %:
+                        <div class="slds-m-left_small slds-m-top_xx-small">
+                            <lightning-input type="number" label="Profit %:" formatter="percent" step=".0001" data-id="finances_Profit_Percent">
+                            </lightning-input>
                         </div>
-                        
-                        <b style="color: blue;">
-                            <lightning-formatted-rich-text
-                                value="0"
-                                data-id="finances_Profit_Percent">
-                            </lightning-formatted-rich-text>
-                            %
-                        </b>
                     </div>
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Dealer_Pack__c"
-                                data-id="finances_Dealer_Pack">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Dealer Pack" data-id="finances_Dealer_Pack">
+                        </lightning-input>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_xx-small">
@@ -561,11 +364,8 @@
                         </div>
 
                         <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00"
-                                data-id="finances_Gross_Amount">
-                            </lightning-formatted-rich-text>
+                            <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Gross_Amount">
+                            </lightning-formatted-number>
                         </b>
                     </div>
 
@@ -575,11 +375,8 @@
                         </div>
                         
                         <b style="color: blue;">
-                            <lightning-formatted-rich-text
-                                value="0"
-                                data-id="finances_Gross_Percent">
-                            </lightning-formatted-rich-text>
-                            %
+                            <lightning-formatted-number format-style="percent" maximum-fraction-digits="2" data-id="finances_Gross_Percent">
+                            </lightning-formatted-number>
                         </b>
                     </div>
 
@@ -593,11 +390,8 @@
                             </div>
 
                             <b style="color: green;">
-                                $
-                                <lightning-formatted-rich-text
-                                    value="0.00"
-                                    data-id="finances_Subtotal_After_Profit">
-                                </lightning-formatted-rich-text>
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Subtotal_After_Profit">
+                                </lightning-formatted-number>
                             </b>
                         </div>
                     </div>
@@ -619,26 +413,15 @@
                             </div>
 
                             <b style="color: green;">
-                                $
-                                <lightning-formatted-rich-text
-                                    value="0.00"
-                                    data-id="finances_12_FET">
-                                </lightning-formatted-rich-text>
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_12_FET">
+                                </lightning-formatted-number>
                             </b>
                         </div>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_xx-small">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Minus_Tire_FET__c"
-                                data-id="finances_Minus_Tire_FET">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Minus Tire F.E.T." data-id="finances_Minus_Tire_FET">
+                        </lightning-input>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_xx-small">
@@ -647,67 +430,32 @@
                         </div>
 
                         <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00"
-                                data-id="finances_Total_FET">
-                            </lightning-formatted-rich-text>
+                            <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Total_FET">
+                            </lightning-formatted-number>
                         </b>
                     </div>
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Extended_Warranty__c"
-                                data-id="finances_Extended_Warranty">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Extended Warranty" data-id="finances_Extended_Warranty">
+                        </lightning-input>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Other_Fees__c"
-                                data-id="finances_Other_Fees">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Other Fees" data-id="finances_Other_Fees">
+                        </lightning-input>
                     </div>
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Documentation_Fee__c"
-                                data-id="finances_Documentation_Fee">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Documentation Fee" data-id="finances_Documentation_Fee">
+                        </lightning-input>
                     </div>
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-record-edit-form
-                            object-api-name="AdminChecklist__c">
-
-                            <lightning-input-field
-                                field-name="Deposit__c"
-                                data-id="finances_Deposit">
-
-                            </lightning-input-field>
-
-                        </lightning-record-edit-form>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Deposit" data-id="finances_Deposit">
+                        </lightning-input>
                     </div>
 
 
@@ -720,11 +468,8 @@
                             </div>
 
                             <b style="color: green;">
-                                $
-                                <lightning-formatted-rich-text
-                                    value="0.00"
-                                    data-id="finances_Total">
-                                </lightning-formatted-rich-text>
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Total">
+                                </lightning-formatted-number>
                             </b>
                         </div>
                     </div>
@@ -740,84 +485,36 @@
     
                     <div class="slds-clearfix">
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="TradeIn_Make__c"
-                                    data-id="tradeIn_Make">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Trade In Make" data-id="tradeIn_Make">
+                            </lightning-input>
                         
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="TradeIn_Model__c"
-                                    data-id="tradeIn_Model">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Trade In Model" data-id="tradeIn_Model">
+                            </lightning-input>
                         </div>
                     
                         <div class="slds-float_left">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="TradeIn_Year__c"
-                                    data-id="tradeIn_Year">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Trade In Year" data-id="tradeIn_Year">
+                            </lightning-input>
                         </div>
                     </div>
     
                     <div>
                         <div>
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="TradeIn_Unit_Number__c"
-                                    data-id="tradeIn_Unit_Number">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Trade In Unit Number" data-id="tradeIn_Unit_Number">
+                            </lightning-input>
                         </div>
                     </div>
     
     
                     <div class="slds-clearfix">
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="TradeIn_Actual_Cash_Value__c"
-                                    data-id="tradeIn_Actual_Cash_Value">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Actual Cash Value" data-id="tradeIn_Actual_Cash_Value">
+                            </lightning-input>
                         </div>
     
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-record-edit-form
-                                object-api-name="AdminChecklist__c">
-
-                                <lightning-input-field
-                                    field-name="TradeIn_Billing_Amount__c"
-                                    data-id="tradeIn_Billing_Amount">
-
-                                </lightning-input-field>
-
-                            </lightning-record-edit-form>
+                            <lightning-input label="Trade In Billing Amount" data-id="tradeIn_Billing_Amount">
+                            </lightning-input>
                         </div>
                     </div>
                 </div>
@@ -838,69 +535,23 @@
                             </div>
     
                             <div>
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-
-                                    <lightning-input-field
-                                        field-name="FET_Front_Description__c"
-                                        data-id="fetCredit_FET_Front_Description">
-
-                                    </lightning-input-field>
-
-                                </lightning-record-edit-form>
-                            </div>
-    
-                            <div class="slds-m-top_small">
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-
-                                    <lightning-input-field
-                                        field-name="FET_Front_Size__c"
-                                        data-id="fetCredit_FET_Front_Size">
-
-                                    </lightning-input-field>
-
-                                </lightning-record-edit-form>
-                            </div>
-    
-                            <div class="slds-m-top_small">
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-                                    <lightning-input-field
-                                        field-name="FET_Front_Cost__c"
-                                        data-id="fetCredit_FET_Front_Cost">
-
-                                    </lightning-input-field>
-                
-                                    <!--
-                                    <lightning-input
-                                        label="FET_Front_Cost"
-                                        value="$0.00"
-                                        data-id="fetCredit_FET_Front_Cost">
-                                    </lightning-input>
-                                    -->
-                                </lightning-record-edit-form>
-                            </div>
-    
-                            <div class="slds-m-top_small">
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-
-                                    <lightning-input-field
-                                        field-name="FET_Front_Quantity__c"
-                                        data-id="fetCredit_FET_Front_Quantity">
-
-                                    </lightning-input-field>
-
-                                </lightning-record-edit-form>
-                                
-                                <!--
-                                <lightning-input
-                                    label="FET_Front_Quantity"
-                                    value="2"
-                                    data-id="fetCredit_FET_Front_Quantity">
+                                <lightning-input label="Front Tire Description" data-id="fetCredit_FET_Front_Description">
                                 </lightning-input>
-                                -->
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input label="Front Tire Size" data-id="fetCredit_FET_Front_Size">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" formatter="currency" step=".01" label="Front Tire Cost" data-id="fetCredit_FET_Front_Cost">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" label="Front Tire Quantity" data-id="fetCredit_FET_Front_Quantity">
+                                </lightning-input>
                             </div>
     
                             <div class="slds-m-left_small slds-m-top_small">
@@ -909,11 +560,8 @@
                                 </div>
     
                                 <b style="color: green;">
-                                    $
-                                    <lightning-formatted-rich-text
-                                        value="0.00"
-                                        data-id="fetCredit_FET_Front_Subtotal">
-                                    </lightning-formatted-rich-text>
+                                    <lightning-formatted-number format-style="currency" currency-code="USD" data-id="fetCredit_FET_Front_Subtotal">
+                                    </lightning-formatted-number>
                                 </b>
                             </div>
                         </div>
@@ -924,71 +572,23 @@
                             </div>
     
                             <div>
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-
-                                    <lightning-input-field
-                                        field-name="FET_Rear_Description__c"
-                                        data-id="fetCredit_FET_Rear_Description">
-
-                                    </lightning-input-field>
-
-                                </lightning-record-edit-form>
-                            </div>
-    
-                            <div class="slds-m-top_small">
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-
-                                    <lightning-input-field
-                                        field-name="FET_Rear_Size__c"
-                                        data-id="fetCredit_FET_Rear_Size">
-
-                                    </lightning-input-field>
-
-                                </lightning-record-edit-form>
-                            </div>
-    
-                            <div class="slds-m-top_small">
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-
-                                    <lightning-input-field
-                                        field-name="FET_Rear_Cost__c"
-                                        data-id="fetCredit_FET_Rear_Cost">
-
-                                    </lightning-input-field>
-
-                                </lightning-record-edit-form>
-                                
-                                <!--
-                                <lightning-input
-                                    label="FET_Rear_Cost"
-                                    value="$0.00"
-                                    data-id="fetCredit_FET_Rear_Cost">
+                                <lightning-input label="Rear Tire Description" data-id="fetCredit_FET_Rear_Description">
                                 </lightning-input>
-                                -->
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-record-edit-form
-                                    object-api-name="AdminChecklist__c">
-
-                                    <lightning-input-field
-                                        field-name="FET_Rear_Quantity__c"
-                                        data-id="fetCredit_FET_Rear_Quantity">
-
-                                    </lightning-input-field>
-
-                                </lightning-record-edit-form>
-                                
-                                <!--
-                                <lightning-input
-                                    label="FET_Rear_Quantity"
-                                    value="8"
-                                    data-id="fetCredit_FET_Rear_Quantity">
+                                <lightning-input label="Rear Tire Size" data-id="fetCredit_FET_Rear_Size">
                                 </lightning-input>
-                                -->
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" formatter="currency" step=".01" label="Rear Tire Cost" data-id="fetCredit_FET_Rear_Cost">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" label="Rear Tire Quantity" data-id="fetCredit_FET_Rear_Quantity">
+                                </lightning-input>
                             </div>
     
                             <div class="slds-m-left_small slds-m-top_small">
@@ -997,11 +597,8 @@
                                 </div>
     
                                 <b style="color: green;">
-                                    $
-                                    <lightning-formatted-rich-text
-                                        value="0.00"
-                                        data-id="fetCredit_FET_Rear_Subtotal">
-                                    </lightning-formatted-rich-text>
+                                    <lightning-formatted-number format-style="currency" currency-code="USD" data-id="fetCredit_FET_Rear_Subtotal">
+                                    </lightning-formatted-number>
                                 </b>
                             </div>
                         </div>
@@ -1014,11 +611,8 @@
                         </div>
     
                         <b style="color: green;">
-                            $
-                            <lightning-formatted-rich-text
-                                value="0.00"
-                                data-id="fetCredit_FET_Total">
-                            </lightning-formatted-rich-text>
+                            <lightning-formatted-number format-style="currency" currency-code="USD" data-id="fetCredit_FET_Total">
+                            </lightning-formatted-number>
                         </b>
                     </div>
                 </div>
