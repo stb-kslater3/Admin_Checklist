@@ -1,9 +1,41 @@
 <template>
     <div class="slds-box slds-box_xx-small slds-clearfix slds-theme_shade">
-        <div class="slds-align_absolute-center slds-text_heading-medium">
+        <div class="slds-align_absolute-center slds-text-heading_medium">
             Admin
         </div>
 
+
+        <template if:false={admin}>
+            <div class="sdls-clearfix">
+                <div>
+                    <c-admin_search onadminchosen={handleAdminChosen}></c-admin_search>
+                </div>
+
+                <div class="slds-align_absolute-center slds-m-top_medium">
+                    or
+                </div>
+
+                <div class="slds-align_absolute-center slds-m-top_medium">
+                    <c-lwc_navigator variant="button" label="New Admin" type="standard__navItemPage" attributes={adminNavAttr} state={adminNavState} onclick={handleClick_NewAdmin} data-id="New_Admin_Button"></c-lwc_navigator>
+                </div>
+            </div>
+        </template>
+
+
+        <template if:true={admin}>
+            <div class="slds-clearfix">
+                <div>
+                    Admin Name: {adminName}
+                </div>
+
+                <div class="slds-align_absolute-center slds-m-top_medium">
+                    <c-lwc_navigator variant="button" label="Edit Admin" type="standard__navItemPage" attributes={adminNavAttr} state={adminNavState} onclick={handleClick_EditAdmin} data-id="Edit_Admin_Button"></c-lwc_navigator>
+                </div>
+            </div>
+        </template>
+
+
+        <!--
         <template if:false={hasSearchResults}>
             <div class="slds-align_absolute-center slds-text_heading-small">
                 Empty List of Admins
@@ -33,5 +65,6 @@
                 </div>
             </div>
         </template>
+        -->
     </div>
 </template>

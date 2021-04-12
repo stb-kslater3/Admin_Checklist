@@ -137,11 +137,20 @@ public with sharing class AdminChecklist_Controller {
         }
 
 
-        if(thisAdmin != null) {
-            salesman = thisAdmin.Salesman__r.Name;
+        if(adminData.containsKey('salesman')) {
+            User[] salesmanQueried = [
+                SELECT Name
+                FROM User
+                WHERE Id = :adminData.get('salesman')
+            ];
+
+            if(salesmanQueried.size() > 0) {
+                salesman = salesmanQueried[0].Name;
+            }
         }else {
             salesman = '_';
         }
+
         
         if(adminData.containsKey('date')) {
             last_modified = adminData.get('date');
@@ -189,118 +198,118 @@ public with sharing class AdminChecklist_Controller {
 
 
         
-        if(adminData.containsKey('PO1_Cost__c')) {
-            po1_cost = this.formatMoney(adminData.get('PO1_Cost__c'));
+        if(adminData.containsKey('Chassis_Cost__c')) {
+            po1_cost = this.formatMoney(adminData.get('Chassis_Cost__c'));
         }else {
             po1_cost = '_';
         }
         
-        if(adminData.containsKey('PO1_Description__c')) {
-            po1_description = adminData.get('PO1_Description__c');
+        if(adminData.containsKey('Chassis_Description__c')) {
+            po1_description = adminData.get('Chassis_Description__c');
         }else {
             po1_description = '_';
         }
         
         
-        if(adminData.containsKey('PO2_Cost__c')) {
-            po2_cost = this.formatMoney(adminData.get('PO2_Cost__c'));
+        if(adminData.containsKey('Body_Cost__c')) {
+            po2_cost = this.formatMoney(adminData.get('Body_Cost__c'));
         }else {
             po2_cost = '_';
         }
         
-        if(adminData.containsKey('PO2_Description__c')) {
-            po2_description = adminData.get('PO2_Description__c');
+        if(adminData.containsKey('Body_Description__c')) {
+            po2_description = adminData.get('Body_Description__c');
         }else {
             po2_description = '_';
         }
 
         
-        if(adminData.containsKey('PO3_Cost__c')) {
-            po3_cost = this.formatMoney(adminData.get('PO3_Cost__c'));
+        if(adminData.containsKey('Freight_Cost__c')) {
+            po3_cost = this.formatMoney(adminData.get('Freight_Cost__c'));
         }else {
             po3_cost = '_';
         }
         
-        if(adminData.containsKey('PO3_Description__c')) {
-            po3_description = adminData.get('PO3_Description__c');
+        if(adminData.containsKey('Freight_Description__c')) {
+            po3_description = adminData.get('Freight_Description__c');
         }else {
             po3_description = '_';
         }
 
         
-        if(adminData.containsKey('PO4_Cost__c')) {
-            po4_cost = this.formatMoney(adminData.get('PO4_Cost__c'));
+        if(adminData.containsKey('AOrder_Cost__c')) {
+            po4_cost = this.formatMoney(adminData.get('AOrder_Cost__c'));
         }else {
             po4_cost = '_';
         }
         
-        if(adminData.containsKey('PO4_Description__c')) {
-            po4_description = adminData.get('PO4_Description__c');
+        if(adminData.containsKey('AOrder_Description__c')) {
+            po4_description = adminData.get('AOrder_Description__c');
         }else {
             po4_description = '_';
         }
 
         
-        if(adminData.containsKey('PO5_Cost__c')) {
-            po5_cost = this.formatMoney(adminData.get('PO5_Cost__c'));
+        if(adminData.containsKey('Other_1_Cost__c')) {
+            po5_cost = this.formatMoney(adminData.get('Other_1_Cost__c'));
         }else {
             po5_cost = '_';
         }
         
-        if(adminData.containsKey('PO5_Description__c')) {
-            po5_description = adminData.get('PO5_Description__c');
+        if(adminData.containsKey('Other_1_Description__c')) {
+            po5_description = adminData.get('Other_1_Description__c');
         }else {
             po5_description = '_';
         }
 
         
-        if(adminData.containsKey('PO6_Cost__c')) {
-            po6_cost = this.formatMoney(adminData.get('PO6_Cost__c'));
+        if(adminData.containsKey('Other_2_Cost__c')) {
+            po6_cost = this.formatMoney(adminData.get('Other_2_Cost__c'));
         }else {
             po6_cost = '_';
         }
         
-        if(adminData.containsKey('PO6_Description__c')) {
-            po6_description = adminData.get('PO6_Description__c');
+        if(adminData.containsKey('Other_2_Description__c')) {
+            po6_description = adminData.get('Other_2_Description__c');
         }else {
             po6_description = '_';
         }
 
         
-        if(adminData.containsKey('PO7_Cost__c')) {
-            po7_cost = this.formatMoney(adminData.get('PO7_Cost__c'));
+        if(adminData.containsKey('Other_3_Cost__c')) {
+            po7_cost = this.formatMoney(adminData.get('Other_3_Cost__c'));
         }else {
             po7_cost = '_';
         }
         
-        if(adminData.containsKey('PO7_Description__c')) {
-            po7_description = adminData.get('PO7_Description__c');
+        if(adminData.containsKey('Other_3_Description__c')) {
+            po7_description = adminData.get('Other_3_Description__c');
         }else {
             po7_description = '_';
         }
 
         
-        if(adminData.containsKey('PO8_Cost__c')) {
-            po8_cost = this.formatMoney(adminData.get('PO8_Cost__c'));
+        if(adminData.containsKey('Other_4_Cost__c')) {
+            po8_cost = this.formatMoney(adminData.get('Other_4_Cost__c'));
         }else {
             po8_cost = '_';
         }
         
-        if(adminData.containsKey('PO8_Description__c')) {
-            po8_description = adminData.get('PO8_Description__c');
+        if(adminData.containsKey('Other_4_Description__c')) {
+            po8_description = adminData.get('Other_4_Description__c');
         }else {
             po8_description = '_';
         }
 
         
-        if(adminData.containsKey('PO9_Cost__c')) {
-            po9_cost = this.formatMoney(adminData.get('PO9_Cost__c'));
+        if(adminData.containsKey('Other_5_Cost__c')) {
+            po9_cost = this.formatMoney(adminData.get('Other_5_Cost__c'));
         }else {
             po9_cost = '_';
         }
         
-        if(adminData.containsKey('PO9_Description__c')) {
-            po9_description = adminData.get('PO9_Description__c');
+        if(adminData.containsKey('Other_5_Description__c')) {
+            po9_description = adminData.get('Other_5_Description__c');
         }else {
             po9_description = '_';
         }
@@ -543,24 +552,6 @@ public with sharing class AdminChecklist_Controller {
     }
 
 
-
-    @AuraEnabled(cacheable=false)
-    public static Id createAdminGroup(){
-        try {
-            OpportunityAdmin__c adminGroup = new OpportunityAdmin__c();
-
-            Database.SaveResult result = Database.insert(adminGroup, true);
-
-            if(result.isSuccess()) {
-                return result.getId();                
-            }
-
-            return null;
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        }
-    }
-
     // . . . insert a record
     @AuraEnabled(cacheable=false)
     public static Id insertRecord(String objectName, Map<String, Object> fieldValuePairs){
@@ -605,5 +596,110 @@ public with sharing class AdminChecklist_Controller {
         }
 
         return EncodingUtil.base64Encode(getDownloadPage().getContentAsPDF());
+    }
+
+
+    @AuraEnabled(cacheable=false)
+    public static OpportunityLineItem[] getProducts(Id oppId){
+        try {
+            return [
+                SELECT Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c
+                FROM OpportunityLineItem
+                WHERE OpportunityId = :oppId
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled(cacheable=false)
+    public static rstk__poline__c[] getPOs(OpportunityLineItem[] lineItems){
+        try {
+            rstk__poline__c[] poLines = new List<rstk__poline__c>();
+            rstk__poline__c[] poLinesFound = new List<rstk__poline__c>();
+            rstk__poline__c[] otherPOLinesFound = new List<rstk__poline__c>();
+
+            // Fields to Select
+            // rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+
+            String productString;
+
+            Boolean notAlreadyThere;
+
+
+            for(OpportunityLineItem lineItem : lineItems) {
+                if(lineItem.Product2.VIN_Last_6__c != null) {
+                    poLinesFound = [
+                        SELECT rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        FROM rstk__poline__c
+                        WHERE rstk__poline_div__r.Name LIKE '%STE%'
+                        AND rstk__poline_item__r.Name LIKE :lineItem.Product2.VIN_Last_6__c
+                        AND rstk__poline_qtyreq__c > 0
+                    ];
+                }else {
+                    productString = '%' + lineItem.Product2.Name + '%';
+
+                    poLinesFound = [
+                        SELECT Id, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        FROM rstk__poline__c
+                        WHERE rstk__poline_div__r.Name LIKE '%STE%'
+                        AND STEProject__c LIKE :productString
+                        AND rstk__poline_qtyreq__c > 0
+                    ];
+
+
+                    otherPOLinesFound = [
+                        SELECT Id, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        FROM rstk__poline__c
+                        WHERE rstk__poline_div__r.Name LIKE '%STE%'
+                        AND rstk__poline_proj__r.Name LIKE :productString
+                        AND rstk__poline_qtyreq__c > 0
+                    ];
+
+
+                    if(otherPOLinesFound.size() > 0) {
+                        for(rstk__poline__c otherPOLine : otherPOLinesFound) {
+                            notAlreadyThere = true;
+
+                            for(rstk__poline__c poLine: poLinesFound) {
+                                if(otherPOLine.Id == poLine.Id) {
+                                    notAlreadyThere = false;
+
+                                    break;
+                                }
+                            }
+
+
+                            if(notAlreadyThere) {
+                                poLinesFound.add(otherPOLine);
+                            }
+                        }
+                    }
+                }
+
+
+                // Also make sure it isn't already in the main list, sometimes a Chassis shows up in both, it
+                // depends on whether the chassis is in this Project or its own Project.
+                for(rstk__poline__c otherPOLine : poLinesFound) {
+                    notAlreadyThere = true;
+
+                    for(rstk__poline__c poLine: poLines) {
+                        if(otherPOLine.Id == poLine.Id) {
+                            notAlreadyThere = false;
+
+                            break;
+                        }
+                    }
+
+                    if(notAlreadyThere) {
+                        poLines.add(otherPOLine);
+                    }
+                }
+            }
+
+            return poLines;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
     }
 }

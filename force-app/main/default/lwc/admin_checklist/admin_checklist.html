@@ -1,84 +1,6 @@
 <template>
     <div class="slds-align_absolute-center">
-        <div class="slds-theme_shade slds-box">
-            <div class="slds-text-heading_medium slds-align_absolute-center">
-                Look Up Admin
-            </div>
-
-
-            <div class="slds-m-top_medium slds-clearfix">
-                <div class="slds-float_left slds-m-right_large">
-                    <lightning-record-edit-form
-                        object-api-name="AdminChecklist__c">
-
-                        <lightning-input-field
-                            field-name="Salesman__c"
-                            data-id="lookUpQuote_Salesman">
-
-                        </lightning-input-field>
-
-                    </lightning-record-edit-form>
-                </div>
-
-                <div class="slds-float_left">
-                    <lightning-input variant="text" label="Customer Name" data-id="lookUpQuote_Customer">
-                    </lightning-input>
-                </div>
-            </div>
-
-
-            <div class="slds-m-top_large slds-align_absolute-center">
-                <lightning-record-edit-form
-                    object-api-name="AdminChecklist__c">
-
-                    <lightning-input-field
-                        field-name="OpportunityAdmin__c"
-                        data-id="lookUpQuote_OpportunityAdmin">
-
-                    </lightning-input-field>
-
-                </lightning-record-edit-form>
-            </div>
-
-
-            <div class="slds-m-top_large slds-align_absolute-center">
-                <lightning-button
-                    variant="brand"
-                    label="Search"
-                    onclick={handleClick_SearchQuote}>
-                </lightning-button>
-            </div>
-
-            <div class="slds-m-top_large slds-box slds-box_xx-small slds-clearfix">
-                <template if:false={hasSearchResults}>
-                    <div class="slds-align_absolute-center slds-text-body_small">
-                        No records found
-                    </div>
-                </template>
-
-                <template if:true={hasSearchResults}>
-                    <div style="height: 500px" class="slds-scrollable_y">
-                        <div class="search_result">
-                            <template for:each={searchResults} for:item="record">
-                                <div key={record.id} class="slds-m-top_small undo_search_result" onclick={handleSearchSelection} data-id={record.id}>
-                                    <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
-                                        <p>Created: {record.created}</p>
-                                        <br/>
-                                        <p>Last Modified: {record.lastModified}</p>
-                                        <br/>
-                                        <p>Salesman: {record.salesman}</p>
-                                        <br/>
-                                        <p>Customer Name: {record.customer}</p>
-                                        <br/>
-                                        <p>OpportunityAdmin (Group): {record.opportunityAdmin}</p>
-                                    </lightning-card>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-            </div>
-        </div>
+        <c-admin_search onadminchosen={handleAdminChosen}></c-admin_search>
     </div>
 
 
@@ -88,61 +10,6 @@
             <div class="slds-text-heading_medium slds-align_absolute-center">
                 Admin
             </div>
-
-            <div class="slds-align_absolute-center">
-                <div class="slds-float_left slds-m-top_medium slds-box slds-box_xx-small">
-                    <div class="slds-text-heading_x-small slds-align_absolute-center">
-                        Admin Group
-                    </div>
-    
-                    <div class="slds-clearfix slds-m-top_medium">
-                        <div class="slds-align_absolute-center slds-text-heading_xsmall">
-                            Find the group with the same Opportunity or make a new group for a new Opportunity.
-                        </div>
-
-                        <div class="slds-align_absolute-center slds-m-top_xsmall">
-                            <div>
-                                <div class="slds-float_left">
-                                    <lightning-record-edit-form
-                                        object-api-name="AdminChecklist__c">
-                    
-                                        <lightning-input-field
-                                            field-name="OpportunityAdmin__c"
-                                            data-id="whoWhat_OpportunityAdmin">
-                    
-                                        </lightning-input-field>
-                    
-                                    </lightning-record-edit-form>
-                                </div>
-
-                                <div class="slds-float_left slds-m-top_small slds-m-left_medium slds-text-heading_xsmall">
-                                    or
-                                </div>
-                
-                                <div class="slds-float_left slds-m-left_medium slds-m-top_small">
-                                    <lightning-button
-                                        variant="brand"
-                                        label="New"
-                                        onclick={handleClick_NewAdminGroup}>
-                                    </lightning-button>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="slds-align_absolute-center slds-border_top slds-m-top_medium slds-text-heading_xsmall">
-                            Name of the group.
-                        </div>
-
-                        <div class="slds-align_absolute-center slds-m-top_xsmall">
-                            <lightning-input type="text" label="OpportunityAdmin Name" data-id="whoWhat_GroupName">
-                            </lightning-input>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
 
             <div class="slds-m-top_medium slds-align_absolute-center">
                 <div class="slds-float_left slds-m-top_medium slds-box slds-box_xx-small">
@@ -154,6 +21,12 @@
                         <lightning-input type="text" label="Admin Name" data-id="whoWhat_AdminName">
                         </lightning-input>
                     </div>
+
+                    <template if:true={opportunity}>
+                        <div class="slds-align_absolute-center slds-m-top_small">
+                            - - - Link to Opportunity Will Replace This Text - - -
+                        </div>
+                    </template>
 
                     <div class="slds-clearfix slds-m-top_small">
                         <div class="slds-float_left slds-m-right_large">
@@ -216,108 +89,108 @@
                 <div class="slds-float_left">
                     <div class="slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO1 Cost" data-id="finances_PO1_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Chassis Cost" data-id="finances_Chassis_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO1 Description" data-id="finances_PO1_Description">
+                            <lightning-textarea label="Chassis Description" data-id="finances_Chassis_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO2 Cost" data-id="finances_PO2_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Body Cost" data-id="finances_Body_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO2 Description" data-id="finances_PO2_Description">
+                            <lightning-textarea label="Body Description" data-id="finances_Body_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO3 Cost" data-id="finances_PO3_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Freight Cost" data-id="finances_Freight_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO3 Description" data-id="finances_PO3_Description">
+                            <lightning-textarea label="Freight Description" data-id="finances_Freight_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO4 Cost" data-id="finances_PO4_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="AOrder Cost" data-id="finances_AOrder_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO4 Description" data-id="finances_PO4_Description">
+                            <lightning-textarea label="AOrder Description" data-id="finances_AOrder_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO5 Cost" data-id="finances_PO5_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 1 Cost" data-id="finances_Other_1_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO5 Description" data-id="finances_PO5_Description">
+                            <lightning-textarea label="Other 1 Description" data-id="finances_Other_1_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO6 Cost" data-id="finances_PO6_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 2 Cost" data-id="finances_Other_2_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO6 Description" data-id="finances_PO6_Description">
+                            <lightning-textarea label="Other 2 Description" data-id="finances_Other_2_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO7 Cost" data-id="finances_PO7_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 3 Cost" data-id="finances_Other_3_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO7 Description" data-id="finances_PO7_Description">
+                            <lightning-textarea label="Other 3 Description" data-id="finances_Other_3_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO8 Cost" data-id="finances_PO8_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 4 Cost" data-id="finances_Other_4_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO8 Description" data-id="finances_PO8_Description">
+                            <lightning-textarea label="Other 4 Description" data-id="finances_Other_4_Description">
                             </lightning-textarea>
                         </div>
                     </div>
 
                     <div class="slds-m-top_small slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="PO9 Cost" data-id="finances_PO9_Cost">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 5 Cost" data-id="finances_Other_5_Cost">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="PO9 Description" data-id="finances_PO9_Description">
+                            <lightning-textarea label="Other 5 Description" data-id="finances_Other_5_Description">
                             </lightning-textarea>
                         </div>
                     </div>
@@ -632,16 +505,8 @@
                     <div class="slds-float_left slds-m-right_medium slds-m-top_small">
                         <lightning-button
                             variant="brand"
-                            label="Print"
+                            label="Download"
                             onclick={handleClick_PrintQuote}>
-                        </lightning-button>
-                    </div>
-    
-                    <div class="slds-float_left slds-m-top_small">
-                        <lightning-button
-                            variant="brand"
-                            label="Clone"
-                            onclick={handleClick_CloneQuote}>
                         </lightning-button>
                     </div>
                 </div>

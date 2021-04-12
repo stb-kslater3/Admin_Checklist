@@ -1,0 +1,72 @@
+<template>
+    <div class="slds-theme_shade slds-box">
+        <div class="slds-text-heading_small slds-align_absolute-center">
+            Search for Admin
+        </div>
+
+
+        <div class="slds-m-top_medium slds-clearfix">
+            <div class="slds-align_abosolute-center">
+                <lightning-record-edit-form
+                    object-api-name="AdminChecklist__c">
+
+                    <lightning-input-field
+                        field-name="Salesman__c"
+                        data-id="lookUpAdmin_Salesman">
+
+                    </lightning-input-field>
+
+                </lightning-record-edit-form>
+            </div>
+
+            <div class="slds-align_absolute-center">
+                <lightning-input variant="text" label="Customer Name" data-id="lookUpAdmin_Customer">
+                </lightning-input>
+            </div>
+
+            <div class="slds-align_absolute-center">
+                <lightning-input type="date" label="Date" data-id="lookUpAdmin_Date">
+                </lightning-input>
+            </div>
+        </div>
+
+
+        <div class="slds-m-top_large slds-align_absolute-center">
+            <lightning-button
+                variant="brand"
+                label="Search"
+                onclick={handleClick_SearchAdmin}>
+            </lightning-button>
+        </div>
+
+        <div class="slds-m-top_large slds-box slds-box_xx-small slds-clearfix">
+            <template if:false={hasSearchResults}>
+                <div class="slds-align_absolute-center slds-text-body_small">
+                    No records found
+                </div>
+            </template>
+
+            <template if:true={hasSearchResults}>
+                <div style="max-height: 500px" class="slds-scrollable_y">
+                    <div class="search_result">
+                        <template for:each={searchResults} for:item="record">
+                            <div key={record.id} class="slds-m-top_small undo_search_result" onclick={handleSearchSelection} data-id={record.id}>
+                                <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
+                                    <p>Date: {record.date}</p>
+                                    <br/>
+                                    <p>Created: {record.created}</p>
+                                    <br/>
+                                    <p>Last Modified: {record.lastModified}</p>
+                                    <br/>
+                                    <p>Salesman: {record.salesman}</p>
+                                    <br/>
+                                    <p>Customer Name: {record.customer}</p>
+                                </lightning-card>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

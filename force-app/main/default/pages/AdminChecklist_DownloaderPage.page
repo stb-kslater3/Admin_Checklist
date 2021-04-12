@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="Medium_Box">
-                    <b>Date (YYYY-MM-DD):</b> {!last_modified}
+                    <b>Date:</b> {!last_modified}
                 </div>
             </div>
 
@@ -58,6 +58,10 @@
                         <table>
                             <tr>
                                 <td class="Bold">
+                                    Item
+                                </td>
+
+                                <td class="Bold">
                                     Cost
                                 </td>
     
@@ -67,6 +71,10 @@
                             </tr>
     
                             <tr>
+                                <td>
+                                    Chassis
+                                </td>
+
                                 <td class="DataCell MediumCell">
                                     {!po1_cost}
                                 </td>
@@ -76,7 +84,11 @@
                                 </td>
                             </tr>
             
-                            <tr>
+                            <tr>    
+                                <td>
+                                    Body
+                                </td>
+
                                 <td class="DataCell MediumCell">
                                     {!po2_cost}
                                 </td>
@@ -87,6 +99,10 @@
                             </tr>
             
                             <tr>
+                                <td>
+                                    Freight
+                                </td>
+
                                 <td class="DataCell MediumCell">
                                     {!po3_cost}
                                 </td>
@@ -97,6 +113,10 @@
                             </tr>
             
                             <tr>
+                                <td>
+                                    AOrder
+                                </td>
+
                                 <td class="DataCell MediumCell">
                                     {!po4_cost}
                                 </td>
@@ -107,6 +127,10 @@
                             </tr>
             
                             <tr>
+                                <td>
+                                    Other 1
+                                </td>
+
                                 <td class="DataCell MediumCell">
                                     {!po5_cost}
                                 </td>
@@ -117,6 +141,10 @@
                             </tr>
             
                             <tr>
+                                <td>
+                                    Other 2
+                                </td>
+                                
                                 <td class="DataCell MediumCell">
                                     {!po6_cost}
                                 </td>
@@ -127,6 +155,10 @@
                             </tr>
             
                             <tr>
+                                <td>
+                                    Other 3
+                                </td>
+                                
                                 <td class="DataCell MediumCell">
                                     {!po7_cost}
                                 </td>
@@ -137,6 +169,10 @@
                             </tr>
             
                             <tr>
+                                <td>
+                                    Other 4
+                                </td>
+                                
                                 <td class="DataCell MediumCell">
                                     {!po8_cost}
                                 </td>
@@ -147,6 +183,10 @@
                             </tr>
             
                             <tr>
+                                <td>
+                                    Other 5
+                                </td>
+                                
                                 <td class="DataCell MediumCell">
                                     {!po9_cost}
                                 </td>

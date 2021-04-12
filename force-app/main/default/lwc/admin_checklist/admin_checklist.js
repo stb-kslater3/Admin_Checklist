@@ -1,5 +1,7 @@
 import { LightningElement } from 'lwc';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
+import {LWC_Toast, LWC_Element, LWC_Input_Element, Attribute_Handler} from 'c/lwc_js_common';
+import {blobToPDF} from 'c/lwc_blob_handlers'
 
 import Id from '@salesforce/user/Id';
 
@@ -7,202 +9,10 @@ import queryFromString from '@salesforce/apex/ApexDataInterface.queryFromString'
 import updateRecordFromId from '@salesforce/apex/ApexDataInterface.updateRecordFromId';
 import getObjectDefaults from '@salesforce/apex/ApexDataInterface.getObjectDefaults';
 
-import createAdminGroup from '@salesforce/apex/AdminChecklist_Controller.createAdminGroup';
 import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
 import downloadAdmin from '@salesforce/apex/AdminChecklist_Controller.downloadAdmin';
-
-
-class LWC_Toast {
-    thisReference;
-
-    constructor(thisReference) {
-        this.thisReference = thisReference;
-    }
-
-    displayChoice(title, message, variant, mode) {
-        const toast = new ShowToastEvent({
-            title: title,
-            message: message,
-            variant: variant,
-            mode: mode
-        });
-
-        this.thisReference.dispatchEvent(toast);
-    }
-
-    displaySuccess(title, message) {
-        const toast = new ShowToastEvent({
-            title: title,
-            message: message,
-            variant: 'success',
-            mode: 'sticky'
-        });
-
-        this.thisReference.dispatchEvent(toast);
-    }
-
-    displayError(title, userMessage, error) {
-        const errorToast = new ShowToastEvent({
-            title: title,
-            message: userMessage,
-            variant: 'error',
-            mode: 'sticky'
-        });
-
-        let errorMessage;
-        if(error.body) {
-            errorMessage = error.body.message;
-        }else {
-            errorMessage = error.message;
-        }
-        console.log(userMessage, '\n\n' + errorMessage, '\nOn Line: ' + error.lineNumber, '\nIn File: ' + error.fileName, '\n\nStack Trace: ' + error.stack, '\n');
-
-        this.thisReference.dispatchEvent(errorToast);
-    }
-}
-
-
-class Attribute_Handler {
-    attributeType;
-
-    constructor(attributeType) {
-        this.attributeType = attributeType;
-    }
-
-    getAttribute(element, attribute) {
-        let value = element[attribute];
-
-        if(this.attributeType === 'number' || this.attributeType === 'currency' || this.attributeType === 'percent') {
-            return Number(value)
-        }else {
-            return value;
-        }
-    }
-
-
-    setAttribute(element, attribute, value) {
-        if(this.attributeType === 'currency') {
-            if(value) {
-                element[attribute] = value.toFixed(2);
-            }else {
-                element[attribute] = 0.00;
-            }
-        }else if(this.attributeType === 'percent') {
-            if(value) {
-                element[attribute] = value.toFixed(4);
-            }else {
-                element[attribute] = 0.00;
-            }
-        }else {
-            element[attribute] = value;
-        }
-    }
-}
-
-
-class LWC_Element {
-    // The Id used to query the dom for this specific element
-    dataId;
-
-    // So that I can access the this of the Element
-    templateReference;
-
-    // The reference to the dom element itself so its attributes can be read and written to and
-    // event listeners added, etc.
-    domElement;
-
-    // To ensure the dom is queried only once, since renderedCallback is run multiple times
-    isInitialized;
-
-    apiFieldName;
-
-
-    // Because Javascript has crappy typing, I need this to get number rather than string back and 
-    // those sorts of things. Otherwise getting values concatenates numbers etc.
-    attributeHandler;
-
-
-    constructor(dataId, templateReference, attributeHandler) {
-        this.dataId = dataId;
-
-        this.isInitialized = false;
-
-        this.templateReference = templateReference;
-
-        this.attributeHandler = attributeHandler;
-    }
-
-
-    setApiFieldName(fieldName) {
-        this.apiFieldName = fieldName;
-    }
-
-
-    initialize() {
-        this.domElement = this.templateReference.querySelector("[data-id='" + this.dataId + "']");
-
-        this.isInitialized = true;
-    }
-
-
-    getAttribute(name) {
-        return this.attributeHandler.getAttribute(this.domElement, name);
-    }
-
-    setAttribute(name, value) {
-        this.attributeHandler.setAttribute(this.domElement, name, value);
-    }
-}
-
-
-class LWC_Input_Element extends LWC_Element {
-    // The callback function that handles Changes
-    changeHandler;
-
-    constructor(dataId, templateReference, attributeHandler, changeHandler) {
-        super(dataId, templateReference, attributeHandler);
-
-        this.changeHandler = changeHandler;
-    }
-
-
-    initialize() {
-        // Note that I call the protype method so I need to bind this context to access my properties
-        LWC_Element.prototype.initialize.call(this);
-
-        this.domElement.addEventListener('focusout', (event) => {
-            this.handleChange(event)
-        });
-    }
-
-
-    handleChange(event) {
-        /*
-        if(this.getAttribute('value')) {
-            console.log(this.getAttribute('value'));
-        }else {
-            console.log(this.getAttribute('checked')); 
-        }
-        */
-
-        this.changeHandler(event);
-    }
-}
-
-
-
-var saveBlob = (function () {
-    var a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-    return function (blob, fileName) {
-        var url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);
-    };
-}());
+import getProducts from '@salesforce/apex/AdminChecklist_Controller.getProducts';
+import getPOs from '@salesforce/apex/AdminChecklist_Controller.getPOs';
 
 
 
@@ -218,8 +28,6 @@ export default class Admin_checklist extends LightningElement {
 
     toastHandler;
 
-    lookUpQuote_elements;
-
     whoWhat_elements;
     fetCredit_elements;
     tradeIn_elements;
@@ -232,20 +40,24 @@ export default class Admin_checklist extends LightningElement {
     currencyAttributeHandler;
     percentAttributeHandler;
 
+    opportunity;
+
+    oppProducts;
+
 
     calculateTotalBeforeProfit() {
         this.finances_elements.finances_Subtotal_Before_Profit.setAttribute(
             'value', 
 
-            this.finances_elements.finances_PO1_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO2_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO3_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO4_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO5_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO6_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO7_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO8_Cost.getAttribute('value') +
-            this.finances_elements.finances_PO9_Cost.getAttribute('value')
+            this.finances_elements.finances_Chassis_Cost.getAttribute('value') +
+            this.finances_elements.finances_Body_Cost.getAttribute('value') +
+            this.finances_elements.finances_Freight_Cost.getAttribute('value') +
+            this.finances_elements.finances_AOrder_Cost.getAttribute('value') +
+            this.finances_elements.finances_Other_1_Cost.getAttribute('value') +
+            this.finances_elements.finances_Other_2_Cost.getAttribute('value') +
+            this.finances_elements.finances_Other_3_Cost.getAttribute('value') +
+            this.finances_elements.finances_Other_4_Cost.getAttribute('value') +
+            this.finances_elements.finances_Other_5_Cost.getAttribute('value')
         );
     }
 
@@ -392,47 +204,47 @@ export default class Admin_checklist extends LightningElement {
 
     handleDOMInput(event) {
         switch(event.target.getAttribute("data-id")) {
-            case 'finances_PO1_Cost':
+            case 'finances_Chassis_Cost':
                 this.makeFinancesCalculations();
 
                 break;
 
-            case 'finances_PO2_Cost':
-                this.makeFinancesCalculations();
-                
-                break;
-
-            case 'finances_PO3_Cost':
+            case 'finances_Body_Cost':
                 this.makeFinancesCalculations();
                 
                 break;
 
-            case 'finances_PO4_Cost':
+            case 'finances_Freight_Cost':
                 this.makeFinancesCalculations();
                 
                 break;
 
-            case 'finances_PO5_Cost':
+            case 'finances_AOrder_Cost':
                 this.makeFinancesCalculations();
                 
                 break;
 
-            case 'finances_PO6_Cost':
+            case 'finances_Other_1_Cost':
                 this.makeFinancesCalculations();
                 
                 break;
 
-            case 'finances_PO7_Cost':
+            case 'finances_Other_2_Cost':
                 this.makeFinancesCalculations();
                 
                 break;
 
-            case 'finances_PO8_Cost':
+            case 'finances_Other_3_Cost':
                 this.makeFinancesCalculations();
                 
                 break;
 
-            case 'finances_PO9_Cost':
+            case 'finances_Other_4_Cost':
+                this.makeFinancesCalculations();
+                
+                break;
+
+            case 'finances_Other_5_Cost':
                 this.makeFinancesCalculations();
                 
                 break;
@@ -515,148 +327,88 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
-    handleAdminChosen() {
+    handleAdminChosen(event) {
+        if(event) {
+            this.adminChosen = event.detail.value;
+        }
+
         // Clear everything out to the defaults and then get the Admin and update
         this.queryAdminChecklist_Defaults().then(() => {
-            this.initializeFromQuery(this.defaultAdminChecklist);
+            this.initializeFromAdmin(this.defaultAdminChecklist);
 
 
-            let adminString = 
-                'SELECT OpportunityAdmin__c, OpportunityAdmin__r.Name__c, Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, PO1_Cost__c, PO1_Description__c, PO2_Cost__c, PO2_Description__c, PO3_Cost__c, PO3_Description__c, PO4_Cost__c, PO4_Description__c, PO5_Cost__c, PO5_Description__c, PO6_Cost__c, PO6_Description__c, PO7_Cost__c, PO7_Description__c, PO8_Cost__c, PO8_Description__c, PO9_Cost__c, PO9_Description__c, Profit_Amount__c, Dealer_Pack__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c' +
-                ' FROM AdminChecklist__c ' +
-                ' WHERE Id = \'' + this.adminChosen + '\'';
+            // If you don't yet have an Opportunity tied to you then just pull the Admin, otherwise pull the Opportunity and
+            // set the Admin values if an opportunity with this admin id is found
+            queryFromString({ 
+                queryString: 'SELECT Id, Name, OwnerId, Account.Name, Gross_Amount_s__c, Deposit_Received__c, Doc_Fee__c, Total_PAC_Fees__c' +
+                ' FROM Opportunity ' +
+                ' WHERE AdminChecklist__c=\'' + this.adminChosen + '\''
+            }).then(haveAdmins => {
+                if(haveAdmins.length > 0) {
+                    this.initializeFromOpportunity(haveAdmins[0]);
 
-            queryFromString({ queryString: adminString }).then(record => {
-                if(record.length > 0) {
-                    this.groupChosen = record[0].OpportunityAdmin__c;
-                    this.whoWhat_elements.whoWhat_GroupName.setAttribute('value', record[0].OpportunityAdmin__r.Name__c);
+                    this.opportunity = haveAdmins[0].Id;
 
-                    this.initializeFromQuery(record[0]);
+                    getProducts({ oppId: haveAdmins[0].Id }).then(lineItems => {
+                        if(lineItems) {
+                            if(lineItems.length > 0) {
+                                console.log('(admin_in_opportunity)');
+                                console.log(lineItems);
 
-                    this.toastHandler.displayChoice('Admin Checklist Loaded!', '', 'info', 'sticky');
+                                this.oppProducts = lineItems;
+
+                                this.initializeFromLineItems(lineItems);
+
+                                getPOs({ lineItems: lineItems }).then(poLines => {
+                                    if(poLines) {
+                                        if(poLines.length > 0) {
+                                            console.log('(admin_in_opportunity)');
+                                            console.log(poLines);
+
+                                            this.initializeFromPOs(poLines);
+
+                                            this.toastHandler.displayChoice('Admin Checklist Loaded!', '', 'info', 'sticky');
+                                        }else {
+                                            this.toastHandler.displayChoice('No Purchase Orders found for the Products in this Opportunity', '', 'info', 'sticky');
+                                        }
+                                    }
+                                }).catch(err => {
+                                    this.toastHandler.displayError('Error in call to getPOs!', '(admin_in_opportunity) See console log for more details', err);
+                                });
+                            }else {
+                                this.toastHandler.displayChoice('No Products found for this Opportunity.', '', 'info', 'sticky');
+                            }
+                        }
+                    }).catch(err => {
+                        this.toastHandler.displayError('Error in call to getProducts!', '(admin_in_opportunity) See console log for more details', err);
+                    });
                 }else {
-                    this.toastHandler.displayChoice('No Records Found!', 'Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0', 'error', 'sticky');
+                    let adminString = 
+                        'SELECT Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, Chassis_Cost__c, Chassis_Description__c, Body_Cost__c, Body_Description__c, Freight_Cost__c, Freight_Description__c, AOrder_Cost__c, AOrder_Description__c, Other_1_Cost__c, Other_1_Description__c, Other_2_Cost__c, Other_2_Description__c, Other_3_Cost__c, Other_3_Description__c, Other_4_Cost__c, Other_4_Description__c, Other_5_Cost__c, Other_5_Description__c, Profit_Amount__c, Dealer_Pack__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c' +
+                        ' FROM AdminChecklist__c ' +
+                        ' WHERE Id = \'' + this.adminChosen + '\'';
 
-                    console.log('Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0');
-            
-                    this.thisReference.dispatchEvent(errorToast);
+                    queryFromString({ queryString: adminString }).then(record => {
+                        if(record.length > 0) {
+                            this.initializeFromAdmin(record[0]);
+
+                            this.toastHandler.displayChoice('Admin Checklist Loaded!', '', 'info', 'sticky');
+                        }else {
+                            this.toastHandler.displayChoice('No Records Found!', '(admin_in_opportunity) Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0', 'error', 'sticky');
+
+                            console.log('Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0');
+                    
+                            this.thisReference.dispatchEvent(errorToast);
+                        }
+                    }).catch(err => {
+                        this.toastHandler.displayError('Error in call to queryFromString for handleAdminChosen!', '(admin_in_opportunity) See console log for more details', err);
+                    });
                 }
             }).catch(err => {
-                this.toastHandler.displayError('Error in call to queryFromString for handleAdminChosen!', 'See console log for more details', err);
+                this.toastHandler.displayError('Something Went Wrong!', 'Error in call to queryFromString for Opportunity in handleAdminChosen', err);
             });
         }).catch(err => {
-            this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', 'Something went wrong, see console log for more info', err);
-        });
-    }
-
-
-    handleClick_SearchQuote() {
-        //console.log('Clicked Search Quote');
-
-        let lookUpString =
-            'SELECT Name, Name__c, Salesman__r.Name, OpportunityAdmin__r.Name, OpportunityAdmin__r.Name__c, Customer_Name__c, LastModifiedDate, CreatedDate' +
-            ' FROM AdminChecklist__c';
-
-        let whereString = '';
-        let hasWhere = false;
-
-        if(this.lookUpQuote_elements.lookUpQuote_Salesman.getAttribute('value')) {
-            whereString += 'Salesman__c = \'' + this.lookUpQuote_elements.lookUpQuote_Salesman.getAttribute('value') + '\'';
-
-            hasWhere = true;
-        }
-
-        if(this.lookUpQuote_elements.lookUpQuote_Customer.getAttribute('value')) {
-            if(hasWhere) {
-                whereString += 'AND ';
-            }
-
-            whereString += 'Customer_Name__c LIKE \'%' + this.lookUpQuote_elements.lookUpQuote_Customer.getAttribute('value') + '%\'';
-
-            hasWhere = true;
-        }
-
-        if(this.lookUpQuote_elements.lookUpQuote_OpportunityAdmin.getAttribute('value')) {
-            if(hasWhere) {
-                whereString += 'AND ';
-            }
-
-            whereString += 'OpportunityAdmin__c = \'' + this.lookUpQuote_elements.lookUpQuote_OpportunityAdmin.getAttribute('value') + '\'';
-
-            hasWhere = true;
-        }
-
-
-        if(hasWhere) {
-            whereString = ' WHERE ' + whereString;
-
-            lookUpString += whereString;
-        }
-
-
-        queryFromString({ queryString: lookUpString }).then(records => {
-            if(records.length > 0) {
-                this.hasSearchResults = true;
-
-                this.searchResults = [];
-
-                for(const recordIndex in records) {
-                    //console.log(records[recordIndex]);
-
-                    this.searchResults.push({
-                        index: recordIndex,
-
-                        id: records[recordIndex].Id,
-
-                        created: records[recordIndex].CreatedDate.split('Z')[0].replace('T', ' ').split('.')[0],
-
-                        lastModified: records[recordIndex].LastModifiedDate.split('Z')[0].replace('T', ' ').split('.')[0],
-
-                        salesman: records[recordIndex].Salesman__r.Name,
-
-                        customer: records[recordIndex].Customer_Name__c
-                    });
-
-
-                    if(records[recordIndex].Name__c) {
-                        this.searchResults[recordIndex].name = records[recordIndex].Name__c + ' (' + records[recordIndex].Name + ')';
-                    }else {
-                        this.searchResults[recordIndex].name = records[recordIndex].Name;
-                    }
-
-
-                    if(records[recordIndex].OpportunityAdmin__r.Name__c) {
-                        this.searchResults[recordIndex].opportunityAdmin = records[recordIndex].OpportunityAdmin__r.Name__c + ' (' + records[recordIndex].OpportunityAdmin__r.Name + ')';
-                    }else {
-                        this.searchResults[recordIndex].opportunityAdmin = records[recordIndex].OpportunityAdmin__r.Name;
-                    }
-                }
-            }else {
-                this.hasSearchResults = false;
-            }
-        }).catch(err => {
-            this.toastHandler.displayError('Error in call to queryFromString for SearchQuote!', 'See console log for more details', err);
-        });
-    }
-
-    handleSearchSelection(event) {
-        try {
-            this.adminChosen = event.currentTarget.getAttribute('data-id');
-            this.handleAdminChosen();
-        }catch(err) {
-            this.toastHandler.displayError('Error in handleSearchSelection!', 'See console log for more details', err);
-        }
-    }
-
-
-    handleClick_NewAdminGroup() {
-        //console.log('Clicked New Admin Group');
-
-        createAdminGroup().then(resultId => {
-            this.groupChosen = resultId;
-            this.whoWhat_elements.whoWhat_OpportunityAdmin.setAttribute('value', resultId);
-        }).catch(err => {
-            this.toastHandler.displayError('Error in call to createAdminGroup!', 'Problem occured while getting creating a new OpportunityAdmin', err);
+            this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', '(admin_in_opportunity) Something went wrong, see console log for more info', err);
         });
     }
 
@@ -669,10 +421,10 @@ export default class Admin_checklist extends LightningElement {
 
                 this.toastHandler.displaySuccess('AdminChecklist Inserted!', '');
             }else {
-                this.toastHandler.displayChoice('Failed to insert Admin Checklist', 'Something went wrong', 'error', 'sticky');
+                this.toastHandler.displayChoice('Failed to insert Admin Checklist', '(admin_in_opportunity) Something went wrong', 'error', 'sticky');
             }
         }).catch(err => {
-            this.toastHandler.displayError('Error in call to insertRecord for AdminCheclist__c!', 'An error occured, see console log for more details', err);
+            this.toastHandler.displayError('Error in call to insertRecord for AdminCheclist__c!', '(admin_in_opportunity) An error occured, see console log for more details', err);
         });
     }
 
@@ -692,26 +444,13 @@ export default class Admin_checklist extends LightningElement {
                 if(isSuccess) {
                     this.toastHandler.displaySuccess('AdminChecklist Updated!', '');
                 }else {
-                    this.toastHandler.displayChoice('Failed to update Admin Checklist', 'Something went wrong', 'error', 'sticky');
+                    this.toastHandler.displayChoice('Failed to update Admin Checklist', '(admin_in_opportunity) Something went wrong', 'error', 'sticky');
                 }
             }).catch(err => {
-                this.toastHandler.displayError('Error in call to updateRecordFromId for AdminChecklist__c!', 'An error occured, see console log for more details', err);
+                this.toastHandler.displayError('Error in call to updateRecordFromId for AdminChecklist__c!', '(admin_in_opportunity) An error occured, see console log for more details', err);
             });
         }else {
             this.makeInsert(fieldValues);
-        }
-
-
-        if(this.groupChosen) {
-            updateRecordFromId({ objectName: 'OpportunityAdmin__c', recordId: this.groupChosen, fieldValuePairs: {'Name__c': this.whoWhat_elements.whoWhat_GroupName.getAttribute('value')}}).then(isSuccess => {
-                if(isSuccess) {
-                    this.toastHandler.displaySuccess('OpportunityAdmin Updated with given Group!', '');
-                }else {
-                    this.toastHandler.displayChoice('Failed to update OpportunityAdmin Name', 'Something went wrong', 'error', 'sticky');
-                }
-            }).catch(err => {
-                this.toastHandler.displayError('Error in call to updateRecordFromId for the Name of the group chosen!', 'An error occured, see console log for more details', err);
-            });
         }
     }
 
@@ -732,6 +471,8 @@ export default class Admin_checklist extends LightningElement {
         this.appendFieldValuePairs(this.fetCredit_elements, fieldValues);
 
         fieldValues['Id'] = this.adminChosen;
+        
+        fieldValues['salesman'] = this.whoWhat_elements.whoWhat_Salesman.getAttribute('value');
 
         fieldValues['date'] = this.whoWhat_elements.whoWhat_Date.getAttribute('value');
 
@@ -767,35 +508,16 @@ export default class Admin_checklist extends LightningElement {
 
             let fileName = '';
             if(this.whoWhat_elements.whoWhat_AdminName.getAttribute('value') && this.whoWhat_elements.whoWhat_AdminName.getAttribute('value') != '') {
-                fileName += this.whoWhat_elements.whoWhat_AdminName.getAttribute('value');
+                fileName += 'Admin_' + this.whoWhat_elements.whoWhat_AdminName.getAttribute('value');
             }else {
                 fileName += 'Admin_' + this.whoWhat_elements.whoWhat_Body_Series_Name.getAttribute('value')
             }
 
-            saveBlob(b, fileName + '.pdf');
+            blobToPDF(b, fileName + '.pdf');
         }).catch(err => {
-            this.toastHandler.displayError('Error in call to downloadAdmin for PrintQuote!', 'See console log for more details', err);
+            this.toastHandler.displayError('Error in call to downloadAdmin for PrintQuote!', '(admin_in_opportunity) See console log for more details', err);
         });
 
-    }
-
-
-    handleClick_CloneQuote() {
-        //console.log('Clicked Clone Quote');
-
-        // First do an insert or update with the current record
-        this.handleClick_SaveQuote();
-
-        // Then set field values and call insert which will save it again but create a new AdminChecklist this time
-        // and set the current adminChosen to the new version
-        let fieldValues = {};
-
-        this.appendFieldValuePairs(this.whoWhat_elements, fieldValues);
-        this.appendFieldValuePairs(this.finances_elements, fieldValues);
-        this.appendFieldValuePairs(this.tradeIn_elements, fieldValues);
-        this.appendFieldValuePairs(this.fetCredit_elements, fieldValues);
-
-        this.makeInsert(fieldValues);
     }
 
 
@@ -833,6 +555,30 @@ export default class Admin_checklist extends LightningElement {
         }
     }
 
+    /*
+    updateValuesFromOpportunity(fieldObject, result) {
+        let needsEmptied;
+
+        for(const key in fieldObject) {
+            needsEmptied = false;
+
+            if(fieldObject[key].apiFieldName) {
+                if(result[fieldObject[key].apiFieldName] !== null && result[fieldObject[key].apiFieldName] !== undefined) {
+                    fieldObject[key].setAttribute('value', result[fieldObject[key].apiFieldName]);
+                }else {
+                    needsEmptied = true;
+                }
+            }else {
+                needsEmptied = true;
+            }
+
+            if(needsEmptied) {
+                fieldObject[key].setAttribute('value', '');
+            }
+        }
+    }
+    */
+
 
     queryAdminChecklist_Defaults() {
         return getObjectDefaults({ objectName: 'AdminChecklist__c' }).then( admin => {
@@ -845,129 +591,173 @@ export default class Admin_checklist extends LightningElement {
 
 
     createLWC_Elements() {
-        if(!this.lookUpQuote_elements) {
-            this.lookUpQuote_elements = {};
-
-            this.lookUpQuote_elements.lookUpQuote_Salesman = new LWC_Input_Element('lookUpQuote_Salesman', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-
-            this.lookUpQuote_elements.lookUpQuote_Customer = new LWC_Input_Element('lookUpQuote_Customer', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-
-            this.lookUpQuote_elements.lookUpQuote_OpportunityAdmin = new LWC_Input_Element('lookUpQuote_OpportunityAdmin', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-        }
-
-
         if(!this.whoWhat_elements) {
             this.whoWhat_elements = {};
 
-            this.whoWhat_elements.whoWhat_OpportunityAdmin = new LWC_Input_Element('whoWhat_OpportunityAdmin', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.whoWhat_elements.whoWhat_OpportunityAdmin.setApiFieldName('OpportunityAdmin__c');
-
-            this.whoWhat_elements.whoWhat_GroupName = new LWC_Input_Element('whoWhat_GroupName', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-
-            this.whoWhat_elements.whoWhat_AdminName = new LWC_Input_Element('whoWhat_AdminName', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_AdminName = new LWC_Input_Element('whoWhat_AdminName', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_AdminName.setApiFieldName('Name__c');
 
-            this.whoWhat_elements.whoWhat_Salesman = new LWC_Input_Element('whoWhat_Salesman', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Salesman = new LWC_Input_Element('whoWhat_Salesman', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Salesman.setApiFieldName('Salesman__c');
 
-            this.whoWhat_elements.whoWhat_Customer = new LWC_Input_Element('whoWhat_Customer', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Customer = new LWC_Input_Element('whoWhat_Customer', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Customer.setApiFieldName('Customer_Name__c');
 
-            this.whoWhat_elements.whoWhat_Date = new LWC_Input_Element('whoWhat_Date', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Date = new LWC_Input_Element('whoWhat_Date', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Date.setApiFieldName('Date__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_Make = new LWC_Input_Element('whoWhat_Chassis_Make', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Chassis_Make = new LWC_Input_Element('whoWhat_Chassis_Make', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Chassis_Make.setApiFieldName('Chassis_Make__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_Model = new LWC_Input_Element('whoWhat_Chassis_Model', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Chassis_Model = new LWC_Input_Element('whoWhat_Chassis_Model', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Chassis_Model.setApiFieldName('Chassis_Model__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_Year = new LWC_Input_Element('whoWhat_Chassis_Year', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Chassis_Year = new LWC_Input_Element('whoWhat_Chassis_Year', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Chassis_Year.setApiFieldName('Chassis_Year__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_VIN = new LWC_Input_Element('whoWhat_Chassis_VIN', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Chassis_VIN = new LWC_Input_Element('whoWhat_Chassis_VIN', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Chassis_VIN.setApiFieldName('Chassis_VIN__c');
 
-            this.whoWhat_elements.whoWhat_Body_Series_Name = new LWC_Input_Element('whoWhat_Body_Series_Name', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.whoWhat_elements.whoWhat_Body_Series_Name = new LWC_Input_Element('whoWhat_Body_Series_Name', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.whoWhat_elements.whoWhat_Body_Series_Name.setApiFieldName('Body_Series_Name__c');
         }
 
         if(!this.finances_elements) {
             this.finances_elements = {};
 
-            this.finances_elements.finances_PO1_Cost = new LWC_Input_Element('finances_PO1_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO1_Cost.setApiFieldName('PO1_Cost__c');
+            this.finances_elements.finances_Chassis_Cost = new LWC_Input_Element('finances_Chassis_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Chassis_Cost.setApiFieldName('Chassis_Cost__c');
 
-            this.finances_elements.finances_PO1_Description = new LWC_Input_Element('finances_PO1_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO1_Description.setApiFieldName('PO1_Description__c');
-
-
-            this.finances_elements.finances_PO2_Cost = new LWC_Input_Element('finances_PO2_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO2_Cost.setApiFieldName('PO2_Cost__c');
-
-            this.finances_elements.finances_PO2_Description = new LWC_Input_Element('finances_PO2_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO2_Description.setApiFieldName('PO2_Description__c');
+            this.finances_elements.finances_Chassis_Description = new LWC_Input_Element('finances_Chassis_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Chassis_Description.setApiFieldName('Chassis_Description__c');
 
 
-            this.finances_elements.finances_PO3_Cost = new LWC_Input_Element('finances_PO3_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO3_Cost.setApiFieldName('PO3_Cost__c');
+            this.finances_elements.finances_Body_Cost = new LWC_Input_Element('finances_Body_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Body_Cost.setApiFieldName('Body_Cost__c');
 
-            this.finances_elements.finances_PO3_Description = new LWC_Input_Element('finances_PO3_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO3_Description.setApiFieldName('PO3_Description__c');
-
-
-            this.finances_elements.finances_PO4_Cost = new LWC_Input_Element('finances_PO4_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO4_Cost.setApiFieldName('PO4_Cost__c');
-
-            this.finances_elements.finances_PO4_Description = new LWC_Input_Element('finances_PO4_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO4_Description.setApiFieldName('PO4_Description__c');
+            this.finances_elements.finances_Body_Description = new LWC_Input_Element('finances_Body_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Body_Description.setApiFieldName('Body_Description__c');
 
 
-            this.finances_elements.finances_PO5_Cost = new LWC_Input_Element('finances_PO5_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO5_Cost.setApiFieldName('PO5_Cost__c');
+            this.finances_elements.finances_Freight_Cost = new LWC_Input_Element('finances_Freight_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Freight_Cost.setApiFieldName('Freight_Cost__c');
 
-            this.finances_elements.finances_PO5_Description = new LWC_Input_Element('finances_PO5_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO5_Description.setApiFieldName('PO5_Description__c');
-
-
-            this.finances_elements.finances_PO6_Cost = new LWC_Input_Element('finances_PO6_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO6_Cost.setApiFieldName('PO6_Cost__c');
-
-            this.finances_elements.finances_PO6_Description = new LWC_Input_Element('finances_PO6_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO6_Description.setApiFieldName('PO6_Description__c');
+            this.finances_elements.finances_Freight_Description = new LWC_Input_Element('finances_Freight_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Freight_Description.setApiFieldName('Freight_Description__c');
 
 
-            this.finances_elements.finances_PO7_Cost = new LWC_Input_Element('finances_PO7_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO7_Cost.setApiFieldName('PO7_Cost__c');
+            this.finances_elements.finances_AOrder_Cost = new LWC_Input_Element('finances_AOrder_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_AOrder_Cost.setApiFieldName('AOrder_Cost__c');
 
-            this.finances_elements.finances_PO7_Description = new LWC_Input_Element('finances_PO7_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO7_Description.setApiFieldName('PO7_Description__c');
-
-
-            this.finances_elements.finances_PO8_Cost = new LWC_Input_Element('finances_PO8_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO8_Cost.setApiFieldName('PO8_Cost__c');
-
-            this.finances_elements.finances_PO8_Description = new LWC_Input_Element('finances_PO8_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO8_Description.setApiFieldName('PO8_Description__c');
+            this.finances_elements.finances_AOrder_Description = new LWC_Input_Element('finances_AOrder_Description', this.template, this.arbitraryAttributeHandler,  (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_AOrder_Description.setApiFieldName('AOrder_Description__c');
 
 
-            this.finances_elements.finances_PO9_Cost = new LWC_Input_Element('finances_PO9_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO9_Cost.setApiFieldName('PO9_Cost__c');
+            this.finances_elements.finances_Other_1_Cost = new LWC_Input_Element('finances_Other_1_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_1_Cost.setApiFieldName('Other_1_Cost__c');
 
-            this.finances_elements.finances_PO9_Description = new LWC_Input_Element('finances_PO9_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
-            this.finances_elements.finances_PO9_Description.setApiFieldName('PO9_Description__c');
+            this.finances_elements.finances_Other_1_Description = new LWC_Input_Element('finances_Other_1_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_1_Description.setApiFieldName('Other_1_Description__c');
+
+
+            this.finances_elements.finances_Other_2_Cost = new LWC_Input_Element('finances_Other_2_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_2_Cost.setApiFieldName('Other_2_Cost__c');
+
+            this.finances_elements.finances_Other_2_Description = new LWC_Input_Element('finances_Other_2_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_2_Description.setApiFieldName('Other_2_Description__c');
+
+
+            this.finances_elements.finances_Other_3_Cost = new LWC_Input_Element('finances_Other_3_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_3_Cost.setApiFieldName('Other_3_Cost__c');
+
+            this.finances_elements.finances_Other_3_Description = new LWC_Input_Element('finances_Other_3_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_3_Description.setApiFieldName('Other_3_Description__c');
+
+
+            this.finances_elements.finances_Other_4_Cost = new LWC_Input_Element('finances_Other_4_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_4_Cost.setApiFieldName('Other_4_Cost__c');
+
+            this.finances_elements.finances_Other_4_Description = new LWC_Input_Element('finances_Other_4_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_4_Description.setApiFieldName('Other_4_Description__c');
+
+
+            this.finances_elements.finances_Other_5_Cost = new LWC_Input_Element('finances_Other_5_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_5_Cost.setApiFieldName('Other_5_Cost__c');
+
+            this.finances_elements.finances_Other_5_Description = new LWC_Input_Element('finances_Other_5_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+            this.finances_elements.finances_Other_5_Description.setApiFieldName('Other_5_Description__c');
 
 
             this.finances_elements.finances_Subtotal_Before_Profit = new LWC_Element('finances_Subtotal_Before_Profit', this.template, this.currencyAttributeHandler);
 
 
 
-            this.finances_elements.finances_Profit_Amount = new LWC_Input_Element('finances_Profit_Amount', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Profit_Amount = new LWC_Input_Element('finances_Profit_Amount', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.finances_elements.finances_Profit_Amount.setApiFieldName('Profit_Amount__c');
             
-            this.finances_elements.finances_Profit_Percent = new LWC_Input_Element('finances_Profit_Percent', this.template,  this.percentAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Profit_Percent = new LWC_Input_Element('finances_Profit_Percent', this.template,  this.percentAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
 
-            this.finances_elements.finances_Dealer_Pack = new LWC_Input_Element('finances_Dealer_Pack', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Dealer_Pack = new LWC_Input_Element('finances_Dealer_Pack', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.finances_elements.finances_Dealer_Pack.setApiFieldName('Dealer_Pack__c');
 
             this.finances_elements.finances_Gross_Amount = new LWC_Element('finances_Gross_Amount', this.template,  this.currencyAttributeHandler);
@@ -979,27 +769,39 @@ export default class Admin_checklist extends LightningElement {
             this.finances_elements.finances_Subtotal_After_Profit = new LWC_Element('finances_Subtotal_After_Profit', this.template, this.currencyAttributeHandler);
 
 
-            this.finances_elements.finances_FET_Checkbox = new LWC_Input_Element('finances_FET_Checkbox', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_FET_Checkbox = new LWC_Input_Element('finances_FET_Checkbox', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
 
             this.finances_elements.finances_12_FET = new LWC_Element('finances_12_FET', this.template, this.currencyAttributeHandler);
 
-            this.finances_elements.finances_Minus_Tire_FET = new LWC_Input_Element('finances_Minus_Tire_FET', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Minus_Tire_FET = new LWC_Input_Element('finances_Minus_Tire_FET', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.finances_elements.finances_Minus_Tire_FET.setApiFieldName('Minus_Tire_FET__c');
 
             this.finances_elements.finances_Total_FET = new LWC_Element('finances_Total_FET', this.template, this.currencyAttributeHandler);
 
 
 
-            this.finances_elements.finances_Extended_Warranty = new LWC_Input_Element('finances_Extended_Warranty', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Extended_Warranty = new LWC_Input_Element('finances_Extended_Warranty', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.finances_elements.finances_Extended_Warranty.setApiFieldName('Extended_Warranty__c');
 
-            this.finances_elements.finances_Other_Fees = new LWC_Input_Element('finances_Other_Fees', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Other_Fees = new LWC_Input_Element('finances_Other_Fees', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.finances_elements.finances_Other_Fees.setApiFieldName('Other_Fees__c');
 
-            this.finances_elements.finances_Documentation_Fee = new LWC_Input_Element('finances_Documentation_Fee', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Documentation_Fee = new LWC_Input_Element('finances_Documentation_Fee', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.finances_elements.finances_Documentation_Fee.setApiFieldName('Documentation_Fee__c');
 
-            this.finances_elements.finances_Deposit = new LWC_Input_Element('finances_Deposit', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.finances_elements.finances_Deposit = new LWC_Input_Element('finances_Deposit', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.finances_elements.finances_Deposit.setApiFieldName('Deposit__c');
 
             this.finances_elements.finances_Total = new LWC_Element('finances_Total', this.template, this.currencyAttributeHandler);
@@ -1009,22 +811,34 @@ export default class Admin_checklist extends LightningElement {
         if(!this.tradeIn_elements) {
             this.tradeIn_elements = {};
 
-            this.tradeIn_elements.tradeIn_Make = new LWC_Input_Element('tradeIn_Make', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.tradeIn_elements.tradeIn_Make = new LWC_Input_Element('tradeIn_Make', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.tradeIn_elements.tradeIn_Make.setApiFieldName('TradeIn_Make__c');
 
-            this.tradeIn_elements.tradeIn_Model = new LWC_Input_Element('tradeIn_Model', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.tradeIn_elements.tradeIn_Model = new LWC_Input_Element('tradeIn_Model', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.tradeIn_elements.tradeIn_Model.setApiFieldName('TradeIn_Model__c');
 
-            this.tradeIn_elements.tradeIn_Year = new LWC_Input_Element('tradeIn_Year', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.tradeIn_elements.tradeIn_Year = new LWC_Input_Element('tradeIn_Year', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.tradeIn_elements.tradeIn_Year.setApiFieldName('TradeIn_Year__c');
 
-            this.tradeIn_elements.tradeIn_Unit_Number = new LWC_Input_Element('tradeIn_Unit_Number', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.tradeIn_elements.tradeIn_Unit_Number = new LWC_Input_Element('tradeIn_Unit_Number', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.tradeIn_elements.tradeIn_Unit_Number.setApiFieldName('TradeIn_Unit_Number__c');
 
-            this.tradeIn_elements.tradeIn_Actual_Cash_Value = new LWC_Input_Element('tradeIn_Actual_Cash_Value', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.tradeIn_elements.tradeIn_Actual_Cash_Value = new LWC_Input_Element('tradeIn_Actual_Cash_Value', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.tradeIn_elements.tradeIn_Actual_Cash_Value.setApiFieldName('TradeIn_Actual_Cash_Value__c');
 
-            this.tradeIn_elements.tradeIn_Billing_Amount = new LWC_Input_Element('tradeIn_Billing_Amount', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.tradeIn_elements.tradeIn_Billing_Amount = new LWC_Input_Element('tradeIn_Billing_Amount', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.tradeIn_elements.tradeIn_Billing_Amount.setApiFieldName('TradeIn_Billing_Amount__c');
         }
 
@@ -1032,31 +846,47 @@ export default class Admin_checklist extends LightningElement {
         if(!this.fetCredit_elements) {
             this.fetCredit_elements = {};
 
-            this.fetCredit_elements.fetCredit_FET_Front_Description = new LWC_Input_Element('fetCredit_FET_Front_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Front_Description = new LWC_Input_Element('fetCredit_FET_Front_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Front_Description.setApiFieldName('FET_Front_Description__c');
 
-            this.fetCredit_elements.fetCredit_FET_Front_Size = new LWC_Input_Element('fetCredit_FET_Front_Size', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Front_Size = new LWC_Input_Element('fetCredit_FET_Front_Size', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Front_Size.setApiFieldName('FET_Front_Size__c');
 
-            this.fetCredit_elements.fetCredit_FET_Front_Cost = new LWC_Input_Element('fetCredit_FET_Front_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Front_Cost = new LWC_Input_Element('fetCredit_FET_Front_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Front_Cost.setApiFieldName('FET_Front_Cost__c');
 
-            this.fetCredit_elements.fetCredit_FET_Front_Quantity = new LWC_Input_Element('fetCredit_FET_Front_Quantity', this.template, this.numberAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Front_Quantity = new LWC_Input_Element('fetCredit_FET_Front_Quantity', this.template, this.numberAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Front_Quantity.setApiFieldName('FET_Front_Quantity__c');
 
             this.fetCredit_elements.fetCredit_FET_Front_Subtotal = new LWC_Element('fetCredit_FET_Front_Subtotal', this.template, this.currencyAttributeHandler);
 
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Description = new LWC_Input_Element('fetCredit_FET_Rear_Description', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Rear_Description = new LWC_Input_Element('fetCredit_FET_Rear_Description', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Rear_Description.setApiFieldName('FET_Rear_Description__c');
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Size = new LWC_Input_Element('fetCredit_FET_Rear_Size', this.template, this.arbitraryAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Rear_Size = new LWC_Input_Element('fetCredit_FET_Rear_Size', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Rear_Size.setApiFieldName('FET_Rear_Size__c');
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Cost = new LWC_Input_Element('fetCredit_FET_Rear_Cost', this.template, this.currencyAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Rear_Cost = new LWC_Input_Element('fetCredit_FET_Rear_Cost', this.template, this.currencyAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Rear_Cost.setApiFieldName('FET_Rear_Cost__c');
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Quantity = new LWC_Input_Element('fetCredit_FET_Rear_Quantity', this.template, this.numberAttributeHandler, this.handleDOMInput.bind(this));
+            this.fetCredit_elements.fetCredit_FET_Rear_Quantity = new LWC_Input_Element('fetCredit_FET_Rear_Quantity', this.template, this.numberAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
             this.fetCredit_elements.fetCredit_FET_Rear_Quantity.setApiFieldName('FET_Rear_Quantity__c');
 
             this.fetCredit_elements.fetCredit_FET_Rear_Subtotal = new LWC_Element('fetCredit_FET_Rear_Subtotal', this.template, this.currencyAttributeHandler);
@@ -1083,17 +913,6 @@ export default class Admin_checklist extends LightningElement {
 
 
     initializeLWC_Elements() {
-        if(!this.lookUpQuote_elements.lookUpQuote_Salesman.isInitialized) {
-            for(const key in this.lookUpQuote_elements) {
-                this.lookUpQuote_elements[key].initialize();
-            }
-
-
-            // Default Salesman Lookup to Current User
-            this.lookUpQuote_elements.lookUpQuote_Salesman.setAttribute('value', this.currentUser);
-        }
-
-
         if(!this.whoWhat_elements.whoWhat_Salesman.isInitialized) {
             for(const key in this.whoWhat_elements) {
                 this.whoWhat_elements[key].initialize();
@@ -1103,7 +922,7 @@ export default class Admin_checklist extends LightningElement {
             this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', this.currentUser);
         }
 
-        if(!this.finances_elements.finances_PO1_Cost.isInitialized) {
+        if(!this.finances_elements.finances_Chassis_Cost.isInitialized) {
             for(const key in this.finances_elements) {
                 this.finances_elements[key].initialize();
             }
@@ -1125,7 +944,7 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
-    initializeFromQuery(queryValues) {
+    initializeFromAdmin(queryValues) {
         this.updateValuesFromQuery(this.whoWhat_elements, queryValues);
 
         this.updateValuesFromQuery(this.fetCredit_elements, queryValues);
@@ -1139,13 +958,177 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
+    initializeFromOpportunity(opportunityValues) {
+        /*
+        this.updateValuesFromOpportunity(this.whoWhat_elements, opportunityValues);
+
+        this.updateValuesFromOpportunity(this.fetCredit_elements, opportunityValues);
+
+        this.updateValuesFromOpportunity(this.tradeIn_elements, opportunityValues);
+
+        this.updateValuesFromOpportunity(this.finances_elements, opportunityValues);
+        */
+
+
+        if(opportunityValues.Name) {
+            this.whoWhat_elements.whoWhat_AdminName.setAttribute('value', opportunityValues.Name);
+
+            this.whoWhat_elements.whoWhat_AdminName.setAttribute('disabled', true);
+        }
+
+        if(opportunityValues.OwnerId) {
+            this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', opportunityValues.OwnerId);
+            
+            this.whoWhat_elements.whoWhat_Salesman.setAttribute('disabled', true);
+        }
+
+        if(opportunityValues.Account) {
+            if(opportunityValues.Account.Name) {
+                this.whoWhat_elements.whoWhat_Customer.setAttribute('value', opportunityValues.Account.Name);
+
+                this.whoWhat_elements.whoWhat_Customer.setAttribute('disabled', true);
+            }
+        }
+        
+        if(opportunityValues.Gross_Amount_s__c) {
+            this.finances_elements.finances_Profit_Amount.setAttribute('value', opportunityValues.Gross_Amount_s__c);
+
+            this.finances_elements.finances_Profit_Amount.setAttribute('disabled', true);
+
+            this.finances_elements.finances_Profit_Percent.setAttribute('disabled', true);
+        }
+
+        if(opportunityValues.Doc_Fee__c) {
+            this.finances_elements.finances_Documentation_Fee.setAttribute('value', opportunityValues.Doc_Fee__c);
+
+            this.finances_elements.finances_Documentation_Fee.setAttribute('disabled', true);
+        }
+
+        if(opportunityValues.Deposit_Received__c) {
+            this.finances_elements.finances_Deposit.setAttribute('value', opportunityValues.Deposit_Received__c);
+
+            this.finances_elements.finances_Deposit.setAttribute('disabled', true);
+        }
+
+        if(opportunityValues.Total_PAC_Fees__c) {
+            this.finances_elements.finances_Dealer_Pack.setAttribute('value', opportunityValues.Total_PAC_Fees__c);
+
+            this.finances_elements.finances_Dealer_Pack.setAttribute('disabled', true);
+        }
+
+
+        this.makeFinancesCalculations();
+    }
+
+
+    initializeFromLineItems(lineItems) {
+        for(const lineItemIndex in lineItems) {
+            if(lineItems[lineItemIndex].Product2.RecordType.Name === 'Chassis') {
+                this.whoWhat_elements.whoWhat_Chassis_VIN.setAttribute('value', lineItems[lineItemIndex].Product2.VIN__c);
+                this.whoWhat_elements.whoWhat_Chassis_VIN.setAttribute('disabled', true);
+
+                this.whoWhat_elements.whoWhat_Chassis_Make.setAttribute('value', lineItems[lineItemIndex].Product2.Chassis_Make__c);
+                this.whoWhat_elements.whoWhat_Chassis_Make.setAttribute('disabled', true);
+
+                this.whoWhat_elements.whoWhat_Chassis_Model.setAttribute('value', lineItems[lineItemIndex].Product2.Chassis_Model__c);
+                this.whoWhat_elements.whoWhat_Chassis_Model.setAttribute('disabled', true);
+
+                this.whoWhat_elements.whoWhat_Chassis_Year.setAttribute('value', lineItems[lineItemIndex].Product2.Year__c);
+                this.whoWhat_elements.whoWhat_Chassis_Year.setAttribute('disabled', true);
+            }
+
+
+            if(lineItems[lineItemIndex].Product2.RecordType.Name === 'Service Body') {
+                this.whoWhat_elements.whoWhat_Body_Series_Name.setAttribute('value', lineItems[lineItemIndex].Product2.Body_Model__c);
+                this.whoWhat_elements.whoWhat_Body_Series_Name.setAttribute('disabled', true);
+            }
+        }
+
+        this.makeFinancesCalculations();
+    }
+
+
+    initializeFromPOs(poLines) {
+        let otherIndex = 1;
+
+        let chassisPOFound = false;
+
+        for(const poIndex in poLines) {
+            if(poLines[poIndex].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('CHASSIS')) {
+                this.finances_elements.finances_Chassis_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
+                this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
+
+
+                let oldDescription = this.finances_elements.finances_Chassis_Description.getAttribute('value');
+                this.finances_elements.finances_Chassis_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                chassisPOFound = true;
+            }else if(poLines[poIndex].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('BODY')) {
+                if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('lube skid')) {
+                    this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
+                    this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('disabled', true);
+
+
+                    let oldDescription = this.finances_elements['finances_Other_' + otherIndex + '_Description'].getAttribute('value');
+                    this.finances_elements['finances_Other_' + otherIndex + '_Description'].setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                    otherIndex += 1;
+                }else {
+                    this.finances_elements.finances_Body_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
+                    this.finances_elements.finances_Body_Cost.setAttribute('disabled', true);
+
+
+                    let oldDescription = this.finances_elements.finances_Body_Description.getAttribute('value');
+                    this.finances_elements.finances_Body_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+                }
+            }else if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
+                this.finances_elements.finances_Freight_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
+                this.finances_elements.finances_Freight_Cost.setAttribute('disabled', true);
+
+
+                let oldDescription = this.finances_elements.finances_Freight_Description.getAttribute('value');
+                this.finances_elements.finances_Freight_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+            }else if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
+                this.finances_elements.finances_AOrder_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
+                this.finances_elements.finances_AOrder_Cost.setAttribute('disabled', true);
+
+
+                let oldDescription = this.finances_elements.finances_AOrder_Description.getAttribute('value');
+                this.finances_elements.finances_AOrder_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+            }
+        }
+
+
+        // If I didn't find a Chassis PO then check Products for the Chassis, and if I find a Chassis then let Dianne known that
+        // there was a Product but not a Chassis
+        if(!chassisPOFound) {
+            for(const oppProductIndex in this.oppProducts) {
+                if(this.oppProducts[oppProductIndex].Product2.RecordType.Name === 'Chassis') {
+                    this.finances_elements.finances_Chassis_Cost.setAttribute('value', this.oppProducts[oppProductIndex].Sales_Price_w_o_FET__c);
+                    this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
+
+                    chassisPOFound = true;
+                } 
+            }
+
+            // In the case that there isn't a Chassis do something here like, put no Chassis in the description or something
+            if(!chassisPOFound) {
+
+            }
+        }
+
+
+        this.makeFinancesCalculations();
+    }
+
+
     renderedCallback() {
         if(!this.defaultAdminChecklist) {
             this.queryAdminChecklist_Defaults().then(() => {
                 this.initializeLWC_Elements();
 
 
-                this.initializeFromQuery(this.defaultAdminChecklist);
+                this.initializeFromAdmin(this.defaultAdminChecklist);
 
 
                 let page_url = new URL(window.location.href);
@@ -1156,7 +1139,7 @@ export default class Admin_checklist extends LightningElement {
                     this.handleAdminChosen();
                 }
             }).catch(err => {
-                this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', 'Something went wrong, see console log for more info', err);
+                this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', '(admin_in_opportunity) Something went wrong, see console log for more info', err);
             });
         }
     }
