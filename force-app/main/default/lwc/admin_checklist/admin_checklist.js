@@ -41,6 +41,8 @@ export default class Admin_checklist extends LightningElement {
     percentAttributeHandler;
 
     opportunity;
+    //opportunityData;
+    //opportunityLink;
 
     oppProducts;
 
@@ -345,9 +347,11 @@ export default class Admin_checklist extends LightningElement {
                 ' WHERE AdminChecklist__c=\'' + this.adminChosen + '\''
             }).then(haveAdmins => {
                 if(haveAdmins.length > 0) {
-                    this.initializeFromOpportunity(haveAdmins[0]);
-
                     this.opportunity = haveAdmins[0].Id;
+
+                    //this.opportunityData = haveAdmins[0];
+
+                    this.initializeFromOpportunity(haveAdmins[0]);
 
                     getProducts({ oppId: haveAdmins[0].Id }).then(lineItems => {
                         if(lineItems) {
@@ -599,6 +603,10 @@ export default class Admin_checklist extends LightningElement {
             });
             this.whoWhat_elements.whoWhat_AdminName.setApiFieldName('Name__c');
 
+            this.whoWhat_elements.whoWhat_OpportunityLink = new LWC_Input_Element('whoWhat_OpportunityLink', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+
             this.whoWhat_elements.whoWhat_Salesman = new LWC_Input_Element('whoWhat_Salesman', this.template, this.arbitraryAttributeHandler, (event) => {
                 this.handleDOMInput(event)
             });
@@ -667,6 +675,10 @@ export default class Admin_checklist extends LightningElement {
             });
             this.finances_elements.finances_Body_Description.setApiFieldName('Body_Description__c');
 
+            this.finances_elements.finances_Body_POInfo = new LWC_Input_Element('finances_Body_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
+
 
             this.finances_elements.finances_Freight_Cost = new LWC_Input_Element('finances_Freight_Cost', this.template, this.currencyAttributeHandler, (event) => {
                 this.handleDOMInput(event)
@@ -677,6 +689,10 @@ export default class Admin_checklist extends LightningElement {
                 this.handleDOMInput(event)
             });
             this.finances_elements.finances_Freight_Description.setApiFieldName('Freight_Description__c');
+
+            this.finances_elements.finances_Freight_POInfo = new LWC_Input_Element('finances_Freight_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
 
 
             this.finances_elements.finances_AOrder_Cost = new LWC_Input_Element('finances_AOrder_Cost', this.template, this.currencyAttributeHandler, (event) => {
@@ -976,6 +992,13 @@ export default class Admin_checklist extends LightningElement {
             this.whoWhat_elements.whoWhat_AdminName.setAttribute('value', opportunityValues.Name);
 
             this.whoWhat_elements.whoWhat_AdminName.setAttribute('disabled', true);
+
+
+            this.whoWhat_elements.whoWhat_OpportunityLink.setAttribute('label', opportunityValues.Name);
+            this.whoWhat_elements.whoWhat_OpportunityLink.setAttribute('attributes', {
+                recordId: opportunityValues.Id,
+                actionName: 'view'
+            });
         }
 
         if(opportunityValues.OwnerId) {
@@ -1064,7 +1087,12 @@ export default class Admin_checklist extends LightningElement {
                 //let oldDescription = this.finances_elements.finances_Chassis_Description.getAttribute('value');
                 //this.finances_elements.finances_Chassis_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
 
-                this.finances_elements.finances_Chassis_POInfo.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c);
+                this.finances_elements.finances_Chassis_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
+                //this.finances_elements.finances_Chassis_POInfo.setAttribute('recordId', poLines[poIndex].Id);
+                this.finances_elements.finances_Chassis_POInfo.setAttribute('attributes', {
+                    recordId: poLines[poIndex].Id,
+                    actionName: 'view'
+                });
 
                 chassisPOFound = true;
             }else if(poLines[poIndex].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('BODY')) {
@@ -1082,16 +1110,28 @@ export default class Admin_checklist extends LightningElement {
                     this.finances_elements.finances_Body_Cost.setAttribute('disabled', true);
 
 
-                    let oldDescription = this.finances_elements.finances_Body_Description.getAttribute('value');
-                    this.finances_elements.finances_Body_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+                    //let oldDescription = this.finances_elements.finances_Body_Description.getAttribute('value');
+                    //this.finances_elements.finances_Body_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                    this.finances_elements.finances_Body_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
+                    this.finances_elements.finances_Body_POInfo.setAttribute('attributes', {
+                        recordId: poLines[poIndex].Id,
+                        actionName: 'view'
+                    });
                 }
             }else if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
                 this.finances_elements.finances_Freight_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
                 this.finances_elements.finances_Freight_Cost.setAttribute('disabled', true);
 
 
-                let oldDescription = this.finances_elements.finances_Freight_Description.getAttribute('value');
-                this.finances_elements.finances_Freight_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+                //let oldDescription = this.finances_elements.finances_Freight_Description.getAttribute('value');
+                //this.finances_elements.finances_Freight_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                this.finances_elements.finances_Freight_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
+                    this.finances_elements.finances_Freight_POInfo.setAttribute('attributes', {
+                        recordId: poLines[poIndex].Id,
+                        actionName: 'view'
+                    });
             }else if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
                 this.finances_elements.finances_AOrder_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
                 this.finances_elements.finances_AOrder_Cost.setAttribute('disabled', true);
@@ -1146,5 +1186,18 @@ export default class Admin_checklist extends LightningElement {
                 this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', '(admin_in_opportunity) Something went wrong, see console log for more info', err);
             });
         }
+
+        /*
+        if(this.opportunity && !this.opportunityLink) {
+            this.opportunityLink = this.template.querySelector("[data-id='OpportunityLink']");
+
+            this.opportunityLink['label'] = this.opportunityData.Name;
+
+            this.opportunityLink['attributes'] = {
+                recordId: this.opportunityData.Id,
+                actionName: 'view'
+            }
+        }
+        */
     }
 }

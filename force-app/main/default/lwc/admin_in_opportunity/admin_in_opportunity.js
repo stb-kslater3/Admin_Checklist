@@ -146,7 +146,7 @@ export default class Admin_in_opportunity extends LightningElement {
 
     handleClick_EditAdmin() {
         try {
-            this.editAdminButton.domElement.navigate();
+            //this.editAdminButton.domElement.navigate();
         }catch(e) {
             this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to editAdminButton.Navigate', e);
         }
