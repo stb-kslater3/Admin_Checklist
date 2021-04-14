@@ -6,17 +6,19 @@
 
 
         <div class="slds-m-top_medium slds-clearfix">
-            <div class="slds-align_abosolute-center">
-                <lightning-record-edit-form
-                    object-api-name="AdminChecklist__c">
+            <div class="slds-align_absolute-center">
+                <div class="slds-show_inline-block">
+                    <lightning-record-edit-form
+                        object-api-name="AdminChecklist__c">
 
-                    <lightning-input-field
-                        field-name="Salesman__c"
-                        data-id="lookUpAdmin_Salesman">
+                        <lightning-input-field
+                            field-name="Salesman__c"
+                            data-id="lookUpAdmin_Salesman">
 
-                    </lightning-input-field>
+                        </lightning-input-field>
 
-                </lightning-record-edit-form>
+                    </lightning-record-edit-form>
+                </div>
             </div>
 
             <div class="slds-align_absolute-center">
@@ -39,34 +41,36 @@
             </lightning-button>
         </div>
 
-        <div class="slds-m-top_large slds-box slds-box_xx-small slds-clearfix">
-            <template if:false={hasSearchResults}>
-                <div class="slds-align_absolute-center slds-text-body_small">
-                    No records found
-                </div>
-            </template>
-
-            <template if:true={hasSearchResults}>
-                <div style="max-height: 500px" class="slds-scrollable_y">
-                    <div class="search_result">
-                        <template for:each={searchResults} for:item="record">
-                            <div key={record.id} class="slds-m-top_small undo_search_result" onclick={handleSearchSelection} data-id={record.id}>
-                                <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
-                                    <p>Date: {record.date}</p>
-                                    <br/>
-                                    <p>Created: {record.created}</p>
-                                    <br/>
-                                    <p>Last Modified: {record.lastModified}</p>
-                                    <br/>
-                                    <p>Salesman: {record.salesman}</p>
-                                    <br/>
-                                    <p>Customer Name: {record.customer}</p>
-                                </lightning-card>
-                            </div>
-                        </template>
+        <div class="slds-align_absolute-center">
+            <div class="slds-m-top_large slds-box slds-box_xx-small slds-clearfix slds-show_inline-block">
+                <template if:false={hasSearchResults}>
+                    <div class="slds-text-body_small">
+                        No records found
                     </div>
-                </div>
-            </template>
+                </template>
+
+                <template if:true={hasSearchResults}>
+                    <div style="max-height: 500px" class="slds-scrollable_y">
+                        <div class="search_result">
+                            <template for:each={searchResults} for:item="record">
+                                <div key={record.id} class="slds-m-top_small undo_search_result" onclick={handleSearchSelection} data-id={record.id}>
+                                    <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
+                                        <p>Date: {record.date}</p>
+                                        <br/>
+                                        <p>Created: {record.created}</p>
+                                        <br/>
+                                        <p>Last Modified: {record.lastModified}</p>
+                                        <br/>
+                                        <p>Salesman: {record.salesman}</p>
+                                        <br/>
+                                        <p>Customer Name: {record.customer}</p>
+                                    </lightning-card>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 </template>

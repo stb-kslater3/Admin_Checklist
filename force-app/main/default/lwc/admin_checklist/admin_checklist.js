@@ -653,6 +653,9 @@ export default class Admin_checklist extends LightningElement {
             });
             this.finances_elements.finances_Chassis_Description.setApiFieldName('Chassis_Description__c');
 
+            this.finances_elements.finances_Chassis_POInfo = new LWC_Input_Element('finances_Chassis_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
 
             this.finances_elements.finances_Body_Cost = new LWC_Input_Element('finances_Body_Cost', this.template, this.currencyAttributeHandler, (event) => {
                 this.handleDOMInput(event)
@@ -921,13 +924,12 @@ export default class Admin_checklist extends LightningElement {
             // Default Salesman Lookup to Current User
             this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', this.currentUser);
         }
-
+        
         if(!this.finances_elements.finances_Chassis_Cost.isInitialized) {
             for(const key in this.finances_elements) {
                 this.finances_elements[key].initialize();
             }
         }
-
 
         if(!this.fetCredit_elements.fetCredit_FET_Front_Description.isInitialized) {
             for(const key in this.fetCredit_elements) {
@@ -1059,8 +1061,10 @@ export default class Admin_checklist extends LightningElement {
                 this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
 
 
-                let oldDescription = this.finances_elements.finances_Chassis_Description.getAttribute('value');
-                this.finances_elements.finances_Chassis_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+                //let oldDescription = this.finances_elements.finances_Chassis_Description.getAttribute('value');
+                //this.finances_elements.finances_Chassis_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                this.finances_elements.finances_Chassis_POInfo.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c);
 
                 chassisPOFound = true;
             }else if(poLines[poIndex].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('BODY')) {
@@ -1099,8 +1103,8 @@ export default class Admin_checklist extends LightningElement {
         }
 
 
-        // If I didn't find a Chassis PO then check Products for the Chassis, and if I find a Chassis then let Dianne known that
-        // there was a Product but not a Chassis
+        // If I didn't find a Chassis PO then check Products for the Chassis, and if I find a Chassis then let Dianne
+        // known that there was a Product but not a Chassis
         if(!chassisPOFound) {
             for(const oppProductIndex in this.oppProducts) {
                 if(this.oppProducts[oppProductIndex].Product2.RecordType.Name === 'Chassis') {

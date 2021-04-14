@@ -89,13 +89,21 @@
                 <div class="slds-float_left">
                     <div class="slds-clearfix slds-border_bottom">
                         <div class="slds-float_left slds-m-right_small">
-                            <lightning-input type="number" formatter="currency" step=".01" label="Chassis Cost" data-id="finances_Chassis_Cost">
-                            </lightning-input>
+                            <div>
+                                <lightning-input type="number" formatter="currency" step=".01" label="Chassis Cost" data-id="finances_Chassis_Cost">
+                                </lightning-input>
+                            </div>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                <lightning-formatted-text data-id="finances_Chassis_POInfo"></lightning-formatted-text>
+                            </div>
                         </div>
                         
                         <div class="slds-float_left">
-                            <lightning-textarea label="Chassis Description" data-id="finances_Chassis_Description">
-                            </lightning-textarea>
+                            <div>
+                                <lightning-textarea label="Chassis Description" data-id="finances_Chassis_Description">
+                                </lightning-textarea>
+                            </div>
                         </div>
                     </div>
 
