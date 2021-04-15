@@ -20,6 +20,7 @@ export default class Admin_checklist extends LightningElement {
     currentUser = Id;
 
     adminChosen;
+    adminData;
 
     groupChosen;
 
@@ -41,8 +42,7 @@ export default class Admin_checklist extends LightningElement {
     percentAttributeHandler;
 
     opportunity;
-    //opportunityData;
-    //opportunityLink;
+    opportunityData;
 
     oppProducts;
 
@@ -349,7 +349,7 @@ export default class Admin_checklist extends LightningElement {
                 if(haveAdmins.length > 0) {
                     this.opportunity = haveAdmins[0].Id;
 
-                    //this.opportunityData = haveAdmins[0];
+                    this.opportunityData = haveAdmins[0];
 
                     this.initializeFromOpportunity(haveAdmins[0]);
 
@@ -704,6 +704,10 @@ export default class Admin_checklist extends LightningElement {
                 this.handleDOMInput(event)
             });
             this.finances_elements.finances_AOrder_Description.setApiFieldName('AOrder_Description__c');
+
+            this.finances_elements.finances_AOrder_POInfo = new LWC_Input_Element('finances_AOrder_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
+                this.handleDOMInput(event)
+            });
 
 
             this.finances_elements.finances_Other_1_Cost = new LWC_Input_Element('finances_Other_1_Cost', this.template, this.currencyAttributeHandler, (event) => {
@@ -1101,8 +1105,14 @@ export default class Admin_checklist extends LightningElement {
                     this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('disabled', true);
 
 
-                    let oldDescription = this.finances_elements['finances_Other_' + otherIndex + '_Description'].getAttribute('value');
-                    this.finances_elements['finances_Other_' + otherIndex + '_Description'].setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+                    //let oldDescription = this.finances_elements['finances_Other_' + otherIndex + '_Description'].getAttribute('value');
+                    //this.finances_elements['finances_Other_' + otherIndex + '_Description'].setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
+                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('attributes', {
+                        recordId: poLines[poIndex].Id,
+                        actionName: 'view'
+                    });
 
                     otherIndex += 1;
                 }else {
@@ -1128,17 +1138,38 @@ export default class Admin_checklist extends LightningElement {
                 //this.finances_elements.finances_Freight_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
 
                 this.finances_elements.finances_Freight_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
-                    this.finances_elements.finances_Freight_POInfo.setAttribute('attributes', {
-                        recordId: poLines[poIndex].Id,
-                        actionName: 'view'
-                    });
+                this.finances_elements.finances_Freight_POInfo.setAttribute('attributes', {
+                    recordId: poLines[poIndex].Id,
+                    actionName: 'view'
+                });
             }else if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
                 this.finances_elements.finances_AOrder_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
                 this.finances_elements.finances_AOrder_Cost.setAttribute('disabled', true);
 
 
-                let oldDescription = this.finances_elements.finances_AOrder_Description.getAttribute('value');
-                this.finances_elements.finances_AOrder_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+                //let oldDescription = this.finances_elements.finances_AOrder_Description.getAttribute('value');
+                //this.finances_elements.finances_AOrder_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                this.finances_elements.finances_AOrder_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
+                this.finances_elements.finances_AOrder_POInfo.setAttribute('attributes', {
+                    recordId: poLines[poIndex].Id,
+                    actionName: 'view'
+                });
+            }else {
+                this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
+                this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('disabled', true);
+
+
+                //let oldDescription = this.finances_elements['finances_Other_' + otherIndex + '_Description'].getAttribute('value');
+                //this.finances_elements['finances_Other_' + otherIndex + '_Description'].setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
+
+                this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
+                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('attributes', {
+                        recordId: poLines[poIndex].Id,
+                        actionName: 'view'
+                    });
+
+                otherIndex += 1;
             }
         }
 
