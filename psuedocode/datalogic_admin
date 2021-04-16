@@ -1,0 +1,44 @@
+
+Once The Admin is Chosen:
+    Query for this Admins data:
+        Go ahead and fill in the Descriptions.
+
+        . . .
+
+        Query for an Opportunity with this Admin:
+            if(No Opportunity) {
+                Go ahead and fill in what would have been those Opportunity fields with the AdminChecklist data.
+            }else if(More than 1) {
+                . . .
+            }else {
+                Query for Products:
+                    if(Products) {
+                        if(there is a Chassis) {
+                            fill out chassis_year, vin, etc.
+                        }
+
+                        if(there is a body) {
+                            fill out body series name
+                        }
+
+                        Query for POs, then:
+                            for each PO Line:
+                                if(this po has a value for Cost) {
+                                    use the po value for cost
+                                }else {
+                                    if(This is a product and it has a value then use that) {
+
+                                    }else {
+                                        use what was entered on the Admin.
+                                    }
+                                }
+                            }
+                    }
+
+                    . . .
+            }
+
+
+            DATA FILLED IN DOWN HERE AND JUST DETERMINING WHAT OUR CASES ARE UP ABOVE
+            - That is, I would like to avoid double entering the data logic. For example in any case the Descriptions are coming
+            from the Admin, but I don't want to do that for each if Case, instead I figure out . . .

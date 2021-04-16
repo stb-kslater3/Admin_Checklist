@@ -44,7 +44,9 @@ export default class Admin_checklist extends LightningElement {
     opportunity;
     opportunityData;
 
-    oppProducts;
+    lineItemsData;
+
+    poData;
 
 
     calculateTotalBeforeProfit() {
@@ -128,19 +130,32 @@ export default class Admin_checklist extends LightningElement {
 
 
     calculateFETFinances() {
-        this.finances_elements.finances_12_FET.setAttribute(
-            'value',
+        if(this.finances_elements.finances_FET_Checkbox.getAttribute('checked') == true) {
+            this.finances_elements.finances_12_FET.setAttribute(
+                'value',
+    
+                Math.round( (this.finances_elements.finances_Subtotal_After_Profit.getAttribute('value') * 0.12) * 100) / 100
+            );
 
-            Math.round( (this.finances_elements.finances_Subtotal_After_Profit.getAttribute('value') * 0.12) * 100) / 100
-        );
+            this.finances_elements.finances_Total_FET.setAttribute(
+                'value',
 
+                this.finances_elements.finances_12_FET.getAttribute('value') -
+                this.finances_elements.finances_Minus_Tire_FET.getAttribute('value')
+            );
+        }else {
+            this.finances_elements.finances_12_FET.setAttribute(
+                'value',
+    
+                0.00
+            );
 
-        this.finances_elements.finances_Total_FET.setAttribute(
-            'value',
+            this.finances_elements.finances_Total_FET.setAttribute(
+                'value',
 
-            this.finances_elements.finances_12_FET.getAttribute('value') -
-            this.finances_elements.finances_Minus_Tire_FET.getAttribute('value')
-        );
+                0.00
+            );
+        }
     }
 
     
@@ -271,11 +286,6 @@ export default class Admin_checklist extends LightningElement {
                 
                 break;
 
-            case 'finances_FET_Checkbox':
-                this.makeFinancesCalculations();
-                
-                break;
-
             case 'finances_Minus_Tire_FET':
                 this.makeFinancesCalculations();
                 
@@ -329,90 +339,321 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
+    handleApplyFET() {
+        this.makeFinancesCalculations();
+    }
+
+
     handleAdminChosen(event) {
+        // For when the admin search passes the admin to me through the event detail
         if(event) {
             this.adminChosen = event.detail.value;
         }
 
-        // Clear everything out to the defaults and then get the Admin and update
-        this.queryAdminChecklist_Defaults().then(() => {
-            this.initializeFromAdmin(this.defaultAdminChecklist);
+        // First and foremost, since my fallback data comes from the AdminChecklist itself, I need to go ahead
+        // and query all that data then start working on the rest of the data and will just use these when the 
+        // other options don't exist
+
+        let adminString = 
+            'SELECT Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, Chassis_Cost__c, Chassis_Description__c, Body_Cost__c, Body_Description__c, Freight_Cost__c, Freight_Description__c, AOrder_Cost__c, AOrder_Description__c, Other_1_Cost__c, Other_1_Description__c, Other_2_Cost__c, Other_2_Description__c, Other_3_Cost__c, Other_3_Description__c, Other_4_Cost__c, Other_4_Description__c, Other_5_Cost__c, Other_5_Description__c, Profit_Amount__c, Dealer_Pack__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c' +
+            ' FROM AdminChecklist__c ' +
+            ' WHERE Id = \'' + this.adminChosen + '\'';
+
+        queryFromString({ queryString: adminString }).then(adminRecords => {
+            if(adminRecords.length > 0) {
+                // Since I used the Id, this will be the only Admin I get
+                // Also, this data is needed within the inner "then"s so this is the globalized version
+                this.adminData = adminRecords[0];
+
+                // Go ahead and set the Descriptions since those won't be overwritten
+                this.finances_elements.finances_Chassis_Description.setAttribute('value', this.adminData.Chassis_Description__c);
+                this.finances_elements.finances_Body_Description.setAttribute('value', this.adminData.Body_Description__c);
+                this.finances_elements.finances_Freight_Description.setAttribute('value', this.adminData.Freight_Description__c);
+                this.finances_elements.finances_AOrder_Description.setAttribute('value', this.adminData.AOrder_Description__c);
+                this.finances_elements.finances_Other_1_Description.setAttribute('value', this.adminData.Other_1_Description__c);
+                this.finances_elements.finances_Other_2_Description.setAttribute('value', this.adminData.Other_2_Description__c);
+                this.finances_elements.finances_Other_3_Description.setAttribute('value', this.adminData.Other_3_Description__c);
+                this.finances_elements.finances_Other_4_Description.setAttribute('value', this.adminData.Other_4_Description__c);
+                this.finances_elements.finances_Other_5_Description.setAttribute('value', this.adminData.Other_5_Description__c);
 
 
-            // If you don't yet have an Opportunity tied to you then just pull the Admin, otherwise pull the Opportunity and
-            // set the Admin values if an opportunity with this admin id is found
-            queryFromString({ 
-                queryString: 'SELECT Id, Name, OwnerId, Account.Name, Gross_Amount_s__c, Deposit_Received__c, Doc_Fee__c, Total_PAC_Fees__c' +
-                ' FROM Opportunity ' +
-                ' WHERE AdminChecklist__c=\'' + this.adminChosen + '\''
-            }).then(haveAdmins => {
-                if(haveAdmins.length > 0) {
-                    this.opportunity = haveAdmins[0].Id;
 
-                    this.opportunityData = haveAdmins[0];
+                // Now go ahead and fill out the rest of everything else with the Admin Checklist and
+                // if down the road it can be replaced we will replace it with the higher ranking value
+                // but otherwise it falls back on these values without getting bogged down in double entry
+                // within the else statements
+                
+                // Who What Fields
+                this.whoWhat_elements.whoWhat_AdminName.setAttribute('value', this.adminData.Name__c);
+                this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', this.adminData.Salesman__c);
+                this.whoWhat_elements.whoWhat_Customer.setAttribute('value', this.adminData.Customer_Name__c);
 
-                    this.initializeFromOpportunity(haveAdmins[0]);
+                this.whoWhat_elements.whoWhat_Chassis_Year.setAttribute('value', this.adminData.Chassis_Year__c);
+                this.whoWhat_elements.whoWhat_Chassis_Make.setAttribute('value', this.adminData.Chassis_Make__c);
+                this.whoWhat_elements.whoWhat_Chassis_VIN.setAttribute('value', this.adminData.Chassis_VIN__c);
+                this.whoWhat_elements.whoWhat_Chassis_Model.setAttribute('value', this.adminData.Chassis_Model__c);
 
-                    getProducts({ oppId: haveAdmins[0].Id }).then(lineItems => {
-                        if(lineItems) {
-                            if(lineItems.length > 0) {
-                                console.log('(admin_in_opportunity)');
-                                console.log(lineItems);
+                this.whoWhat_elements.whoWhat_Body_Series_Name.setAttribute('value', this.adminData.Body_Series_Name__c);
 
-                                this.oppProducts = lineItems;
 
-                                this.initializeFromLineItems(lineItems);
+                // Finances Fields
+                this.finances_elements.finances_Chassis_Cost.setAttribute('value', this.adminData.Chassis_Cost__c);
+                this.finances_elements.finances_Body_Cost.setAttribute('value', this.adminData.Body_Cost__c);
+                this.finances_elements.finances_Freight_Cost.setAttribute('value', this.adminData.Freight_Cost__c);
+                this.finances_elements.finances_AOrder_Cost.setAttribute('value', this.adminData.AOrder_Cost__c);
+                this.finances_elements.finances_Other_1_Cost.setAttribute('value', this.adminData.Other_1_Cost__c);
+                this.finances_elements.finances_Other_2_Cost.setAttribute('value', this.adminData.Other_2_Cost__c);
+                this.finances_elements.finances_Other_3_Cost.setAttribute('value', this.adminData.Other_3_Cost__c);
+                this.finances_elements.finances_Other_4_Cost.setAttribute('value', this.adminData.Other_4_Cost__c);
+                this.finances_elements.finances_Other_5_Cost.setAttribute('value', this.adminData.Other_5_Cost__c);
 
-                                getPOs({ lineItems: lineItems }).then(poLines => {
-                                    if(poLines) {
-                                        if(poLines.length > 0) {
-                                            console.log('(admin_in_opportunity)');
-                                            console.log(poLines);
+                this.finances_elements.finances_Profit_Amount.setAttribute('value', this.adminData.Profit_Amount__c);
+                this.finances_elements.finances_Dealer_Pack.setAttribute('value', this.adminData.Dealer_Pack__c);
 
-                                            this.initializeFromPOs(poLines);
+                this.finances_elements.finances_Minus_Tire_FET.setAttribute('value', this.adminData.Minus_Tire_FET__c);
 
-                                            this.toastHandler.displayChoice('Admin Checklist Loaded!', '', 'info', 'sticky');
-                                        }else {
-                                            this.toastHandler.displayChoice('No Purchase Orders found for the Products in this Opportunity', '', 'info', 'sticky');
+                this.finances_elements.finances_Extended_Warranty.setAttribute('value', this.adminData.Extended_Warranty__c);
+                this.finances_elements.finances_Other_Fees.setAttribute('value', this.adminData.Other_Fees__c);
+                this.finances_elements.finances_Documentation_Fee.setAttribute('value', this.adminData.Documentation_Fee__c);
+                this.finances_elements.finances_Deposit.setAttribute('value', this.adminData.Deposit__c);
+
+
+                // Trade In Fields
+                this.tradeIn_elements.tradeIn_Make.setAttribute('value', this.adminData.TradeIn_Make__c);
+                this.tradeIn_elements.tradeIn_Model.setAttribute('value', this.adminData.TradeIn_Model__c);
+                this.tradeIn_elements.tradeIn_Year.setAttribute('value', this.adminData.TradeIn_Year__c);
+                this.tradeIn_elements.tradeIn_Unit_Number.setAttribute('value', this.adminData.TradeIn_Unit_Number__c);
+                this.tradeIn_elements.tradeIn_Actual_Cash_Value.setAttribute('value', this.adminData.TradeIn_Actual_Cash_Value__c);
+                this.tradeIn_elements.tradeIn_Billing_Amount.setAttribute('value', this.adminData.TradeIn_Billing_Amount__c);
+
+
+                // F.E.T. Fields
+                this.fetCredit_elements.fetCredit_FET_Front_Description.setAttribute('value', this.adminData.FET_Front_Description__c);
+                this.fetCredit_elements.fetCredit_FET_Front_Size.setAttribute('value', this.adminData.FET_Front_Size__c);
+                this.fetCredit_elements.fetCredit_FET_Front_Cost.setAttribute('value', this.adminData.FET_Front_Cost__c);
+                this.fetCredit_elements.fetCredit_FET_Front_Quantity.setAttribute('value', this.adminData.FET_Front_Quantity__c);
+                
+                this.fetCredit_elements.fetCredit_FET_Rear_Description.setAttribute('value', this.adminData.FET_Rear_Description__c);
+                this.fetCredit_elements.fetCredit_FET_Rear_Size.setAttribute('value', this.adminData.FET_Rear_Size__c);
+                this.fetCredit_elements.fetCredit_FET_Rear_Cost.setAttribute('value', this.adminData.FET_Rear_Cost__c);
+                this.fetCredit_elements.fetCredit_FET_Rear_Quantity.setAttribute('value', this.adminData.FET_Rear_Quantity__c);
+
+
+                this.makeFinancesCalculations();
+
+
+                // Next up is to go fetch the Opportunity and determine if it exists, fill in values, etc. 
+                queryFromString({ 
+                    queryString: 'SELECT Id, Name, OwnerId, Account.Name, Gross_Amount_s__c, Deposit_Received__c, Doc_Fee__c, Total_PAC_Fees__c' +
+                    ' FROM Opportunity ' +
+                    ' WHERE AdminChecklist__c=\'' + this.adminChosen + '\''
+                }).then(opportunityRecords => {
+                    // There should only be 1 Opportunity per Admin, but since Salesforce doesn't have 1-1 go ahead and 
+                    // check for the rare case that the workaround to the 1-1 problem has a loophole
+                    if(opportunityRecords.length == 1) {
+                        this.opportunityData = opportunityRecords[0];
+
+                        // Fill out those parts of the Opportunity that won't be overwritten by the higher up data
+                        // if they are there, otherwise use the adminchecklist for that value
+                        if(this.opportunityData.Name) {
+                            this.whoWhat_elements.whoWhat_AdminName.setAttribute('value', this.opportunityData.Name);
+
+                            this.whoWhat_elements.whoWhat_AdminName.setAttribute('disabled', true);
+
+                            this.whoWhat_elements.whoWhat_OpportunityLink.setAttribute('label', this.opportunityData.Name);
+
+                            this.whoWhat_elements.whoWhat_OpportunityLink.setAttribute('attributes', {
+                                recordId: this.opportunityData.Id,
+                                actionName: 'view'
+                            });
+                        }
+
+                        if(this.opportunityData.OwnerId) {
+                            this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', this.opportunityData.OwnerId);
+
+                            this.whoWhat_elements.whoWhat_Salesman.setAttribute('disabled', true);
+                        }
+
+                        if(this.opportunityData.Account.Name) {
+                            this.whoWhat_elements.whoWhat_Customer.setAttribute('value', this.opportunityData.Account.Name);
+
+                            this.whoWhat_elements.whoWhat_Customer.setAttribute('disabled', true);
+                        }
+
+                        if(this.opportunityData.Gross_Amount_s__c) {
+                            this.finances_elements.finances_Profit_Amount.setAttribute('value', this.opportunityData.Gross_Amount_s__c);
+
+                            this.finances_elements.finances_Profit_Amount.setAttribute('disabled', true);
+
+                            this.finances_elements.finances_Profit_Percent.setAttribute('disabled', true);
+                        }
+
+                        if(this.opportunityData.Total_PAC_Fees__c) {
+                            this.finances_elements.finances_Dealer_Pack.setAttribute('value', this.opportunityData.Total_PAC_Fees__c);
+
+                            this.finances_elements.finances_Dealer_Pack.setAttribute('disabled', true);
+                        }
+
+                        if(this.opportunityData.Doc_Fee__c) {
+                            this.finances_elements.finances_Documentation_Fee.setAttribute('value', this.opportunityData.Doc_Fee__c);
+
+                            this.finances_elements.finances_Documentation_Fee.setAttribute('disabled', true);
+                        }
+
+                        if(this.opportunityData.Deposit_Received__c) {
+                            this.finances_elements.finances_Deposit.setAttribute('value', this.opportunityData.Deposit_Received__c);
+
+                            this.finances_elements.finances_Deposit.setAttribute('disabled', true);
+                        }
+
+
+                        this.makeFinancesCalculations();
+
+
+                        // Now go get the Products associated with this Opportunity then the POs then start filling in etc.
+                        getProducts({ oppId: this.opportunityData.Id }).then(lineItemRecords => {
+                            if(lineItemRecords.length > 0) {
+                                this.lineItemsData = lineItemRecords;
+
+                                // If we have the Cost for the Chassis from the Product go ahead and use that
+                                // and it will be the fallback for when we don't have a PO Line to find the cost with
+                                for(let index in this.lineItemsData) {
+                                    if(this.lineItemsData[index].Product2.RecordType.Name === 'Chassis') {
+                                        this.finances_elements.finances_Chassis_Cost.setAttribute('value', this.lineItemsData[index].Total_Product_Cost__c);
+
+                                        this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
+
+                                        break;
+                                    }
+                                }
+
+
+                                this.makeFinancesCalculations();
+
+
+                                // Now get the PO Lines
+                                getPOs({ lineItems: this.lineItemsData }).then(poRecords => {
+                                    if(poRecords.length > 0) {
+                                        this.poData = poRecords;
+
+                                        let otherIndex = 1;
+
+                                        for(let index in this.poData) {
+                                            if(this.poData[index].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('CHASSIS')) {
+                                                this.finances_elements.finances_Chassis_Cost.setAttribute('value', this.poData[index].rstk__poline_amtreq__c);
+
+                                                this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
+
+
+                                                this.finances_elements.finances_Chassis_POInfo.setAttribute('label', this.poData[index].rstk__poline_longdescr__c);
+
+                                                this.finances_elements.finances_Chassis_POInfo.setAttribute('attributes', {
+                                                    recordId: this.poData[index].Id,
+                                                    actionName: 'view'
+                                                });
+                                            }else if(this.poData[index].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('BODY')) {
+                                                if(this.poData[index].rstk__poline_longdescr__c.toLowerCase().includes('lube skid') || this.poData[index].rstk__poline_longdescr__c.toLowerCase().includes('lubeskid')) {
+                                                    this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('value', this.poData[index].rstk__poline_amtreq__c);
+                                                    
+                                                    this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('disabled', true);
+                                
+                                
+                                                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('label', this.poData[index].rstk__poline_longdescr__c);
+
+                                                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('attributes', {
+                                                        recordId: this.poData[index].Id,
+                                                        actionName: 'view'
+                                                    });
+                                
+                                                    otherIndex += 1;
+                                                }else {
+                                                    this.finances_elements.finances_Body_Cost.setAttribute('value', this.poData[index].rstk__poline_amtreq__c);
+
+                                                    this.finances_elements.finances_Body_Cost.setAttribute('disabled', true);
+                                
+                                
+                                                    this.finances_elements.finances_Body_POInfo.setAttribute('label', this.poData[index].rstk__poline_longdescr__c);
+
+                                                    this.finances_elements.finances_Body_POInfo.setAttribute('attributes', {
+                                                        recordId: this.poData[index].Id,
+                                                        actionName: 'view'
+                                                    });
+                                                }
+                                            }else if(this.poData[index].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
+                                                this.finances_elements.finances_Freight_Cost.setAttribute('value', this.poData[index].rstk__poline_amtreq__c);
+
+                                                this.finances_elements.finances_Freight_Cost.setAttribute('disabled', true);
+                                
+                                
+                                                this.finances_elements.finances_Freight_POInfo.setAttribute('label', this.poData[index].rstk__poline_longdescr__c);
+
+                                                this.finances_elements.finances_Freight_POInfo.setAttribute('attributes', {
+                                                    recordId: this.poData[index].Id,
+                                                    actionName: 'view'
+                                                });
+                                            }else if(this.poData[index].rstk__poline_longdescr__c.toLowerCase().includes('a order') || this.poData[index].rstk__poline_longdescr__c.toLowerCase().includes('a  order') || this.poData[index].rstk__poline_longdescr__c.toLowerCase().includes('a-order')) {
+                                                this.finances_elements.finances_AOrder_Cost.setAttribute('value', this.poData[index].rstk__poline_amtreq__c);
+
+                                                this.finances_elements.finances_AOrder_Cost.setAttribute('disabled', true);
+                                
+                                
+                                                this.finances_elements.finances_AOrder_POInfo.setAttribute('label', this.poData[index].rstk__poline_longdescr__c);
+
+                                                this.finances_elements.finances_AOrder_POInfo.setAttribute('attributes', {
+                                                    recordId: this.poData[index].Id,
+                                                    actionName: 'view'
+                                                });
+                                            }else {
+                                                this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('value', this.poData[index].rstk__poline_amtreq__c);
+
+                                                this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('disabled', true);
+                                
+                                
+                                                this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('label', this.poData[index].rstk__poline_longdescr__c);
+
+                                                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('attributes', {
+                                                        recordId: this.poData[index].Id,
+                                                        actionName: 'view'
+                                                    });
+                                
+                                                otherIndex += 1;
+                                            }
+                                        
+
                                         }
+
+
+                                        this.makeFinancesCalculations();
+                                    }else {
+                                        // . . . ..................................................................
+                                        // . . .  ...................................................................
                                     }
                                 }).catch(err => {
-                                    this.toastHandler.displayError('Error in call to getPOs!', '(admin_in_opportunity) See console log for more details', err);
+                                    this.toastHandler.displayError('Error occurred while trying to find the Purchase Order Lines for the Opportunity!', '(admin_in_opportunity) See console log for more details', err);
                                 });
                             }else {
-                                this.toastHandler.displayChoice('No Products found for this Opportunity.', '', 'info', 'sticky');
+                                // Just in case they haven't added the products yet, let them know no products were found
+                                this.toastHandler.displayChoice('Note: No Products were found that belong to this Opportunity', 'No big deal, but the data you see will only be pulled from the Admin Checklist and the Opportunity until the Products are added to the Opportunity', 'warning', 'sticky');
                             }
-                        }
-                    }).catch(err => {
-                        this.toastHandler.displayError('Error in call to getProducts!', '(admin_in_opportunity) See console log for more details', err);
-                    });
-                }else {
-                    let adminString = 
-                        'SELECT Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, Chassis_Cost__c, Chassis_Description__c, Body_Cost__c, Body_Description__c, Freight_Cost__c, Freight_Description__c, AOrder_Cost__c, AOrder_Description__c, Other_1_Cost__c, Other_1_Description__c, Other_2_Cost__c, Other_2_Description__c, Other_3_Cost__c, Other_3_Description__c, Other_4_Cost__c, Other_4_Description__c, Other_5_Cost__c, Other_5_Description__c, Profit_Amount__c, Dealer_Pack__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c' +
-                        ' FROM AdminChecklist__c ' +
-                        ' WHERE Id = \'' + this.adminChosen + '\'';
+                        }).catch(err => {
+                            this.toastHandler.displayError('Error occurred while trying to find the Products for the Opportunity!', '(admin_in_opportunity) See console log for more details', err);
+                        });
+                    }else if(opportunityRecords.length > 1) {
+                // . . . ......................................................................
+                // . . . ......................................................................
+                    }else {
+                        // Just in case they set the wrong Opportunity, give this warning when no Opportunity found
+                        this.toastHandler.displayChoice('Note: An Opportunity was not found that owns this Admin', 'No big deal, but if this Admin is supposed to belong to an already existing Opportunity, then go to that Opportunity and check if you selected the correct Admin.', 'warning', 'sticky');
+                    }
+                }).catch(err => {
+                    this.toastHandler.displayError('Error occurred while trying to find the Opportuninty!', '(admin_in_opportunity) See console log for more details', err);
+                });
 
-                    queryFromString({ queryString: adminString }).then(record => {
-                        if(record.length > 0) {
-                            this.initializeFromAdmin(record[0]);
-
-                            this.toastHandler.displayChoice('Admin Checklist Loaded!', '', 'info', 'sticky');
-                        }else {
-                            this.toastHandler.displayChoice('No Records Found!', '(admin_in_opportunity) Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0', 'error', 'sticky');
-
-                            console.log('Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0');
-                    
-                            this.thisReference.dispatchEvent(errorToast);
-                        }
-                    }).catch(err => {
-                        this.toastHandler.displayError('Error in call to queryFromString for handleAdminChosen!', '(admin_in_opportunity) See console log for more details', err);
-                    });
-                }
-            }).catch(err => {
-                this.toastHandler.displayError('Something Went Wrong!', 'Error in call to queryFromString for Opportunity in handleAdminChosen', err);
-            });
+            }else {
+                this.toastHandler.displayChoice('Could not find this specified Admin!', '(admin_in_opportunity) Length of records return by queryFromString for AdminChecklist__c in handleAdminChosen is 0', 'error', 'sticky');
+            }
         }).catch(err => {
-            this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', '(admin_in_opportunity) Something went wrong, see console log for more info', err);
+            this.toastHandler.displayError('Error occurred while trying to find the Admin!', '(admin_in_opportunity) See console log for more details', err);
         });
     }
 
@@ -558,30 +799,6 @@ export default class Admin_checklist extends LightningElement {
             }
         }
     }
-
-    /*
-    updateValuesFromOpportunity(fieldObject, result) {
-        let needsEmptied;
-
-        for(const key in fieldObject) {
-            needsEmptied = false;
-
-            if(fieldObject[key].apiFieldName) {
-                if(result[fieldObject[key].apiFieldName] !== null && result[fieldObject[key].apiFieldName] !== undefined) {
-                    fieldObject[key].setAttribute('value', result[fieldObject[key].apiFieldName]);
-                }else {
-                    needsEmptied = true;
-                }
-            }else {
-                needsEmptied = true;
-            }
-
-            if(needsEmptied) {
-                fieldObject[key].setAttribute('value', '');
-            }
-        }
-    }
-    */
 
 
     queryAdminChecklist_Defaults() {
@@ -793,7 +1010,7 @@ export default class Admin_checklist extends LightningElement {
 
 
             this.finances_elements.finances_FET_Checkbox = new LWC_Input_Element('finances_FET_Checkbox', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
+                // do nothing on focus out of checking Apply FET
             });
 
             this.finances_elements.finances_12_FET = new LWC_Element('finances_12_FET', this.template, this.currencyAttributeHandler);
@@ -980,223 +1197,6 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
-    initializeFromOpportunity(opportunityValues) {
-        /*
-        this.updateValuesFromOpportunity(this.whoWhat_elements, opportunityValues);
-
-        this.updateValuesFromOpportunity(this.fetCredit_elements, opportunityValues);
-
-        this.updateValuesFromOpportunity(this.tradeIn_elements, opportunityValues);
-
-        this.updateValuesFromOpportunity(this.finances_elements, opportunityValues);
-        */
-
-
-        if(opportunityValues.Name) {
-            this.whoWhat_elements.whoWhat_AdminName.setAttribute('value', opportunityValues.Name);
-
-            this.whoWhat_elements.whoWhat_AdminName.setAttribute('disabled', true);
-
-
-            this.whoWhat_elements.whoWhat_OpportunityLink.setAttribute('label', opportunityValues.Name);
-            this.whoWhat_elements.whoWhat_OpportunityLink.setAttribute('attributes', {
-                recordId: opportunityValues.Id,
-                actionName: 'view'
-            });
-        }
-
-        if(opportunityValues.OwnerId) {
-            this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', opportunityValues.OwnerId);
-            
-            this.whoWhat_elements.whoWhat_Salesman.setAttribute('disabled', true);
-        }
-
-        if(opportunityValues.Account) {
-            if(opportunityValues.Account.Name) {
-                this.whoWhat_elements.whoWhat_Customer.setAttribute('value', opportunityValues.Account.Name);
-
-                this.whoWhat_elements.whoWhat_Customer.setAttribute('disabled', true);
-            }
-        }
-        
-        if(opportunityValues.Gross_Amount_s__c) {
-            this.finances_elements.finances_Profit_Amount.setAttribute('value', opportunityValues.Gross_Amount_s__c);
-
-            this.finances_elements.finances_Profit_Amount.setAttribute('disabled', true);
-
-            this.finances_elements.finances_Profit_Percent.setAttribute('disabled', true);
-        }
-
-        if(opportunityValues.Doc_Fee__c) {
-            this.finances_elements.finances_Documentation_Fee.setAttribute('value', opportunityValues.Doc_Fee__c);
-
-            this.finances_elements.finances_Documentation_Fee.setAttribute('disabled', true);
-        }
-
-        if(opportunityValues.Deposit_Received__c) {
-            this.finances_elements.finances_Deposit.setAttribute('value', opportunityValues.Deposit_Received__c);
-
-            this.finances_elements.finances_Deposit.setAttribute('disabled', true);
-        }
-
-        if(opportunityValues.Total_PAC_Fees__c) {
-            this.finances_elements.finances_Dealer_Pack.setAttribute('value', opportunityValues.Total_PAC_Fees__c);
-
-            this.finances_elements.finances_Dealer_Pack.setAttribute('disabled', true);
-        }
-
-
-        this.makeFinancesCalculations();
-    }
-
-
-    initializeFromLineItems(lineItems) {
-        for(const lineItemIndex in lineItems) {
-            if(lineItems[lineItemIndex].Product2.RecordType.Name === 'Chassis') {
-                this.whoWhat_elements.whoWhat_Chassis_VIN.setAttribute('value', lineItems[lineItemIndex].Product2.VIN__c);
-                this.whoWhat_elements.whoWhat_Chassis_VIN.setAttribute('disabled', true);
-
-                this.whoWhat_elements.whoWhat_Chassis_Make.setAttribute('value', lineItems[lineItemIndex].Product2.Chassis_Make__c);
-                this.whoWhat_elements.whoWhat_Chassis_Make.setAttribute('disabled', true);
-
-                this.whoWhat_elements.whoWhat_Chassis_Model.setAttribute('value', lineItems[lineItemIndex].Product2.Chassis_Model__c);
-                this.whoWhat_elements.whoWhat_Chassis_Model.setAttribute('disabled', true);
-
-                this.whoWhat_elements.whoWhat_Chassis_Year.setAttribute('value', lineItems[lineItemIndex].Product2.Year__c);
-                this.whoWhat_elements.whoWhat_Chassis_Year.setAttribute('disabled', true);
-            }
-
-
-            if(lineItems[lineItemIndex].Product2.RecordType.Name === 'Service Body') {
-                this.whoWhat_elements.whoWhat_Body_Series_Name.setAttribute('value', lineItems[lineItemIndex].Product2.Body_Model__c);
-                this.whoWhat_elements.whoWhat_Body_Series_Name.setAttribute('disabled', true);
-            }
-        }
-
-        this.makeFinancesCalculations();
-    }
-
-
-    initializeFromPOs(poLines) {
-        let otherIndex = 1;
-
-        let chassisPOFound = false;
-
-        for(const poIndex in poLines) {
-            if(poLines[poIndex].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('CHASSIS')) {
-                this.finances_elements.finances_Chassis_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
-                this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
-
-
-                //let oldDescription = this.finances_elements.finances_Chassis_Description.getAttribute('value');
-                //this.finances_elements.finances_Chassis_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
-
-                this.finances_elements.finances_Chassis_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
-                //this.finances_elements.finances_Chassis_POInfo.setAttribute('recordId', poLines[poIndex].Id);
-                this.finances_elements.finances_Chassis_POInfo.setAttribute('attributes', {
-                    recordId: poLines[poIndex].Id,
-                    actionName: 'view'
-                });
-
-                chassisPOFound = true;
-            }else if(poLines[poIndex].rstk__poline_item__r.rstk__poitem_comcod__r.Name.includes('BODY')) {
-                if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('lube skid')) {
-                    this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
-                    this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('disabled', true);
-
-
-                    //let oldDescription = this.finances_elements['finances_Other_' + otherIndex + '_Description'].getAttribute('value');
-                    //this.finances_elements['finances_Other_' + otherIndex + '_Description'].setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
-
-                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
-                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('attributes', {
-                        recordId: poLines[poIndex].Id,
-                        actionName: 'view'
-                    });
-
-                    otherIndex += 1;
-                }else {
-                    this.finances_elements.finances_Body_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
-                    this.finances_elements.finances_Body_Cost.setAttribute('disabled', true);
-
-
-                    //let oldDescription = this.finances_elements.finances_Body_Description.getAttribute('value');
-                    //this.finances_elements.finances_Body_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
-
-                    this.finances_elements.finances_Body_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
-                    this.finances_elements.finances_Body_POInfo.setAttribute('attributes', {
-                        recordId: poLines[poIndex].Id,
-                        actionName: 'view'
-                    });
-                }
-            }else if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
-                this.finances_elements.finances_Freight_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
-                this.finances_elements.finances_Freight_Cost.setAttribute('disabled', true);
-
-
-                //let oldDescription = this.finances_elements.finances_Freight_Description.getAttribute('value');
-                //this.finances_elements.finances_Freight_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
-
-                this.finances_elements.finances_Freight_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
-                this.finances_elements.finances_Freight_POInfo.setAttribute('attributes', {
-                    recordId: poLines[poIndex].Id,
-                    actionName: 'view'
-                });
-            }else if(poLines[poIndex].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
-                this.finances_elements.finances_AOrder_Cost.setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
-                this.finances_elements.finances_AOrder_Cost.setAttribute('disabled', true);
-
-
-                //let oldDescription = this.finances_elements.finances_AOrder_Description.getAttribute('value');
-                //this.finances_elements.finances_AOrder_Description.setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
-
-                this.finances_elements.finances_AOrder_POInfo.setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
-                this.finances_elements.finances_AOrder_POInfo.setAttribute('attributes', {
-                    recordId: poLines[poIndex].Id,
-                    actionName: 'view'
-                });
-            }else {
-                this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('value', poLines[poIndex].rstk__poline_amtreq__c);
-                this.finances_elements['finances_Other_' + otherIndex + '_Cost'].setAttribute('disabled', true);
-
-
-                //let oldDescription = this.finances_elements['finances_Other_' + otherIndex + '_Description'].getAttribute('value');
-                //this.finances_elements['finances_Other_' + otherIndex + '_Description'].setAttribute('value', poLines[poIndex].rstk__poline_longdescr__c.concat(oldDescription));
-
-                this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('label', poLines[poIndex].rstk__poline_longdescr__c);
-                    this.finances_elements['finances_Other_' + otherIndex + '_POInfo'].setAttribute('attributes', {
-                        recordId: poLines[poIndex].Id,
-                        actionName: 'view'
-                    });
-
-                otherIndex += 1;
-            }
-        }
-
-
-        // If I didn't find a Chassis PO then check Products for the Chassis, and if I find a Chassis then let Dianne
-        // known that there was a Product but not a Chassis
-        if(!chassisPOFound) {
-            for(const oppProductIndex in this.oppProducts) {
-                if(this.oppProducts[oppProductIndex].Product2.RecordType.Name === 'Chassis') {
-                    this.finances_elements.finances_Chassis_Cost.setAttribute('value', this.oppProducts[oppProductIndex].Sales_Price_w_o_FET__c);
-                    this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
-
-                    chassisPOFound = true;
-                } 
-            }
-
-            // In the case that there isn't a Chassis do something here like, put no Chassis in the description or something
-            if(!chassisPOFound) {
-
-            }
-        }
-
-
-        this.makeFinancesCalculations();
-    }
-
-
     renderedCallback() {
         if(!this.defaultAdminChecklist) {
             this.queryAdminChecklist_Defaults().then(() => {
@@ -1217,18 +1217,5 @@ export default class Admin_checklist extends LightningElement {
                 this.toastHandler.displayError('Error in call to then after queryAdminChecklist_Defaults!', '(admin_in_opportunity) Something went wrong, see console log for more info', err);
             });
         }
-
-        /*
-        if(this.opportunity && !this.opportunityLink) {
-            this.opportunityLink = this.template.querySelector("[data-id='OpportunityLink']");
-
-            this.opportunityLink['label'] = this.opportunityData.Name;
-
-            this.opportunityLink['attributes'] = {
-                recordId: this.opportunityData.Id,
-                actionName: 'view'
-            }
-        }
-        */
     }
 }
