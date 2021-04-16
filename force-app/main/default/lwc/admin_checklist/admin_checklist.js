@@ -770,7 +770,9 @@ export default class Admin_checklist extends LightningElement {
     appendFieldValuePairs(fieldObject, fieldValueMap) {
         for(const key in fieldObject) {
             if(fieldObject[key].apiFieldName) {
-                if(fieldObject[key].getAttribute('value')) {
+                // Need to 'or' with the empty string case because '' is considered to be falsy and won't save making
+                // it impossible to remove a comment
+                if(fieldObject[key].getAttribute('value') || fieldObject[key].getAttribute('value') === '') {
                     fieldValueMap[fieldObject[key].apiFieldName] = fieldObject[key].getAttribute('value');
                 }
             }
@@ -1071,12 +1073,12 @@ export default class Admin_checklist extends LightningElement {
             });
             this.tradeIn_elements.tradeIn_Unit_Number.setApiFieldName('TradeIn_Unit_Number__c');
 
-            this.tradeIn_elements.tradeIn_Actual_Cash_Value = new LWC_Input_Element('tradeIn_Actual_Cash_Value', this.template, this.arbitraryAttributeHandler, (event) => {
+            this.tradeIn_elements.tradeIn_Actual_Cash_Value = new LWC_Input_Element('tradeIn_Actual_Cash_Value', this.template, this.numberAttributeHandler, (event) => {
                 this.handleDOMInput(event)
             });
             this.tradeIn_elements.tradeIn_Actual_Cash_Value.setApiFieldName('TradeIn_Actual_Cash_Value__c');
 
-            this.tradeIn_elements.tradeIn_Billing_Amount = new LWC_Input_Element('tradeIn_Billing_Amount', this.template, this.arbitraryAttributeHandler, (event) => {
+            this.tradeIn_elements.tradeIn_Billing_Amount = new LWC_Input_Element('tradeIn_Billing_Amount', this.template, this.numberAttributeHandler, (event) => {
                 this.handleDOMInput(event)
             });
             this.tradeIn_elements.tradeIn_Billing_Amount.setApiFieldName('TradeIn_Billing_Amount__c');
@@ -1157,9 +1159,6 @@ export default class Admin_checklist extends LightningElement {
             for(const key in this.whoWhat_elements) {
                 this.whoWhat_elements[key].initialize();
             }
-
-            // Default Salesman Lookup to Current User
-            this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', this.currentUser);
         }
         
         if(!this.finances_elements.finances_Chassis_Cost.isInitialized) {
@@ -1204,6 +1203,12 @@ export default class Admin_checklist extends LightningElement {
 
 
                 this.initializeFromAdmin(this.defaultAdminChecklist);
+
+                if(this.currentUser) {
+                    // Default Salesman Lookup to Current User
+                    // MUST BE AFTER initializeFromAdmin and initializeLWC_Elements or it will be overwritten
+                    this.whoWhat_elements.whoWhat_Salesman.setAttribute('value', this.currentUser);
+                }
 
 
                 let page_url = new URL(window.location.href);
