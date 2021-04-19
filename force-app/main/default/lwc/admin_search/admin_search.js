@@ -1,6 +1,6 @@
 import { LightningElement } from 'lwc';
 
-import {LWC_Toast, LWC_Element, LWC_Input_Element, Attribute_Handler} from 'c/lwc_js_common';
+import {LWC_Toast, LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
 
 import Id from '@salesforce/user/Id';
 
@@ -28,39 +28,65 @@ export default class Admin_search extends LightningElement {
         if(!this.lookUpAdmin_elements) {
             this.lookUpAdmin_elements = {};
         
-            this.lookUpAdmin_elements.lookUpAdmin_Salesman = new LWC_Input_Element(
+            this.lookUpAdmin_elements.lookUpAdmin_Salesman = new LWC_Element(
+                // data-id
                 'lookUpAdmin_Salesman',
-
+                
+                // Reference to this context so query dom element can be applied
                 this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
 
-                this.arbitraryAttributeHandler,
-
-                (event) => {
-                    this.handleDOMInput(event);
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
                 }
             );
         
-            this.lookUpAdmin_elements.lookUpAdmin_Customer = new LWC_Input_Element(
+
+            this.lookUpAdmin_elements.lookUpAdmin_Customer = new LWC_Element(
+                // data-id
                 'lookUpAdmin_Customer',
-
+                
+                // Reference to this context so query dom element can be applied
                 this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
 
-                this.arbitraryAttributeHandler,
-
-                (event) => {
-                    this.handleDOMInput(event);
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
                 }
             );
 
-            this.lookUpAdmin_elements.lookUpAdmin_Date = new LWC_Input_Element(
+
+            this.lookUpAdmin_elements.lookUpAdmin_Date = new LWC_Element(
+                // data-id
                 'lookUpAdmin_Date',
-
+                
+                // Reference to this context so query dom element can be applied
                 this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
 
-                this.arbitraryAttributeHandler,
-
-                (event) => {
-                    this.handleDOMInput(event);
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
                 }
             );
         }

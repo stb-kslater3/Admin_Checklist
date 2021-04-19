@@ -1,6 +1,6 @@
 import { LightningElement } from 'lwc';
 
-import {LWC_Toast, LWC_Element, LWC_Input_Element, Attribute_Handler} from 'c/lwc_js_common';
+import {LWC_Toast, LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
 import {blobToPDF} from 'c/lwc_blob_handlers'
 
 import Id from '@salesforce/user/Id';
@@ -847,270 +847,1314 @@ if(key === 'tradeIn_Actual_Cash_Value') {
         if(!this.whoWhat_elements) {
             this.whoWhat_elements = {};
 
-            this.whoWhat_elements.whoWhat_AdminName = new LWC_Input_Element('whoWhat_AdminName', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.whoWhat_elements.whoWhat_AdminName = new LWC_Element(
+                // data-id
+                'whoWhat_AdminName',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_AdminName.setApiFieldName('Name__c');
 
-            this.whoWhat_elements.whoWhat_OpportunityLink = new LWC_Input_Element('whoWhat_OpportunityLink', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
 
-            this.whoWhat_elements.whoWhat_Salesman = new LWC_Input_Element('whoWhat_Salesman', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.whoWhat_elements.whoWhat_OpportunityLink = new LWC_Element(
+                // data-id
+                'whoWhat_OpportunityLink',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
+
+
+            this.whoWhat_elements.whoWhat_Salesman = new LWC_Element(
+                // data-id
+                'whoWhat_Salesman',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+            
             this.whoWhat_elements.whoWhat_Salesman.setApiFieldName('Salesman__c');
 
-            this.whoWhat_elements.whoWhat_Customer = new LWC_Input_Element('whoWhat_Customer', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.whoWhat_elements.whoWhat_Customer = new LWC_Element(
+                // data-id
+                'whoWhat_Customer',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_Customer.setApiFieldName('Customer_Name__c');
 
-            this.whoWhat_elements.whoWhat_Date = new LWC_Input_Element('whoWhat_Date', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.whoWhat_elements.whoWhat_Date = new LWC_Element(
+                // data-id
+                'whoWhat_Date',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_Date.setApiFieldName('Date__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_Make = new LWC_Input_Element('whoWhat_Chassis_Make', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            // _____________________________ WHOWHAT CHASSIS STUFF ___________________________________
+            this.whoWhat_elements.whoWhat_Chassis_Make = new LWC_Element(
+                // data-id
+                'whoWhat_Chassis_Make',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_Chassis_Make.setApiFieldName('Chassis_Make__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_Model = new LWC_Input_Element('whoWhat_Chassis_Model', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.whoWhat_elements.whoWhat_Chassis_Model = new LWC_Element(
+                // data-id
+                'whoWhat_Chassis_Model',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_Chassis_Model.setApiFieldName('Chassis_Model__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_Year = new LWC_Input_Element('whoWhat_Chassis_Year', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.whoWhat_elements.whoWhat_Chassis_Year = new LWC_Element(
+                // data-id
+                'whoWhat_Chassis_Year',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_Chassis_Year.setApiFieldName('Chassis_Year__c');
 
-            this.whoWhat_elements.whoWhat_Chassis_VIN = new LWC_Input_Element('whoWhat_Chassis_VIN', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.whoWhat_elements.whoWhat_Chassis_VIN = new LWC_Element(
+                // data-id
+                'whoWhat_Chassis_VIN',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_Chassis_VIN.setApiFieldName('Chassis_VIN__c');
 
-            this.whoWhat_elements.whoWhat_Body_Series_Name = new LWC_Input_Element('whoWhat_Body_Series_Name', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            // _____________________________ BODY SERIES ___________________________________
+            this.whoWhat_elements.whoWhat_Body_Series_Name = new LWC_Element(
+                // data-id
+                'whoWhat_Body_Series_Name',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.whoWhat_elements.whoWhat_Body_Series_Name.setApiFieldName('Body_Series_Name__c');
         }
 
         if(!this.finances_elements) {
             this.finances_elements = {};
 
-            this.finances_elements.finances_Chassis_Cost = new LWC_Input_Element('finances_Chassis_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            // ________________________ CHASSIS STUFF ______________________________________
+            this.finances_elements.finances_Chassis_Cost = new LWC_Element(
+                // data-id
+                'finances_Chassis_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Chassis_Cost.setApiFieldName('Chassis_Cost__c');
 
-            this.finances_elements.finances_Chassis_Description = new LWC_Input_Element('finances_Chassis_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            
+            this.finances_elements.finances_Chassis_Description = new LWC_Element(
+                // data-id
+                'finances_Chassis_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Chassis_Description.setApiFieldName('Chassis_Description__c');
 
-            this.finances_elements.finances_Chassis_POInfo = new LWC_Input_Element('finances_Chassis_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
 
-            this.finances_elements.finances_Body_Cost = new LWC_Input_Element('finances_Body_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.finances_elements.finances_Chassis_POInfo = new LWC_Element(
+                // data-id
+                'finances_Chassis_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
+
+
+            // ________________________ BODY STUFF ______________________________________
+            this.finances_elements.finances_Body_Cost = new LWC_Element(
+                // data-id
+                'finances_Body_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Body_Cost.setApiFieldName('Body_Cost__c');
 
-            this.finances_elements.finances_Body_Description = new LWC_Input_Element('finances_Body_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Body_Description = new LWC_Element(
+                // data-id
+                'finances_Body_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Body_Description.setApiFieldName('Body_Description__c');
 
-            this.finances_elements.finances_Body_POInfo = new LWC_Input_Element('finances_Body_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Body_POInfo = new LWC_Element(
+                // data-id
+                'finances_Body_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
 
 
-            this.finances_elements.finances_Freight_Cost = new LWC_Input_Element('finances_Freight_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            
+            // ____________________________ FREIGHT STUFF _______________________________
+            this.finances_elements.finances_Freight_Cost = new LWC_Element(
+                // data-id
+                'finances_Freight_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Freight_Cost.setApiFieldName('Freight_Cost__c');
 
-            this.finances_elements.finances_Freight_Description = new LWC_Input_Element('finances_Freight_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Freight_Description = new LWC_Element(
+                // data-id
+                'finances_Freight_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Freight_Description.setApiFieldName('Freight_Description__c');
 
-            this.finances_elements.finances_Freight_POInfo = new LWC_Input_Element('finances_Freight_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Freight_POInfo = new LWC_Element(
+                // data-id
+                'finances_Freight_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
 
 
-            this.finances_elements.finances_AOrder_Cost = new LWC_Input_Element('finances_AOrder_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            // _____________________________ AORDER STUFF ___________________________________
+            this.finances_elements.finances_AOrder_Cost = new LWC_Element(
+                // data-id
+                'finances_AOrder_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_AOrder_Cost.setApiFieldName('AOrder_Cost__c');
 
-            this.finances_elements.finances_AOrder_Description = new LWC_Input_Element('finances_AOrder_Description', this.template, this.arbitraryAttributeHandler,  (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_AOrder_Description = new LWC_Element(
+                // data-id
+                'finances_AOrder_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_AOrder_Description.setApiFieldName('AOrder_Description__c');
 
-            this.finances_elements.finances_AOrder_POInfo = new LWC_Input_Element('finances_AOrder_POInfo', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_AOrder_POInfo = new LWC_Element(
+                // data-id
+                'finances_AOrder_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
 
 
-            this.finances_elements.finances_Other_1_Cost = new LWC_Input_Element('finances_Other_1_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            // _____________________________ OTHER 1 STUFF ___________________________________
+            this.finances_elements.finances_Other_1_Cost = new LWC_Element(
+                // data-id
+                'finances_Other_1_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_1_Cost.setApiFieldName('Other_1_Cost__c');
 
-            this.finances_elements.finances_Other_1_Description = new LWC_Input_Element('finances_Other_1_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Other_1_Description = new LWC_Element(
+                // data-id
+                'finances_Other_1_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_1_Description.setApiFieldName('Other_1_Description__c');
 
 
-            this.finances_elements.finances_Other_2_Cost = new LWC_Input_Element('finances_Other_2_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.finances_elements.finances_Other_1_POInfo = new LWC_Element(
+                // data-id
+                'finances_Other_1_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
+
+
+            // _____________________________ OTHER 2 STUFF ___________________________________
+            this.finances_elements.finances_Other_2_Cost = new LWC_Element(
+                // data-id
+                'finances_Other_2_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_2_Cost.setApiFieldName('Other_2_Cost__c');
 
-            this.finances_elements.finances_Other_2_Description = new LWC_Input_Element('finances_Other_2_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Other_2_Description = new LWC_Element(
+                // data-id
+                'finances_Other_2_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_2_Description.setApiFieldName('Other_2_Description__c');
 
 
-            this.finances_elements.finances_Other_3_Cost = new LWC_Input_Element('finances_Other_3_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.finances_elements.finances_Other_2_POInfo = new LWC_Element(
+                // data-id
+                'finances_Other_2_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
+
+
+
+            // _____________________________ OTHER 3 STUFF ___________________________________
+            this.finances_elements.finances_Other_3_Cost = new LWC_Element(
+                // data-id
+                'finances_Other_3_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_3_Cost.setApiFieldName('Other_3_Cost__c');
 
-            this.finances_elements.finances_Other_3_Description = new LWC_Input_Element('finances_Other_3_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Other_3_Description = new LWC_Element(
+                // data-id
+                'finances_Other_3_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_3_Description.setApiFieldName('Other_3_Description__c');
 
 
-            this.finances_elements.finances_Other_4_Cost = new LWC_Input_Element('finances_Other_4_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.finances_elements.finances_Other_3_POInfo = new LWC_Element(
+                // data-id
+                'finances_Other_3_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
+
+
+
+            // _____________________________ OTHER 4 STUFF ___________________________________
+            this.finances_elements.finances_Other_4_Cost = new LWC_Element(
+                // data-id
+                'finances_Other_4_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_4_Cost.setApiFieldName('Other_4_Cost__c');
 
-            this.finances_elements.finances_Other_4_Description = new LWC_Input_Element('finances_Other_4_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Other_4_Description = new LWC_Element(
+                // data-id
+                'finances_Other_4_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_4_Description.setApiFieldName('Other_4_Description__c');
 
 
-            this.finances_elements.finances_Other_5_Cost = new LWC_Input_Element('finances_Other_5_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.finances_elements.finances_Other_4_POInfo = new LWC_Element(
+                // data-id
+                'finances_Other_4_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
+
+
+
+            // _____________________________ OTHER 5 STUFF ___________________________________
+            this.finances_elements.finances_Other_5_Cost = new LWC_Element(
+                // data-id
+                'finances_Other_5_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_5_Cost.setApiFieldName('Other_5_Cost__c');
 
-            this.finances_elements.finances_Other_5_Description = new LWC_Input_Element('finances_Other_5_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Other_5_Description = new LWC_Element(
+                // data-id
+                'finances_Other_5_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_5_Description.setApiFieldName('Other_5_Description__c');
 
 
-            this.finances_elements.finances_Subtotal_Before_Profit = new LWC_Element('finances_Subtotal_Before_Profit', this.template, this.currencyAttributeHandler);
+            this.finances_elements.finances_Other_5_POInfo = new LWC_Element(
+                // data-id
+                'finances_Other_5_POInfo',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // We want to call Navigate on it at the right moment, but need to have already queried the DOM in order
+                // to call it so add the event listner for links later.
+                {}
+            );
 
 
 
-            this.finances_elements.finances_Profit_Amount = new LWC_Input_Element('finances_Profit_Amount', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            // _____________________________ SUBTOTAL BEFORE PROFIT ___________________________________
+            this.finances_elements.finances_Subtotal_Before_Profit = new LWC_Element(
+                // data-id
+                'finances_Subtotal_Before_Profit',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This element has no events, it just outputs a calculated value
+                {}
+            );
+
+
+            // _____________________________ PROFIT STUFF AND DEALER PACK ___________________________________
+            this.finances_elements.finances_Profit_Amount = new LWC_Element(
+                // data-id
+                'finances_Profit_Amount',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Profit_Amount.setApiFieldName('Profit_Amount__c');
             
-            this.finances_elements.finances_Profit_Percent = new LWC_Input_Element('finances_Profit_Percent', this.template,  this.percentAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
 
-            this.finances_elements.finances_Dealer_Pack = new LWC_Input_Element('finances_Dealer_Pack', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.finances_elements.finances_Profit_Percent = new LWC_Element(
+                // data-id
+                'finances_Profit_Percent',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.percentAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
+
+            this.finances_elements.finances_Dealer_Pack = new LWC_Element(
+                // data-id
+                'finances_Dealer_Pack',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Dealer_Pack.setApiFieldName('Dealer_Pack__c');
 
-            this.finances_elements.finances_Gross_Amount = new LWC_Element('finances_Gross_Amount', this.template,  this.currencyAttributeHandler);
 
-            this.finances_elements.finances_Gross_Percent = new LWC_Element('finances_Gross_Percent', this.template,  this.percentAttributeHandler);
+            this.finances_elements.finances_Gross_Amount = new LWC_Element(
+                // data-id
+                'finances_Gross_Amount',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This element has no events, it just outputs a calculated value
+                {}
+            );
 
 
+            this.finances_elements.finances_Gross_Percent = new LWC_Element(
+                // data-id
+                'finances_Gross_Percent',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.percentAttributeHandler, 
 
-            this.finances_elements.finances_Subtotal_After_Profit = new LWC_Element('finances_Subtotal_After_Profit', this.template, this.currencyAttributeHandler);
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This element has no events, it just outputs a calculated value
+                {}
+            );
+            
 
 
-            this.finances_elements.finances_FET_Checkbox = new LWC_Input_Element('finances_FET_Checkbox', this.template, this.arbitraryAttributeHandler, (event) => {
-                // do nothing on focus out of checking Apply FET
-            });
+            // _____________________________ SUBTOTAL AFTER PROFIT ___________________________________
+            this.finances_elements.finances_Subtotal_After_Profit = new LWC_Element(
+                // data-id
+                'finances_Subtotal_After_Profit',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
 
-            this.finances_elements.finances_12_FET = new LWC_Element('finances_12_FET', this.template, this.currencyAttributeHandler);
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This element has no events, it just outputs a calculated value
+                {}
+            );
 
-            this.finances_elements.finances_Minus_Tire_FET = new LWC_Input_Element('finances_Minus_Tire_FET', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            // _____________________________ F.E.T. ___________________________________
+            this.finances_elements.finances_FET_Checkbox = new LWC_Element(
+                // data-id
+                'finances_FET_Checkbox',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'onclick': (event) => {
+                        this.handleApplyFET(event);
+                    }
+                }
+            );
+
+
+            this.finances_elements.finances_12_FET = new LWC_Element(
+                // data-id
+                'finances_12_FET',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This element has no events, it just outputs a calculated value
+                {}
+            );
+
+
+            this.finances_elements.finances_Minus_Tire_FET = new LWC_Element(
+                // data-id
+                'finances_Minus_Tire_FET',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Minus_Tire_FET.setApiFieldName('Minus_Tire_FET__c');
 
-            this.finances_elements.finances_Total_FET = new LWC_Element('finances_Total_FET', this.template, this.currencyAttributeHandler);
+
+            this.finances_elements.finances_Total_FET = new LWC_Element(
+                // data-id
+                'finances_Total_FET',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This element has no events, it just outputs a calculated value
+                {}
+            );
 
 
 
-            this.finances_elements.finances_Extended_Warranty = new LWC_Input_Element('finances_Extended_Warranty', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            // _____________________________ OTHER TOTAL STUFF ___________________________________
+            this.finances_elements.finances_Extended_Warranty = new LWC_Element(
+                // data-id
+                'finances_Extended_Warranty',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Extended_Warranty.setApiFieldName('Extended_Warranty__c');
 
-            this.finances_elements.finances_Other_Fees = new LWC_Input_Element('finances_Other_Fees', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Other_Fees = new LWC_Element(
+                // data-id
+                'finances_Other_Fees',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Other_Fees.setApiFieldName('Other_Fees__c');
 
-            this.finances_elements.finances_Documentation_Fee = new LWC_Input_Element('finances_Documentation_Fee', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Documentation_Fee = new LWC_Element(
+                // data-id
+                'finances_Documentation_Fee',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Documentation_Fee.setApiFieldName('Documentation_Fee__c');
 
-            this.finances_elements.finances_Deposit = new LWC_Input_Element('finances_Deposit', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.finances_elements.finances_Deposit = new LWC_Element(
+                // data-id
+                'finances_Deposit',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.finances_elements.finances_Deposit.setApiFieldName('Deposit__c');
 
-            this.finances_elements.finances_Total = new LWC_Element('finances_Total', this.template, this.currencyAttributeHandler);
+
+            this.finances_elements.finances_Total = new LWC_Element(
+                // data-id
+                'finances_Total',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This element has no events, it just outputs a calculated value
+                {}
+            );
         }
 
 
         if(!this.tradeIn_elements) {
             this.tradeIn_elements = {};
 
-            this.tradeIn_elements.tradeIn_Make = new LWC_Input_Element('tradeIn_Make', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            this.tradeIn_elements.tradeIn_Make = new LWC_Element(
+                // data-id
+                'tradeIn_Make',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.tradeIn_elements.tradeIn_Make.setApiFieldName('TradeIn_Make__c');
 
-            this.tradeIn_elements.tradeIn_Model = new LWC_Input_Element('tradeIn_Model', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.tradeIn_elements.tradeIn_Model = new LWC_Element(
+                // data-id
+                'tradeIn_Model',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.tradeIn_elements.tradeIn_Model.setApiFieldName('TradeIn_Model__c');
 
-            this.tradeIn_elements.tradeIn_Year = new LWC_Input_Element('tradeIn_Year', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.tradeIn_elements.tradeIn_Year = new LWC_Element(
+                // data-id
+                'tradeIn_Year',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.tradeIn_elements.tradeIn_Year.setApiFieldName('TradeIn_Year__c');
 
-            this.tradeIn_elements.tradeIn_Unit_Number = new LWC_Input_Element('tradeIn_Unit_Number', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.tradeIn_elements.tradeIn_Unit_Number = new LWC_Element(
+                // data-id
+                'tradeIn_Unit_Number',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.tradeIn_elements.tradeIn_Unit_Number.setApiFieldName('TradeIn_Unit_Number__c');
 
-            this.tradeIn_elements.tradeIn_Actual_Cash_Value = new LWC_Input_Element('tradeIn_Actual_Cash_Value', this.template, this.numberAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.tradeIn_elements.tradeIn_Actual_Cash_Value = new LWC_Element(
+                // data-id
+                'tradeIn_Actual_Cash_Value',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.numberAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.tradeIn_elements.tradeIn_Actual_Cash_Value.setApiFieldName('TradeIn_Actual_Cash_Value__c');
 
-            this.tradeIn_elements.tradeIn_Billing_Amount = new LWC_Input_Element('tradeIn_Billing_Amount', this.template, this.numberAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.tradeIn_elements.tradeIn_Billing_Amount = new LWC_Element(
+                // data-id
+                'tradeIn_Billing_Amount',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.numberAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.tradeIn_elements.tradeIn_Billing_Amount.setApiFieldName('TradeIn_Billing_Amount__c');
         }
 
@@ -1118,53 +2162,244 @@ if(key === 'tradeIn_Actual_Cash_Value') {
         if(!this.fetCredit_elements) {
             this.fetCredit_elements = {};
 
-            this.fetCredit_elements.fetCredit_FET_Front_Description = new LWC_Input_Element('fetCredit_FET_Front_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            // _____________________________ F.E.T. Front ___________________________________
+            this.fetCredit_elements.fetCredit_FET_Front_Description = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Front_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Front_Description.setApiFieldName('FET_Front_Description__c');
 
-            this.fetCredit_elements.fetCredit_FET_Front_Size = new LWC_Input_Element('fetCredit_FET_Front_Size', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.fetCredit_elements.fetCredit_FET_Front_Size = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Front_Size',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Front_Size.setApiFieldName('FET_Front_Size__c');
 
-            this.fetCredit_elements.fetCredit_FET_Front_Cost = new LWC_Input_Element('fetCredit_FET_Front_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.fetCredit_elements.fetCredit_FET_Front_Cost = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Front_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Front_Cost.setApiFieldName('FET_Front_Cost__c');
 
-            this.fetCredit_elements.fetCredit_FET_Front_Quantity = new LWC_Input_Element('fetCredit_FET_Front_Quantity', this.template, this.numberAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.fetCredit_elements.fetCredit_FET_Front_Quantity = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Front_Quantity',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.numberAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Front_Quantity.setApiFieldName('FET_Front_Quantity__c');
 
-            this.fetCredit_elements.fetCredit_FET_Front_Subtotal = new LWC_Element('fetCredit_FET_Front_Subtotal', this.template, this.currencyAttributeHandler);
+
+            this.fetCredit_elements.fetCredit_FET_Front_Subtotal = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Front_Subtotal',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This has no event, it simply outputs a calculated dollar amount
+                {}
+            );
 
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Description = new LWC_Input_Element('fetCredit_FET_Rear_Description', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+            // _____________________________ F.E.T. REAR ___________________________________
+            this.fetCredit_elements.fetCredit_FET_Rear_Description = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Rear_Description',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Rear_Description.setApiFieldName('FET_Rear_Description__c');
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Size = new LWC_Input_Element('fetCredit_FET_Rear_Size', this.template, this.arbitraryAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.fetCredit_elements.fetCredit_FET_Rear_Size = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Rear_Size',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Rear_Size.setApiFieldName('FET_Rear_Size__c');
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Cost = new LWC_Input_Element('fetCredit_FET_Rear_Cost', this.template, this.currencyAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.fetCredit_elements.fetCredit_FET_Rear_Cost = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Rear_Cost',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Rear_Cost.setApiFieldName('FET_Rear_Cost__c');
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Quantity = new LWC_Input_Element('fetCredit_FET_Rear_Quantity', this.template, this.numberAttributeHandler, (event) => {
-                this.handleDOMInput(event)
-            });
+
+            this.fetCredit_elements.fetCredit_FET_Rear_Quantity = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Rear_Quantity',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.numberAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {
+                    'focusout': (event) => {
+                        this.handleDOMInput(event);
+                    }
+                }
+            );
+
             this.fetCredit_elements.fetCredit_FET_Rear_Quantity.setApiFieldName('FET_Rear_Quantity__c');
 
-            this.fetCredit_elements.fetCredit_FET_Rear_Subtotal = new LWC_Element('fetCredit_FET_Rear_Subtotal', this.template, this.currencyAttributeHandler);
+
+            this.fetCredit_elements.fetCredit_FET_Rear_Subtotal = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Rear_Subtotal',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This has no event, it simply outputs a calculated dollar amount
+                {}
+            );
 
 
-            this.fetCredit_elements.fetCredit_FET_Total = new LWC_Element('fetCredit_FET_Total', this.template, this.currencyAttributeHandler);
+            this.fetCredit_elements.fetCredit_FET_Total = new LWC_Element(
+                // data-id
+                'fetCredit_FET_Total',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.currencyAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                // This has no event, it simply outputs a calculated dollar amount
+                {}
+            );
         }
     }
 
@@ -1230,6 +2465,48 @@ if(key === 'tradeIn_Actual_Cash_Value') {
         if(!this.defaultAdminChecklist) {
             this.queryAdminChecklist_Defaults().then(() => {
                 this.initializeLWC_Elements();
+
+                // Now that the components are queried, we can make the callback for the lwc_navigator links with
+                // their navigate methods
+                this.whoWhat_elements.whoWhat_OpportunityLink.domElement.addEventListener('click', (event) => {
+                    this.whoWhat_elements.whoWhat_OpportunityLink.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Chassis_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Chassis_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Body_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Body_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Freight_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Freight_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_AOrder_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_AOrder_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Other_1_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Other_1_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Other_2_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Other_2_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Other_3_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Other_3_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Other_4_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Other_4_POInfo.domElement.navigate();
+                });
+
+                this.finances_elements.finances_Other_5_POInfo.domElement.addEventListener('click', (event) => {
+                    this.finances_elements.finances_Other_5_POInfo.domElement.navigate();
+                });
 
 
                 this.initializeFromAdmin(this.defaultAdminChecklist);

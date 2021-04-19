@@ -35,11 +35,39 @@ export default class Admin_in_opportunity extends LightningElement {
 
     createLWCElements() {
         if(!this.newAdminButton) {
-            this.newAdminButton = new LWC_Element('New_Admin_Button', this.template, this.arbitraryAttributeHandler);
+            this.newAdminButton = new LWC_Element(
+                // data-id
+                'New_Admin_Button',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {}
+            );
         }
 
         if(!this.editAdminButton) {
-            this.editAdminButton = new LWC_Element('Edit_Admin_Button', this.template, this.arbitraryAttributeHandler);
+            this.editAdminButton = new LWC_Element(
+                // data-id
+                'Edit_Admin_Button',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {}
+            );
         }
     }
 
@@ -118,7 +146,6 @@ export default class Admin_in_opportunity extends LightningElement {
         });
     }
 
-    // TODO: Set the admin field of this Opportunity with the returned admin Id before you make the call to navigate
     handleClick_NewAdmin(event) {
         insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: {
             Customer_Name__c: this.recordData.Account.Name
@@ -146,7 +173,7 @@ export default class Admin_in_opportunity extends LightningElement {
 
     handleClick_EditAdmin() {
         try {
-            //this.editAdminButton.domElement.navigate();
+            this.editAdminButton.domElement.navigate();
         }catch(e) {
             this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to editAdminButton.Navigate', e);
         }
