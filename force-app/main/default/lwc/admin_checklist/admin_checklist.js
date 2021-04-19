@@ -515,15 +515,39 @@ export default class Admin_checklist extends LightningElement {
                             if(lineItemRecords.length > 0) {
                                 this.lineItemsData = lineItemRecords;
 
-                                // If we have the Cost for the Chassis from the Product go ahead and use that
-                                // and it will be the fallback for when we don't have a PO Line to find the cost with
+
                                 for(let index in this.lineItemsData) {
                                     if(this.lineItemsData[index].Product2.RecordType.Name === 'Chassis') {
+                                        this.whoWhat_elements.whoWhat_Chassis_Year.setAttribute('value', this.lineItemsData[index].Product2.Year__c);
+
+                                        this.whoWhat_elements.whoWhat_Chassis_Year.setAttribute('disabled', true);
+
+
+                                        this.whoWhat_elements.whoWhat_Chassis_Make.setAttribute('value', this.lineItemsData[index].Product2.Chassis_Make__c);
+
+                                        this.whoWhat_elements.whoWhat_Chassis_Make.setAttribute('disabled', true);
+
+
+                                        this.whoWhat_elements.whoWhat_Chassis_VIN.setAttribute('value', this.lineItemsData[index].Product2.VIN__c);
+
+                                        this.whoWhat_elements.whoWhat_Chassis_VIN.setAttribute('disabled', true);
+
+
+                                        this.whoWhat_elements.whoWhat_Chassis_Model.setAttribute('value', this.lineItemsData[index].Product2.Chassis_Model__c);
+
+                                        this.whoWhat_elements.whoWhat_Chassis_Model.setAttribute('disabled', true);
+
+
+                                        // If we have the Cost for the Chassis from the Product go ahead and use that
+                                        // and it will be the fallback for when we don't have a PO Line to find the cost with
                                         this.finances_elements.finances_Chassis_Cost.setAttribute('value', this.lineItemsData[index].Total_Product_Cost__c);
 
                                         this.finances_elements.finances_Chassis_Cost.setAttribute('disabled', true);
+                                    }else if(this.lineItemsData[index].Product2.RecordType.Name === 'Service Body') {
+                                        // Go ahead and replace the Body Series Name with the Body Products Name
+                                        this.whoWhat_elements.whoWhat_Body_Series_Name.setAttribute('value', this.lineItemsData[index].Product2.Body_Model__c);
 
-                                        break;
+                                        this.whoWhat_elements.whoWhat_Body_Series_Name.setAttribute('disabled', true);
                                     }
                                 }
 
@@ -769,10 +793,16 @@ export default class Admin_checklist extends LightningElement {
 
     appendFieldValuePairs(fieldObject, fieldValueMap) {
         for(const key in fieldObject) {
+if(key === 'tradeIn_Actual_Cash_Value') {
+    console.log('Actual Cash Value . . .');
+    console.log(fieldObject[key].getAttribute('value'));
+    console.log(fieldObject[key].apiFieldName);
+    console.log('. . .');
+}
             if(fieldObject[key].apiFieldName) {
                 // Need to 'or' with the empty string case because '' is considered to be falsy and won't save making
                 // it impossible to remove a comment
-                if(fieldObject[key].getAttribute('value') || fieldObject[key].getAttribute('value') === '') {
+                if(fieldObject[key].getAttribute('value') || fieldObject[key].getAttribute('value') === '' || fieldObject[key].getAttribute('value') === 0) {
                     fieldValueMap[fieldObject[key].apiFieldName] = fieldObject[key].getAttribute('value');
                 }
             }

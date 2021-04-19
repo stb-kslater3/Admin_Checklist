@@ -561,8 +561,24 @@ public with sharing class AdminChecklist_Controller {
         recordObject = (sObject) Type.forName(objectName).newInstance();
         
         for (String key : fieldValuePairs.keySet()) {
-          recordObject.put(key, fieldValuePairs.get(key));
-        }
+            if(key.equalsIgnoreCase('date') || key.equalsIgnoreCase('date__c')) {
+  System.debug(fieldValuePairs.get(key));
+              String originalString = (String) fieldValuePairs.get(key);
+              
+              originalString = originalString.split('Z')[0];
+              originalString = originalString.split('T')[0];
+  
+              String[] dateSplit = originalString.split('-');
+  
+              String dateString = dateSplit[1];
+              dateString += '/' + dateSplit[2];
+              dateString += '/' + dateSplit[0];
+  System.debug(dateString);
+              recordObject.put(key, Date.parse(dateString));
+            }else {
+              recordObject.put(key, fieldValuePairs.get(key));
+            }
+          }
        
         Database.SaveResult result = Database.insert(recordObject, true);
         

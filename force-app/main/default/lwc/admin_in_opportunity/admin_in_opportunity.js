@@ -112,7 +112,7 @@ export default class Admin_in_opportunity extends LightningElement {
         console.log('Opportunity: ' + this.recordId);
 
         updateRecordFromId({ objectName: 'Opportunity', recordId: this.recordId, fieldValuePairs: {'AdminChecklist__c': event.detail.value}}).then(isSuccess => {
-
+            location.reload();
         }).catch(err => {
             this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to updateRecordFromId for Opportunity in handleAdminChosen', err);
         });
@@ -133,7 +133,7 @@ export default class Admin_in_opportunity extends LightningElement {
                     // So I need the editAdminButtonInstead because it switches real quick
                     this.editAdminButton.domElement.navigate();
                 }else {
-                    console.log('(admin_in_opportunity) updateRecordFromId came back as unseccessful');
+                    console.log('(admin_in_opportunity) updateRecordFromId came back as unsuccessful');
                 }
             }).catch(err => {
                 this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to updateRecordFromId in insertRecord of handleClick_NewAdmin', err);
