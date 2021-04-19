@@ -652,22 +652,29 @@ export default class Admin_checklist extends LightningElement {
                                         // . . . ..................................................................
                                         // . . .  ...................................................................
                                     }
+
+
+                                    this.toastHandler.displayChoice('Admin Loaded!', '', 'info', 'sticky');
                                 }).catch(err => {
                                     this.toastHandler.displayError('Error occurred while trying to find the Purchase Order Lines for the Opportunity!', '(admin_in_opportunity) See console log for more details', err);
                                 });
                             }else {
-                                // Just in case they haven't added the products yet, let them know no products were found
-                                this.toastHandler.displayChoice('Note: No Products were found that belong to this Opportunity', 'No big deal, but the data you see will only be pulled from the Admin Checklist and the Opportunity until the Products are added to the Opportunity', 'warning', 'sticky');
+                                this.toastHandler.displayChoice('Admin Loaded!', '', 'info', 'sticky');
                             }
                         }).catch(err => {
                             this.toastHandler.displayError('Error occurred while trying to find the Products for the Opportunity!', '(admin_in_opportunity) See console log for more details', err);
                         });
                     }else if(opportunityRecords.length > 1) {
                 // . . . ......................................................................
+
+
+                        // Maybe let them know and have them decide which one is the actual then remove this
+                        // admin's value from the other one
+
+
                 // . . . ......................................................................
                     }else {
-                        // Just in case they set the wrong Opportunity, give this warning when no Opportunity found
-                        this.toastHandler.displayChoice('Note: An Opportunity was not found that owns this Admin', 'No big deal, but if this Admin is supposed to belong to an already existing Opportunity, then go to that Opportunity and check if you selected the correct Admin.', 'warning', 'sticky');
+                        this.toastHandler.displayChoice('Admin Loaded!', '', 'info', 'sticky');
                     }
                 }).catch(err => {
                     this.toastHandler.displayError('Error occurred while trying to find the Opportuninty!', '(admin_in_opportunity) See console log for more details', err);
