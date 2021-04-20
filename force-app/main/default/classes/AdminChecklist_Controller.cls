@@ -154,8 +154,10 @@ public with sharing class AdminChecklist_Controller {
         
         if(adminData.containsKey('date')) {
             last_modified = adminData.get('date');
-        }else {
+        }else if(thisAdmin != null) {
             last_modified = thisAdmin.LastModifiedDate.format('y-M-d');
+        }else {
+            last_modified = '_';
         }
 
         if(adminData.containsKey('Customer_Name__c')) {
@@ -513,6 +515,7 @@ public with sharing class AdminChecklist_Controller {
     }
 
 
+    @TestVisible
     private String formatMoney(String numberString) {
         String[] numSplit = numberString.split('\\.');
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>AdminChecklist_Controller</members>
+        <members>AdminChecklist_Controller_TEST</members>
+        <members>Unique_Admin_Opportunity_TEST</members>
+        <name>ApexClass</name>
+    </types>
+
+    <types>
+        <members>Unique_Admin_Opportunity</members>
+        <name>ApexTrigger</name>
+    </types>
+    <version>50.0</version>
+</Package>

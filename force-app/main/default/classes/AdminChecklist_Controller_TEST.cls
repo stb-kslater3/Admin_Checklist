@@ -3,57 +3,69 @@ private class AdminChecklist_Controller_TEST {
     // --------------------------------------------------------------------------------------------
     // ---------------------------------- Format Money -----------------------------------------------
     // --------------------------------------------------------------------------------------------
-/*
     @IsTest
-    static void 
+    static void testFormatMoney_BaseCase() {
+        AdminChecklist_Controller admin = new AdminChecklist_Controller();
 
-    
-    String[] testNums = new String[] {'12345', '678901', '1245.3', '6341.55', '12', '123456789.2', '98765432102'};
 
-    String[] numSplit;
+        System.assertEquals('$12,345.00', admin.formatMoney('12345'));
 
-    String wholePart;
-    String changePart;
+        System.assertEquals('$678,901.00', admin.formatMoney('678901'));
 
-    String moneyString;
+        System.assertEquals('$1,245.30', admin.formatMoney('1245.3'));
 
-    for(Integer t = 0; t < testNums.size(); t++) {
-        numSplit = testNums[t].split('\\.');
+        System.assertEquals('$6,341.55', admin.formatMoney('6341.55'));
 
-        wholePart = numSplit[0];
-        
-        changePart = '';
-        
-        if(numSplit.size() > 1) {
-            if(numSplit[1].length() == 2) {
-                changePart = numSplit[1];
-            }else {
-                changePart = numSplit[1] + '0';
-            }
-        }else {
-            changePart = '00';
-        }
-        
-        moneyString = '';
-        
-        for(Integer i = 0; i < wholePart.length() / 3; i++) {
-            //System.debug( num1.substring(num1.length() - 3*(i+1),  num1.length() - 3*i) );
-            moneyString = ',' + wholePart.substring(wholePart.length() - 3*(i+1),  wholePart.length() - 3*i) + moneyString;
-        }
-        
-        // If multiple of 3 there is extra comment on front so remove that
-        if(Math.mod(wholePart.length(), 3) == 0) {
-            moneyString = moneyString.substring(1, moneyString.length());
-        }
-        
-        //System.debug( num1.substring(0, Math.mod(num1.length(), 3)) );
-        moneyString = '$' + wholePart.substring(0, Math.mod(wholePart.length(), 3)) + moneyString + '.' + changePart;
-        
-        System.debug('Before: ' + testNums[t]);
-        System.debug('After: ' + moneyString);  
-        System.debug(' ');
+        System.assertEquals('$12.00', admin.formatMoney('12'));
+
+        System.assertEquals('$123,456,789.20', admin.formatMoney('123456789.2'));
+
+        System.assertEquals('$98,765,432,102.00', admin.formatMoney('98765432102'));
     }
 
 
-*/    
+
+    // -----------------------------------------------------------------------------------------------
+    // -------------------------------------------- Insert Record --------------------------------------
+    // -----------------------------------------------------------------------------------------------
+    @IsTest
+    static void testInsertRecord_BaseCase() {
+        Id isInserted = AdminChecklist_Controller.insertRecord('AdminChecklist__c', new Map<String, Object> {'Customer_Name__c'=> 'Evergy', 'Date__c'=> '2021-04-01'});
+
+      System.assert(isInserted != null);
+    }
+
+
+
+    // -----------------------------------------------------------------------------------------------
+    // -------------------------------------------- Download Admin --------------------------------------
+    // -----------------------------------------------------------------------------------------------
+    @IsTest
+    static void testDownloadAdmin_BaseCase() {
+        // Not Testable, not that it really needed a test anyway, but apparently test methods do not support the
+        // method get content so coverage will not be applied here. Really it is pointless to have this method, but
+        // I will keep it here in case I forget
+
+        System.assert(true);
+    }
+
+
+
+    // -----------------------------------------------------------------------------------------------
+    // -------------------------------------------- Get Products --------------------------------------
+    // -----------------------------------------------------------------------------------------------
+    @IsTest
+    static void testGetProducts_BaseCase() {
+        System.assert(false);
+    }
+
+
+
+    // -----------------------------------------------------------------------------------------------
+    // -------------------------------------------- Get POs --------------------------------------
+    // -----------------------------------------------------------------------------------------------
+    @IsTest
+    static void testGetPOs_BaseCase() {
+        System.assert(false);
+    }
 }

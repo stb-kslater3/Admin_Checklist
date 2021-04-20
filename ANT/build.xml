@@ -1,0 +1,70 @@
+<project name="AdminChecklist_AntBuild" default="doNothing" basedir="." xmlns:sf="antlib:com.salesforce">
+
+	<property file="build.properties"/>
+    <property environment="env"/>
+	
+	<!-- Setting default value for username, password and session id properties to empty string 
+         so unset values are treated as empty. Without this, ant expressions such as ${sf.username}
+         will be treated literally.
+    -->
+    <condition property="sf.production.username" value=""> <not> <isset property="sf.production.username"/> </not> </condition>
+    <condition property="sf.production.password" value=""> <not> <isset property="sf.production.password"/> </not> </condition>
+
+	<condition property="sf.rspilot.username" value=""> <not> <isset property="sf.rspilot.username"/> </not> </condition>
+    <condition property="sf.rspilot.password" value=""> <not> <isset property="sf.rspilot.password"/> </not> </condition>
+
+
+	<target name="doNothing">
+	</target>
+
+
+	
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Meta Data !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+	<!--
+	<target name="list_metadata_StaticResources">
+        <sf:listMetadata username="${sf.rspilot.username}"
+                         password="${sf.rspilot.password}"
+                         serverurl="${sf.rspilot.serverurl}"
+                         metadataType="StaticResource"
+                         resultFilePath="MetaDataTypes/StaticResources.txt" />
+    </target>
+	-->
+	
+	
+
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Apex !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+	<target name="retrieve_apex">
+		<sf:retrieve
+			username="${sf.rspilot.username}"
+			password="${sf.rspilot.password}"
+			serverurl="${sf.rspilot.serverurl}"
+            retrieveTarget="apex"
+			unpackaged="apex/package.xml"
+        />
+	</target>
+
+	<target name="deploy_apex">
+		<sf:deploy
+			username="${sf.production.username}"
+			password="${sf.production.password}"
+			serverurl="${sf.production.serverurl}"
+			deployroot="apex"
+			testLevel="RunSpecifiedTests"
+			rollbackOnError="true"
+		>
+
+		
+		<runTest>AdminChecklist_Controller_TEST</runTest>
+		<runTest>Unique_Admin_Opportunity_TEST</runTest>
+
+		</sf:deploy>
+	</target>
+
+
+</project>

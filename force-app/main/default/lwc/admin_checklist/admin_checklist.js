@@ -22,11 +22,6 @@ export default class Admin_checklist extends LightningElement {
     adminChosen;
     adminData;
 
-    groupChosen;
-
-    hasSearchResults;
-    searchResults;
-
     toastHandler;
 
     whoWhat_elements;
@@ -41,7 +36,6 @@ export default class Admin_checklist extends LightningElement {
     currencyAttributeHandler;
     percentAttributeHandler;
 
-    opportunity;
     opportunityData;
 
     lineItemsData;
@@ -130,7 +124,7 @@ export default class Admin_checklist extends LightningElement {
 
 
     calculateFETFinances() {
-        if(this.finances_elements.finances_FET_Checkbox.getAttribute('checked') == true) {
+        if(this.finances_elements.finances_FET_Checkbox.getAttribute('checked') === true) {
             this.finances_elements.finances_12_FET.setAttribute(
                 'value',
     
@@ -655,11 +649,15 @@ export default class Admin_checklist extends LightningElement {
 
 
                                     this.toastHandler.displayChoice('Admin Loaded!', '', 'info', 'sticky');
+
+                                    this.handleClick_SaveQuote();
                                 }).catch(err => {
                                     this.toastHandler.displayError('Error occurred while trying to find the Purchase Order Lines for the Opportunity!', '(admin_in_opportunity) See console log for more details', err);
                                 });
                             }else {
                                 this.toastHandler.displayChoice('Admin Loaded!', '', 'info', 'sticky');
+
+                                this.handleClick_SaveQuote();
                             }
                         }).catch(err => {
                             this.toastHandler.displayError('Error occurred while trying to find the Products for the Opportunity!', '(admin_in_opportunity) See console log for more details', err);
@@ -675,6 +673,8 @@ export default class Admin_checklist extends LightningElement {
                 // . . . ......................................................................
                     }else {
                         this.toastHandler.displayChoice('Admin Loaded!', '', 'info', 'sticky');
+
+                        this.handleClick_SaveQuote();
                     }
                 }).catch(err => {
                     this.toastHandler.displayError('Error occurred while trying to find the Opportuninty!', '(admin_in_opportunity) See console log for more details', err);
@@ -695,7 +695,7 @@ export default class Admin_checklist extends LightningElement {
             if(newId) {
                 this.adminChosen = newId;
 
-                this.toastHandler.displaySuccess('AdminChecklist Inserted!', '');
+                this.toastHandler.displaySuccess('AdminChecklist Saved!', '');
             }else {
                 this.toastHandler.displayChoice('Failed to insert Admin Checklist', '(admin_in_opportunity) Something went wrong', 'error', 'sticky');
             }
@@ -718,7 +718,7 @@ export default class Admin_checklist extends LightningElement {
         if(this.adminChosen) {
             updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: fieldValues }).then(isSuccess => {
                 if(isSuccess) {
-                    this.toastHandler.displaySuccess('AdminChecklist Updated!', '');
+                    this.toastHandler.displaySuccess('AdminChecklist Saved!', '');
                 }else {
                     this.toastHandler.displayChoice('Failed to update Admin Checklist', '(admin_in_opportunity) Something went wrong', 'error', 'sticky');
                 }
@@ -800,12 +800,7 @@ export default class Admin_checklist extends LightningElement {
 
     appendFieldValuePairs(fieldObject, fieldValueMap) {
         for(const key in fieldObject) {
-if(key === 'tradeIn_Actual_Cash_Value') {
-    console.log('Actual Cash Value . . .');
-    console.log(fieldObject[key].getAttribute('value'));
-    console.log(fieldObject[key].apiFieldName);
-    console.log('. . .');
-}
+
             if(fieldObject[key].apiFieldName) {
                 // Need to 'or' with the empty string case because '' is considered to be falsy and won't save making
                 // it impossible to remove a comment
@@ -1845,7 +1840,7 @@ if(key === 'tradeIn_Actual_Cash_Value') {
                 // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
                 // context by using an arrow function to call it
                 {
-                    'onclick': (event) => {
+                    'click': (event) => {
                         this.handleApplyFET(event);
                     }
                 }
