@@ -1,0 +1,555 @@
+<template>
+    <div class="slds-align_absolute-center">
+        <c-admin_search onadminchosen={handleAdminChosen}></c-admin_search>
+    </div>
+
+
+    <div class="slds-align_absolute-center slds-m-top_xx-large">
+        <div class="slds-theme_shade slds-box slds-clearfix">
+            <div class="slds-text-heading_medium slds-align_absolute-center">
+                Admin
+            </div>
+
+            <div class="slds-m-top_medium slds-align_absolute-center">
+                <div class="slds-float_left slds-m-top_medium slds-box slds-box_xx-small">
+                    <div class="slds-text-heading_x-small slds-align_absolute-center">
+                        Who, What, When
+                    </div>
+
+                    <div class="slds-align_absolute-center slds-m-top_xsmall">
+                        <lightning-input type="text" label="Admin Name" data-id="whoWhat_AdminName">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-align_absolute-center slds-m-top_medium slds-m-bottom_medium">
+                        Opportunity:
+                        <c-lwc_navigator variant="text" type="standard__recordPage" data-id="whoWhat_OpportunityLink"></c-lwc_navigator>
+                    </div>
+
+                    <div class="slds-clearfix slds-m-top_small">
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-record-edit-form
+                                object-api-name="AdminChecklist__c">
+
+                                <lightning-input-field
+                                    field-name="Salesman__c"
+                                    data-id="whoWhat_Salesman">
+
+                                </lightning-input-field>
+
+                            </lightning-record-edit-form>
+                        </div>
+    
+                        <div class="slds-float_left">
+                            <lightning-input label="Customer Name" data-id="whoWhat_Customer">
+                            </lightning-input>
+                        </div>
+                    </div>
+
+                    <div class="slds-align_absolute-center">
+                        <lightning-input type="date" label="Date" data-id="whoWhat_Date">
+                        </lightning-input>
+                    </div>
+
+    
+                    <div class="slds-clearfix slds-m-top_medium">
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-input label="Chassis Year" data-id="whoWhat_Chassis_Year">
+                            </lightning-input>
+
+                            <lightning-input label="Chassis VIN" data-id="whoWhat_Chassis_VIN">
+                            </lightning-input>
+                        </div>
+                        
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-input label="Chassis Make" data-id="whoWhat_Chassis_Make">
+                            </lightning-input>
+
+                            <lightning-input label="Chassis Model" data-id="whoWhat_Chassis_Model">
+                            </lightning-input>
+                        </div>
+                    </div>
+
+
+                    <div class="slds-align_absolute-center slds-m-right_medium">
+                        <lightning-input label="Body Series" data-id="whoWhat_Body_Series_Name">
+                        </lightning-input>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="slds-m-top_large slds-clearfix slds-box slds-box_xx-small">
+                <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
+                    Finances
+                </div>
+
+                <div class="slds-float_left">
+                    <div class="slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <div>
+                                <lightning-input type="number" formatter="currency" step=".01" label="Chassis Cost" data-id="finances_Chassis_Cost">
+                                </lightning-input>
+                            </div>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Chassis_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <div>
+                                <lightning-textarea label="Chassis Description" data-id="finances_Chassis_Description">
+                                </lightning-textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Body Cost" data-id="finances_Body_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Body_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="Body Description" data-id="finances_Body_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Freight Cost" data-id="finances_Freight_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Freight_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="Freight Description" data-id="finances_Freight_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="AOrder Cost" data-id="finances_AOrder_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_AOrder_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="AOrder Description" data-id="finances_AOrder_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 1 Cost" data-id="finances_Other_1_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Other_1_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="Other 1 Description" data-id="finances_Other_1_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 2 Cost" data-id="finances_Other_2_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Other_2_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="Other 2 Description" data-id="finances_Other_2_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 3 Cost" data-id="finances_Other_3_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Other_3_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="Other 3 Description" data-id="finances_Other_3_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 4 Cost" data-id="finances_Other_4_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Other_4_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="Other 4 Description" data-id="finances_Other_4_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-top_small slds-clearfix slds-border_bottom">
+                        <div class="slds-float_left slds-m-right_small">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Other 5 Cost" data-id="finances_Other_5_Cost">
+                            </lightning-input>
+
+                            <div class="slds-m-top_small slds-m-bottom_small">
+                                PO:<c-lwc_navigator variant="text" type="standard__recordPage" data-id="finances_Other_5_POInfo"></c-lwc_navigator>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-float_left">
+                            <lightning-textarea label="Other 5 Description" data-id="finances_Other_5_Description">
+                            </lightning-textarea>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="Subtotal before profit is the sum of all the Costs/PO's only"></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                Subtotal Before Profit:
+                            </div>
+
+                            <b style="color: green;">
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Subtotal_Before_Profit">
+                                </lightning-formatted-number>
+                            </b>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="slds-float_left slds-m-top_medium slds-m-left_medium slds-border_left">
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Profit Amount" data-id="finances_Profit_Amount">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx_small">
+                        <div class="slds-m-left_small slds-m-top_xx-small">
+                            <lightning-input type="number" label="Profit %:" formatter="percent" step=".0001" data-id="finances_Profit_Percent">
+                            </lightning-input>
+                        </div>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Dealer Pack" data-id="finances_Dealer_Pack">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Gross After Comission:
+                        </div>
+
+                        <b style="color: green;">
+                            <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Gross_Amount">
+                            </lightning-formatted-number>
+                        </b>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx_small">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Gross After Comission %:
+                        </div>
+                        
+                        <b style="color: blue;">
+                            <lightning-formatted-number format-style="percent" maximum-fraction-digits="2" data-id="finances_Gross_Percent">
+                            </lightning-formatted-number>
+                        </b>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_medium slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="Subtotal after profit is the sum of all the Costs/PO's with the Profit_Amount. It is the official Sales Price before Fees are applied, and is used to determine the 12% F.E.T."></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                Subtotal After Profit:
+                            </div>
+
+                            <b style="color: green;">
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Subtotal_After_Profit">
+                                </lightning-formatted-number>
+                            </b>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_medium">
+                        <lightning-input
+                            type="checkbox"
+                            label="Apply F.E.T."
+                            data-id="finances_FET_Checkbox">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="12% of the Subtotal is the Federal Excise Tax (F.E.T.) amount applied"></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                12% F.E.T.:
+                            </div>
+
+                            <b style="color: green;">
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_12_FET">
+                                </lightning-formatted-number>
+                            </b>
+                        </div>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Minus Tire F.E.T." data-id="finances_Minus_Tire_FET">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_xx-small">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Total F.E.T.:
+                        </div>
+
+                        <b style="color: green;">
+                            <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Total_FET">
+                            </lightning-formatted-number>
+                        </b>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Extended Warranty" data-id="finances_Extended_Warranty">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Other Fees" data-id="finances_Other_Fees">
+                        </lightning-input>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Documentation Fee" data-id="finances_Documentation_Fee">
+                        </lightning-input>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Deposit" data-id="finances_Deposit">
+                        </lightning-input>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_medium slds-clearfix">
+                        <lightning-helptext class="slds-float_left slds-m-right_xx-small" content="Sum of the Subtotal, Total F.E.T., Fees, etc. minus the Deposit and the Trade In Billing Amount. The Trade In Billing Amount is the amount of the Trade In credited toward this Sale."></lightning-helptext>
+
+                        <div class="slds-float_left slds-m-top_xx-small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                Total:
+                            </div>
+
+                            <b style="color: green;">
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_Total">
+                                </lightning-formatted-number>
+                            </b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="slds-align_absolute-center">
+                <div class="slds-float_left slds-m-top_large slds-box slds-box_xx-small">
+                    <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
+                        Trade In
+                    </div>
+    
+                    <div class="slds-clearfix">
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-input label="Trade In Make" data-id="tradeIn_Make">
+                            </lightning-input>
+                        
+                            <lightning-input label="Trade In Model" data-id="tradeIn_Model">
+                            </lightning-input>
+                        </div>
+                    
+                        <div class="slds-float_left">
+                            <lightning-input label="Trade In Year" data-id="tradeIn_Year">
+                            </lightning-input>
+                        </div>
+                    </div>
+    
+                    <div>
+                        <div>
+                            <lightning-input label="Trade In Unit Number" data-id="tradeIn_Unit_Number">
+                            </lightning-input>
+                        </div>
+                    </div>
+    
+    
+                    <div class="slds-clearfix">
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Actual Cash Value" data-id="tradeIn_Actual_Cash_Value">
+                            </lightning-input>
+                        </div>
+    
+                        <div class="slds-float_left slds-m-right_large">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Trade In Billing Amount" data-id="tradeIn_Billing_Amount">
+                            </lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="slds-align_absolute-center">
+                <div class="slds-float_left slds-m-top_large slds-box slds-box_xx-small">
+                    <div class="slds-text-heading_x-small slds-align_absolute-center">
+                        F.E.T. Tire Tax Credits
+                    </div>
+    
+    
+                    <div class="slds-clearfix">
+                        <div class="slds-float_left slds-m-right_large slds-m-top_medium">
+                            <div class="slds-m-bottom_small slds-text-body-small slds-align_absolute-center">
+                                Front Tires
+                            </div>
+    
+                            <div>
+                                <lightning-input label="Front Tire Description" data-id="fetCredit_FET_Front_Description">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input label="Front Tire Size" data-id="fetCredit_FET_Front_Size">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" formatter="currency" step=".01" label="Front Tire Cost" data-id="fetCredit_FET_Front_Cost">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" label="Front Tire Quantity" data-id="fetCredit_FET_Front_Quantity">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-left_small slds-m-top_small">
+                                <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                    Subtotal:
+                                </div>
+    
+                                <b style="color: green;">
+                                    <lightning-formatted-number format-style="currency" currency-code="USD" data-id="fetCredit_FET_Front_Subtotal">
+                                    </lightning-formatted-number>
+                                </b>
+                            </div>
+                        </div>
+    
+                        <div class="slds-float_left slds-m-top_medium">
+                            <div class="slds-m-bottom_small slds-text-body-small slds-align_absolute-center">
+                                Rear Tires
+                            </div>
+    
+                            <div>
+                                <lightning-input label="Rear Tire Description" data-id="fetCredit_FET_Rear_Description">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input label="Rear Tire Size" data-id="fetCredit_FET_Rear_Size">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" formatter="currency" step=".01" label="Rear Tire Cost" data-id="fetCredit_FET_Rear_Cost">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-top_small">
+                                <lightning-input type="number" label="Rear Tire Quantity" data-id="fetCredit_FET_Rear_Quantity">
+                                </lightning-input>
+                            </div>
+    
+                            <div class="slds-m-left_small slds-m-top_small">
+                                <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                    Subtotal:
+                                </div>
+    
+                                <b style="color: green;">
+                                    <lightning-formatted-number format-style="currency" currency-code="USD" data-id="fetCredit_FET_Rear_Subtotal">
+                                    </lightning-formatted-number>
+                                </b>
+                            </div>
+                        </div>
+                    </div>
+    
+    
+                    <div class="slds-m-top_medium slds-align_absolute-center">
+                        <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                            Total:
+                        </div>
+    
+                        <b style="color: green;">
+                            <lightning-formatted-number format-style="currency" currency-code="USD" data-id="fetCredit_FET_Total">
+                            </lightning-formatted-number>
+                        </b>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="slds-m-top_large slds-clearfix slds-align_absolute-center">
+                <div>
+                    <div class="slds-float_left slds-m-right_medium slds-m-top_small">
+                        <lightning-button
+                            variant="brand"
+                            label="Save"
+                            onclick={handleClick_SaveQuote}>
+                        </lightning-button>
+                    </div>
+    
+                    <div class="slds-float_left slds-m-right_medium slds-m-top_small">
+                        <lightning-button
+                            variant="brand"
+                            label="Download"
+                            onclick={handleClick_PrintQuote}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>
