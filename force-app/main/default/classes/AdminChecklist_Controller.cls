@@ -637,6 +637,9 @@ public with sharing class AdminChecklist_Controller {
             rstk__poline__c[] poLines = new List<rstk__poline__c>();
             rstk__poline__c[] poLinesFound = new List<rstk__poline__c>();
             rstk__poline__c[] otherPOLinesFound = new List<rstk__poline__c>();
+            rstk__poline__c[] morePOLinesFound = new List<rstk__poline__c>();
+            rstk__poline__c[] evenMorePOLinesFound = new List<rstk__poline__c>();
+
 
             // Fields to Select
             // rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
@@ -647,16 +650,7 @@ public with sharing class AdminChecklist_Controller {
 
 
             for(OpportunityLineItem lineItem : lineItems) {
-                if(lineItem.Product2.VIN_Last_6__c != null) {
-                    poLinesFound = [
-                        SELECT rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
-                        FROM rstk__poline__c
-                        WHERE rstk__poline_div__r.Name LIKE '%STE%'
-                        AND rstk__poline_item__r.Name LIKE :lineItem.Product2.VIN_Last_6__c
-                        AND rstk__poline_qtyreq__c > 0
-                    ];
-                }else {
-                    productString = '%' + lineItem.Product2.Name + '%';
+                productString = '%' + lineItem.Product2.Name + '%';
 
                     poLinesFound = [
                         SELECT Id, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
@@ -672,6 +666,24 @@ public with sharing class AdminChecklist_Controller {
                         FROM rstk__poline__c
                         WHERE rstk__poline_div__r.Name LIKE '%STE%'
                         AND rstk__poline_proj__r.Name LIKE :productString
+                        AND rstk__poline_qtyreq__c > 0
+                    ];
+
+
+                    morePOLinesFound = [
+                        SELECT Id, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        FROM rstk__poline__c
+                        WHERE rstk__poline_div__r.Name LIKE '%STE%'
+                        AND rstk__poline_item__r.Name LIKE :productString
+                        AND rstk__poline_qtyreq__c > 0
+                    ];
+
+
+                    evenMorePOLinesFound = [
+                        SELECT rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        FROM rstk__poline__c
+                        WHERE rstk__poline_div__r.Name LIKE '%STE%'
+                        AND rstk__poline_item__r.Name LIKE :lineItem.Product2.VIN_Last_6__c
                         AND rstk__poline_qtyreq__c > 0
                     ];
 
@@ -694,8 +706,47 @@ public with sharing class AdminChecklist_Controller {
                             }
                         }
                     }
-                }
 
+
+                    if(morePOLinesFound.size() > 0) {
+                        for(rstk__poline__c otherPOLine : morePOLinesFound) {
+                            notAlreadyThere = true;
+
+                            for(rstk__poline__c poLine: poLinesFound) {
+                                if(otherPOLine.Id == poLine.Id) {
+                                    notAlreadyThere = false;
+
+                                    break;
+                                }
+                            }
+
+
+                            if(notAlreadyThere) {
+                                poLinesFound.add(otherPOLine);
+                            }
+                        }
+                    }
+
+
+                    if(evenMorePOLinesFound.size() > 0) {
+                        for(rstk__poline__c otherPOLine : evenMorePOLinesFound) {
+                            notAlreadyThere = true;
+
+                            for(rstk__poline__c poLine: poLinesFound) {
+                                if(otherPOLine.Id == poLine.Id) {
+                                    notAlreadyThere = false;
+
+                                    break;
+                                }
+                            }
+
+
+                            if(notAlreadyThere) {
+                                poLinesFound.add(otherPOLine);
+                            }
+                        }
+                    }
+                
 
                 // Also make sure it isn't already in the main list, sometimes a Chassis shows up in both, it
                 // depends on whether the chassis is in this Project or its own Project.

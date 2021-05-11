@@ -12,7 +12,7 @@
 
             <div class="slds-m-top_medium slds-align_absolute-center">
                 <div class="slds-float_left slds-m-top_medium slds-box slds-box_xx-small">
-                    <div class="slds-text-heading_x-small slds-align_absolute-center">
+                    <div class="slds-text-heading_medium slds-align_absolute-center">
                         Who, What, When
                     </div>
 
@@ -80,7 +80,7 @@
 
 
             <div class="slds-m-top_large slds-clearfix slds-box slds-box_xx-small">
-                <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
+                <div class="slds-m-bottom_small slds-text-heading_medium slds-align_absolute-center">
                     Finances
                 </div>
 
@@ -94,14 +94,18 @@
                                         </lightning-formatted-text>
                                     </div>
 
-                                    <div>
-                                        <lightning-input type="number" formatter="currency" step=".01" label="Cost" data-id={poDynamic.dataIdCost} value={poDynamic.cost} data-track="true" data-index={poDynamic.index}>
+                                    <div class="slds-align_absolute-center">
+                                        <lightning-input type="number" formatter="currency" step=".01" label="Cost" data-id={poDynamic.dataIdCost} value={poDynamic.cost} data-track="true" data-index={poDynamic.index} disabled={poDynamic.disabled} onfocusout={handleModifyFinances}>
                                         </lightning-input>
                                     </div>
 
-                                    <div>
+                                    <div class="slds-align_absolute-center">
                                         <lightning-textarea label="Description" data-id={poDynamic.dataIdDescription} value={poDynamic.description} data-track="true" data-index={poDynamic.index}>
                                         </lightning-textarea>
+                                    </div>
+
+                                    <div class="slds-align_absolute-center">
+                                        {poDynamic.lineDescription}
                                     </div>
 
                                     <div class="slds-align_absolute-center">
@@ -109,7 +113,9 @@
                                             variant="brand"
                                             label="Remove"
                                             onclick={handleClick_RemovePO}
-                                            data-index={poDynamic.index}>
+                                            data-id={poDynamic.dataIdRemoveButton}
+                                            data-index={poDynamic.index}
+                                            hidden={poDynamic.disabled}>
                                         </lightning-button>
                                     </div>
                                 </div>
@@ -146,21 +152,34 @@
 
 
                 <div class="slds-float_left slds-m-top_medium slds-m-left_medium slds-border_left">
+                    <div class="slds-clearfix">
+                        <div class="slds-m-left_small">
+                            <div class="slds-m-right_xx-small slds-float_left slds-text-body_small">
+                                PO Subtotal:
+                            </div>
+
+                            <b style="color: green;">
+                                <lightning-formatted-number format-style="currency" currency-code="USD" data-id="finances_POSubtotal" data-track="true">
+                                </lightning-formatted-number>
+                            </b>
+                        </div>
+                    </div>
+
                     <div class="slds-m-left_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Profit Amount" data-id="finances_Profit_Amount" data-track="true">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Profit Amount" data-id="finances_Profit_Amount" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_xx_small">
                         <div class="slds-m-top_xx-small">
-                            <lightning-input type="number" label="Profit %:" formatter="percent" step=".0001" data-id="finances_Profit_Percent" data-track="true">
+                            <lightning-input type="number" label="Profit %:" formatter="percent" step=".0001" data-id="finances_Profit_Percent" data-track="true" onfocusout={handleModifyProfitPercent}>
                             </lightning-input>
                         </div>
                     </div>
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Dealer Pack" data-id="finances_Dealer_Pack" data-track="true">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Dealer Pack" data-id="finances_Dealer_Pack" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -208,7 +227,7 @@
                         <lightning-input
                             type="checkbox"
                             label="Apply F.E.T."
-                            data-id="finances_FET_Checkbox" data-track="true">
+                            data-id="finances_FET_Checkbox" data-track="true" onclick={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -228,7 +247,7 @@
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_xx-small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Minus Tire F.E.T." data-id="finances_Minus_Tire_FET" data-track="true">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Minus Tire F.E.T." data-id="finances_Minus_Tire_FET" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -245,24 +264,27 @@
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Extended Warranty" data-id="finances_Extended_Warranty" data-track="true">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Extended Warranty" data-id="finances_Extended_Warranty" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Other Fees" data-id="finances_Other_Fees" data-track="true">
-                        </lightning-input>
-                    </div>
-
-
-                    <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Documentation Fee" data-id="finances_Documentation_Fee" data-track="true">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Other Fees" data-id="finances_Other_Fees" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Deposit" data-id="finances_Deposit" data-track="true">
+                        <lightning-input type="number" formatter="currency" step=".01" label="Documentation Fee" data-id="finances_Documentation_Fee" data-track="true" onfocusout={handleModifyFinances}>
+                        </lightning-input>
+                    </div>
+
+
+                    <div class="slds-m-left_small slds-m-top_small">
+                        <lightning-helptext class="slds-float_left" content="Sum of Deposit and Net Trade Allowance">
+                        </lightning-helptext>
+
+                        <lightning-input type="number" formatter="currency" step=".01" label="Deposit" data-id="finances_Deposit" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -353,12 +375,12 @@
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" formatter="currency" step=".01" label="Front Tire Cost" data-id="fetCredit_FET_Front_Cost" data-track="true">
+                                <lightning-input type="number" formatter="currency" step=".01" label="Front Tire Cost" data-id="fetCredit_FET_Front_Cost" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" label="Front Tire Quantity" data-id="fetCredit_FET_Front_Quantity" data-track="true">
+                                <lightning-input type="number" label="Front Tire Quantity" data-id="fetCredit_FET_Front_Quantity" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
@@ -390,12 +412,12 @@
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" formatter="currency" step=".01" label="Rear Tire Cost" data-id="fetCredit_FET_Rear_Cost" data-track="true">
+                                <lightning-input type="number" formatter="currency" step=".01" label="Rear Tire Cost" data-id="fetCredit_FET_Rear_Cost" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" label="Rear Tire Quantity" data-id="fetCredit_FET_Rear_Quantity" data-track="true">
+                                <lightning-input type="number" label="Rear Tire Quantity" data-id="fetCredit_FET_Rear_Quantity" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
