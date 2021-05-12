@@ -90,7 +90,7 @@
                             <template for:each={poDynamicList} for:item="poDynamic">
                                 <div key={poDynamic.index} class=" slds-clearfix slds-m-bottom_small slds-box slds-box-xx_small slds-theme_shade">
                                     <div class="slds-align_absolute-center">
-                                        <lightning-formatted-text data-id={poDynamic.dataIdTitle} value={poDynamic.title} data-track="true" data-index={poDynamic.index}>
+                                        <lightning-formatted-text data-id={poDynamic.dataIdType} value={poDynamic.type} data-track="true" data-index={poDynamic.index}>
                                         </lightning-formatted-text>
                                     </div>
 
@@ -126,8 +126,8 @@
 
                     <div class="slds-m-top_medium slds-clearfix slds-m-bottom_small slds-box slds-box-xx_small">
                         <div>
-                            <lightning-input type="text" label="Ttile" data-id="AddPOTitle" data-track="true">
-                            </lightning-input>
+                            <lightning-combobox label="Type" data-id="AddPOType" data-track="true" options={typeOptions}>
+                            </lightning-combobox>
                         </div>
 
                         <div>
@@ -344,6 +344,9 @@
     
                         <div class="slds-float_left slds-m-right_large">
                             <lightning-input type="number" formatter="currency" step=".01" label="Trade In Billing Amount" data-id="tradeIn_Billing_Amount" data-track="true">
+                            </lightning-input>
+
+                            <lightning-input type="number" formatter="currency" step=".01" label="Payoff Remaining" data-id="tradeIn_Payoff" data-track="true">
                             </lightning-input>
                         </div>
                     </div>

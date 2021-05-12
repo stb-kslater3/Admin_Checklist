@@ -22,10 +22,19 @@ export default class Admin_checklist extends LightningElement {
 
     view;
 
+    @track typeOptions;
+
 
     constructor() {
         super();
 
+        this.typeOptions = [
+            {label: 'Chassis', value: 'Chassis'},
+            {label: 'Body', value: 'Body'},
+            {label: 'Freight', value: 'Freight'},
+            {label: 'A Order', value: 'A Order'},
+            {label: 'Other', value: 'Other'}
+        ];
 
         this.view = new View();
 
@@ -42,12 +51,12 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
-    addToPOList(title, cost, description) {
+    addToPOList(type, cost, description) {
         this.poDynamicList.push({
             index: this.poDynamicList.length,
 
-            dataIdTitle: 'title_' + this.poDynamicList.length,
-            title: title,
+            dataIdType: 'type_' + this.poDynamicList.length,
+            type: type,
 
             dataIdCost: 'cost_' + this.poDynamicList.length,
             cost: cost,
@@ -63,11 +72,35 @@ export default class Admin_checklist extends LightningElement {
         });
     }
 
+    addToFrontOfPOList(type, cost, description) {
+        this.poDynamicList.unshift({
+            index: this.poDynamicList.length,
+
+            dataIdType: 'type_' + this.poDynamicList.length,
+            type: type,
+
+            dataIdCost: 'cost_' + this.poDynamicList.length,
+            cost: cost,
+
+            dataIdDescription: 'description_' + this.poDynamicList.length,
+            description: description,
+
+            dataIdRemoveButton: 'remove_' + this.poDynamicList.length,
+
+            disabled: false,
+
+            lineDescription: ''
+        });
+
+
+        this.updatePODynamicIndices();
+    }
+
     updatePODynamicIndices() {
         for(let i = 0; i < this.poDynamicList.length; i++) {
             this.poDynamicList[i].index = i;
 
-            this.poDynamicList[i].dataIdTitle = 'title_' + i;
+            this.poDynamicList[i].dataIdType = 'type_' + i;
 
             this.poDynamicList[i].dataIdCost = 'cost_' + i;
 
@@ -77,8 +110,27 @@ export default class Admin_checklist extends LightningElement {
         }
     }
 
+    removeFromPOList(poIndex) {
+        this.poDynamicList.splice(poIndex, 1);
+
+        this.updatePODynamicIndices();
+    }
+
+    // As this is currently set up I am only matching on the first occurence, so keep that in mind if it ends up needing
+    // changed later on
+    findCorrespondingPO(type, cost) {
+        for(let i in this.poDynamicList) {
+            if(this.poDynamicList[i].type === type && Math.abs(this.poDynamicList[i].cost - cost) < 0.01) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+
     setInitials_AddPO() {
-        this.view.setAttribute('AddPOTitle', 'value', '');
+        this.view.setAttribute('AddPOType', 'value', '');
         this.view.setAttribute('AddPOCost', 'value', 0);
         this.view.setAttribute('AddPODescription', 'value', '')
     }
@@ -235,7 +287,7 @@ export default class Admin_checklist extends LightningElement {
     queryAdminChosen() {
         return queryFromString({
             queryString:
-                "SELECT Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, Profit_Amount__c, Dealer_Pack__c, ApplyFET__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c" +
+                "SELECT Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, Profit_Amount__c, Dealer_Pack__c, ApplyFET__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, TradeIn_Payoff__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c" +
                 " FROM AdminChecklist__c" +
                 " WHERE Id='" + this.adminChosen + "'"
         });
@@ -244,7 +296,7 @@ export default class Admin_checklist extends LightningElement {
     queryAdminPOs() {
         return queryFromString({
             queryString:
-                "SELECT Title__c, Cost__c, Description__c" +
+                "SELECT Type__c, Cost__c, Description__c" +
                 " FROM AdminPO__c" +
                 " WHERE AdminChecklist__c='" + this.adminChosen + "'"
         });
@@ -263,7 +315,7 @@ export default class Admin_checklist extends LightningElement {
     queryProducts() {
         return queryFromString({
             queryString:
-                "SELECT Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c" +
+                "SELECT Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c, Product2.Trade_Allowance__c, Product2.Pay_Off_Amount__c, Total_Product_Cost__c" +
                 " FROM OpportunityLineItem" +
                 " WHERE OpportunityId='" + this.opportunityId + "'"
         });
@@ -275,7 +327,7 @@ export default class Admin_checklist extends LightningElement {
 
         for(let poIndex in this.poDynamicList) {
             this.recordsToInsert.push({
-                'Title__c': this.view.getAttribute(this.poDynamicList[poIndex].dataIdTitle, 'value'),
+                'Type__c': this.view.getAttribute(this.poDynamicList[poIndex].dataIdType, 'value'),
 
                 'Cost__c': this.view.getAttribute(this.poDynamicList[poIndex].dataIdCost, 'value'),
 
@@ -319,6 +371,7 @@ export default class Admin_checklist extends LightningElement {
         this.view.setAttribute('tradeIn_Unit_Number', 'value', record['TradeIn_Unit_Number__c']);
         this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', record['TradeIn_Actual_Cash_Value__c']);
         this.view.setAttribute('tradeIn_Billing_Amount', 'value', record['TradeIn_Billing_Amount__c']);
+        this.view.setAttribute('tradeIn_Payoff', 'value', record['TradeIn_Payoff__c']);
 
         this.view.setAttribute('fetCredit_FET_Front_Description', 'value', record['FET_Front_Description__c']);
         this.view.setAttribute('fetCredit_FET_Front_Size', 'value', record['FET_Front_Size__c']);
@@ -331,11 +384,24 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
-    loadPOsFromRecords(records) {
+    loadAdminPOsFromRecords(records) {
+        // Used to hold index when checking if a matching one already exists or not
+        let correspondant;
+
         for(let i in records) {
-            this.addToPOList(records[i].Title__c, records[i].Cost__c, records[i].Description__c);
+            correspondant = this.findCorrespondingPO(records[i].Type__c, records[i].Cost__c);
+
+            if(correspondant < 0) {
+                this.addToPOList(records[i].Type__c, records[i].Cost__c, records[i].Description__c);
+            }else {
+                // If I find a matching PO already Existing then I need to put the Description from this and update this
+                // AdminPO when saved
+
+                this.poDynamicList[correspondant].description = records[i].Description__c;
+            }
         }
     }
+
 
     loadAdminFromOpportunity(record) {
         this.opportunityId = record['Id'];
@@ -390,11 +456,16 @@ export default class Admin_checklist extends LightningElement {
                 this.view.setAttribute('whoWhat_Chassis_Model', 'disabled', true);
 
 
-                // If we have the Cost for the Chassis from the Product go ahead and use that
-                // and it will be the fallback for when we don't have a PO Line to find the cost with
-//                this.view.setAttribute('cost_'..., 'value', records[i].Total_Product_Cost__c);
-//                this.view.setAttribute('cost_'..., 'disabled', true);
-//                this.view.setAttribute('remove_'..., 'hidden', true);
+                // If there isn't a Chassis PODynamic yet then put it in at the front
+                let correspondant = this.findCorrespondingPO('Chassis', records[i].Total_Product_Cost__c);
+
+                if(correspondant < 0) {
+                    this.addToFrontOfPOList('Chassis', records[i].Total_Product_Cost__c, '');
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = 'From Opportunity Product';
+                }
 
                 break;
             }
@@ -415,38 +486,122 @@ export default class Admin_checklist extends LightningElement {
             }
         }
 
+
+        // Find Used Unit if there
+        for(let i in records) {
+            if(records[i].Product2.RecordType.Name === 'Used Unit') {
+                this.view.setAttribute('tradeIn_Make', 'value', records[i].Product2.Chassis_Make__c);
+                this.view.setAttribute('tradeIn_Make', 'disabled', true);
+
+                this.view.setAttribute('tradeIn_Year', 'value', records[i].Product2.Chassis_Year__c);
+                this.view.setAttribute('tradeIn_Year', 'disabled', true);
+
+                this.view.setAttribute('tradeIn_Model', 'value', records[i].Product2.Chassis_Model__c);
+                this.view.setAttribute('tradeIn_Model', 'disabled', true);
+
+                this.view.setAttribute('tradeIn_Unit_Number', 'value', records[i].Product2.VIN__c);
+                this.view.setAttribute('tradeIn_Unit_Number', 'disabled', true);
+
+
+                if(records[i].Product2.Trade_Allowance__c) {
+                    this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', records[i].Product2.Trade_Allowance__c);
+                }else {
+                    this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', 0);
+                }
+                this.view.setAttribute('tradeIn_Actual_Cash_Value', 'disabled', true);
+
+                if(records[i].Total_Product_Cost__c) {
+                    this.view.setAttribute('tradeIn_Billing_Amount', 'value', records[i].Total_Product_Cost__c);
+                }else {
+                    this.view.setAttribute('tradeIn_Billing_Amount', 'value', 0);
+                }
+                this.view.setAttribute('tradeIn_Billing_Amount', 'disabled', true);
+
+                if(records[i].Product2.Pay_Off_Amount__c) {
+                    this.view.setAttribute('tradeIn_Payoff', 'value', records[i].Product2.Pay_Off_Amount__c);
+                }else {
+                    this.view.setAttribute('tradeIn_Payoff', 'value', 0);
+                }
+                this.view.setAttribute('tradeIn_Payoff', 'disabled', true);
+
+                break;
+            }
+        }
+
+
         // Find Others
+        // . . .
     }
 
 
-    loadPOsFromPOLines(records) {
-        for(let i in records) {
-            this.addToPOList('Descriptive Title', records[i].rstk__poline_amtreq__c, '');
+    loadPOsFromPOLines(poMap) {
+        // First put the Chassis if there is one
+        if(poMap['Chassis']) {
+            // Make sure list isn't empty, it has been before
+            if(poMap['Chassis'].length > 0) {
+                let record = poMap['Chassis'][0];
 
-            this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+                this.addToPOList('Chassis', record.rstk__poline_amtreq__c, '');
 
-            this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[i].rstk__poline_longdescr__c;
+                this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = record.rstk__poline_longdescr__c;
+            }
+        }
+
+        // Then put the Body and its associated POs
+        if(poMap['Service Body']) {
+            // Make sure list isn't empty, it has been before
+            if(poMap['Service Body'].length > 0) {
+                let records = poMap['Service Body'];
+
+                // In order to determine which one is the body I have to find the highest priced PO
+                // This is the nature of Rootstock
+                let maxIndex = 0;
+
+                for(let i in records) {
+                    this.addToPOList('Other', records[i].rstk__poline_amtreq__c, '');
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[i].rstk__poline_longdescr__c;
+
+                    if(records[i].rstk__poline_amtreq__c > records[maxIndex].rstk__poline_amtreq__c) {
+                        maxIndex = i;
+                    }
+
+                    // If this is a Freight, put it in the Type, or an AOrder, and so on
+                    if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
+                        this.poDynamicList[this.poDynamicList.length - 1].type = 'Freight';
+                    }else if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
+                        this.poDynamicList[this.poDynamicList.length - 1].type = 'A Order';
+                    }
+                }
+
+                // I have to change the Type for the Body in the PODynamic list because rendered callback, and in order
+                // to get to the right one in the PODynamic List I have to calculate this index in a funky way
+                this.poDynamicList[this.poDynamicList.length - records.length + maxIndex].type = 'Body';
+            }
         }
     }
 
 
+
     handleClick_AddPO() {
-        this.addToPOList(this.view.getAttribute('AddPOTitle', 'value'), this.view.getAttribute('AddPOCost', 'value'), this.view.getAttribute('AddPODescription', 'value'));
+        this.addToPOList(this.view.getAttribute('AddPOType', 'value'), this.view.getAttribute('AddPOCost', 'value'), this.view.getAttribute('AddPODescription', 'value'));
 
         this.setInitials_AddPO();
     }
 
 
     handleClick_RemovePO(event) {
-        let poIndex = event.target.getAttribute('data-index');
-
-        this.poDynamicList.splice(poIndex, 1);
-
-        this.updatePODynamicIndices();
+        this.removeFromPOList(event.target.getAttribute('data-index'));
     }
 
 
     handleAdminChosen() {
+        this.poDynamicList = [];
+
         this.queryAdminChosen().then(records => {
             if(records) {
                 if(records.length > 0) {
@@ -459,7 +614,7 @@ console.log(adminData);
                                 // clear out the default POs and put in the ones that exist
                                 this.poDynamicList = [];
 
-                                this.loadPOsFromRecords(records);
+                                //this.loadAdminPOsFromRecords(records);
                                 let adminPOData = records;
 console.log(adminPOData);
                                 
@@ -470,35 +625,82 @@ console.log(adminPOData);
                         this.queryOpportunity().then(records => {
                             if(records) {
                                 if(records.length > 0) {
-                                    this.loadAdminFromOpportunity(records[0]);
                                     let opportunityData = records[0];
 console.log(opportunityData);                                            
                                     this.queryProducts().then(records => {
                                         if(records) {
                                             if(records.length > 0) {
-                                                this.loadAdminFromProducts(records);
                                                 let productsData = records;
 console.log(productsData);
-                                                getPOs({ lineItems: productsData }).then(records => {
-console.log(records);
-                                                    if(records) {
-                                                        if(records.length > 0) {
-                                                            this.loadPOsFromPOLines(records);
+                                                getPOs({ lineItems: productsData }).then(poMap => {
+console.log(poMap);
+                                                    if(poMap) {
+                                                        if(Object.keys(poMap).length > 0) {
+                                                        
+                                                        // Run in order working your way down
+                                                            this.loadPOsFromPOLines(poMap);
 
+                                                            this.loadAdminFromProducts(productsData);
 
+                                                            this.loadAdminFromOpportunity(opportunityData);
 
+                                                            this.loadAdminPOsFromRecords(adminPOData);
+
+                                                            this.loadAdminFromRecord(adminData);
+                                                        }else {
+                                                            // Run in order working your way down without PO Lines
+                                                                this.loadAdminFromProducts(productsData);
+
+                                                                this.loadAdminFromOpportunity(opportunityData);
+
+                                                                this.loadAdminPOsFromRecords(adminPOData);
+
+                                                                this.loadAdminFromRecord(adminData);
                                                         }
+                                                    }else {
+                                                        // Run in order working your way down without PO Lines
+                                                            this.loadAdminFromProducts(productsData);
+
+                                                            this.loadAdminFromOpportunity(opportunityData);
+
+                                                            this.loadAdminPOsFromRecords(adminPOData);
+
+                                                            this.loadAdminFromRecord(adminData);
                                                     }
 
                                                 }).catch(err => {
                                                     this.toast.displayError(err.body ? err.body.message : err.message);
                                                 });
+                                            }else {
+                                                // Run in order working your way down without Products
+                                                    this.loadAdminFromOpportunity(opportunityData);
+
+                                                    this.loadAdminPOsFromRecords(adminPOData);
+
+                                                    this.loadAdminFromRecord(adminData);
                                             }
+                                        }else {
+                                            // Run in order working your way down without Products
+                                                this.loadAdminFromOpportunity(opportunityData);
+
+                                                this.loadAdminPOsFromRecords(adminPOData);
+
+                                                this.loadAdminFromRecord(adminData);
                                         }
                                     }).catch(err => {
                                         this.toast.displayError(err.body ? err.body.message : err.message);
                                     });
+                                }else {
+                                // Run in order working your way down without the Opportunity
+                                    this.loadAdminPOsFromRecords(adminPOData);
+
+                                    this.loadAdminFromRecord(adminData);
                                 }
+                            }else {
+                            // Run in order working your way down without the Opportunity
+                                this.loadAdminPOsFromRecords(adminPOData);
+
+                                this.loadAdminFromRecord(adminData);
                             }
                         }).catch(err => {
                             this.toast.displayError(err.body ? err.body.message : err.message);
