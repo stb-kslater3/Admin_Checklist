@@ -5,10 +5,17 @@ import { LWC_Toast } from "c/lwc_generic_prototype";
 
 import queryFromString from "@salesforce/apex/Apex_Generic_Prototype.queryFromString";
 import insertRecords from "@salesforce/apex/Apex_Generic_Prototype.insertRecords";
+import updateRecordFromId from "@salesforce/apex/Apex_Generic_Prototype.updateRecordFromId";
+import updateRecords from "@salesforce/apex/Apex_Generic_Prototype.updateRecords";
 
 import { View } from "c/lwc_mvc_prototype2";
 
 import getPOs from '@salesforce/apex/AdminChecklist_Controller.getPOs';
+import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
+
+import downloadAdmin from '@salesforce/apex/AdminChecklist_Downloader.downloadAdmin';
+
+import {blobToPDF} from 'c/lwc_blob_handler';
 
 
 
@@ -296,7 +303,7 @@ export default class Admin_checklist extends LightningElement {
     queryAdminPOs() {
         return queryFromString({
             queryString:
-                "SELECT Type__c, Cost__c, Description__c" +
+                "SELECT Id, Type__c, Cost__c, Description__c" +
                 " FROM AdminPO__c" +
                 " WHERE AdminChecklist__c='" + this.adminChosen + "'"
         });
@@ -393,11 +400,15 @@ export default class Admin_checklist extends LightningElement {
 
             if(correspondant < 0) {
                 this.addToPOList(records[i].Type__c, records[i].Cost__c, records[i].Description__c);
+
+                this.poDynamicList[this.poDynamicList.length - 1].apiId = records[i].Id;
             }else {
                 // If I find a matching PO already Existing then I need to put the Description from this and update this
                 // AdminPO when saved
 
                 this.poDynamicList[correspondant].description = records[i].Description__c;
+
+                this.poDynamicList[correspondant].apiId = records[i].Id;
             }
         }
     }
@@ -697,11 +708,15 @@ export default class Admin_checklist extends LightningElement {
     handleAdminChosen(event) {
         // This happens when a searched admin is Selected, since it is a child component it passes the value 
         // through the event
-        if(event.detail.value) {
-            this.adminChosen = event.detail.value;
+        if(event) {
+            if(event.detail.value) {
+                this.adminChosen = event.detail.value;
+            }
         }
 
+
         this.poDynamicList = [];
+
 
         this.queryAdminChosen().then(records => {
             if(records) {
@@ -771,6 +786,177 @@ export default class Admin_checklist extends LightningElement {
         }
 
         this.updateFinanceCalculationsAfterPercent();
+    }
+
+
+
+    getAdminDataFromElements() {
+        let adminElements = this.template.querySelectorAll("[data-admin='true']");
+
+        let adminData = {};
+
+        try {
+            adminElements.forEach(element => {
+                if(element['dataset']['apiname'] === 'ApplyFET__c') {
+                    adminData[element['dataset']['apiname']] = element['checked'];
+                }else {
+                    if(element['value']) {
+                        // Must Check if I have a number because apex won't insert/update if string is passed
+                        if(element['dataset']['isnumber']) {
+                            adminData[element['dataset']['apiname']] = Number(element['value']);
+                        }else {
+                            adminData[element['dataset']['apiname']] = element['value'];
+                        }
+                    }
+                }
+            });
+        }catch(err) {
+            console.log(err.message);
+        }
+
+        return adminData;
+    }
+
+    getAdminPOsFromElements() {
+        let adminPOElements = this.template.querySelectorAll("[data-adminpo='true']");
+
+        let adminPOData = {
+            toInsert: [],
+
+            toUpdate: []
+        };
+
+        let type, cost, description;
+
+        try {
+            for(let i = 0; i < adminPOElements.length/3; i++) {
+                type = adminPOElements[3*i];
+                cost = adminPOElements[3*i + 1];
+                description = adminPOElements[3*i + 2];
+
+                if(type['dataset']['apiid']) {
+                    adminPOData.toUpdate.push({});
+
+                    adminPOData.toUpdate[adminPOData.toUpdate.length - 1]['Id'] = type['dataset']['apiid'];
+
+                    // Effectively adminPOData[i]['Cost__c'] = 250.00, etc. for each field for each AdminPO
+                    adminPOData.toUpdate[adminPOData.toUpdate.length - 1][type['dataset']['apiname']] = type['value'];
+                    adminPOData.toUpdate[adminPOData.toUpdate.length - 1][cost['dataset']['apiname']] = Number(cost['value']);
+                    adminPOData.toUpdate[adminPOData.toUpdate.length - 1][description['dataset']['apiname']] = description['value'];
+                    adminPOData.toUpdate[adminPOData.toUpdate.length - 1]['AdminChecklist__c'] = this.adminChosen;
+                }else {
+                    adminPOData.toInsert.push({});
+
+                    // Effectively adminPOData[i]['Cost__c'] = 250.00, etc. for each field for each AdminPO
+                    adminPOData.toInsert[adminPOData.toInsert.length - 1][type['dataset']['apiname']] = type['value'];
+                    adminPOData.toInsert[adminPOData.toInsert.length - 1][cost['dataset']['apiname']] = Number(cost['value']);
+                    adminPOData.toInsert[adminPOData.toInsert.length - 1][description['dataset']['apiname']] = description['value'];
+                    adminPOData.toInsert[adminPOData.toInsert.length - 1]['AdminChecklist__c'] = this.adminChosen;
+                }
+            }
+        }catch(err) {
+            console.log(err.message);
+        }
+
+        return adminPOData;
+    }
+
+    handleClick_SaveQuote() {
+        let adminData = this.getAdminDataFromElements();
+        let adminPOData = this.getAdminPOsFromElements();
+
+        console.log(adminData);
+        console.log(adminPOData);
+        
+        if(this.adminChosen) {
+            updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: adminData }).then(isSuccess => {
+                if(isSuccess) {
+                    this.toast.displaySuccess('AdminChecklist Updated Succesfully!');
+                }else {
+                    this.toast.displayError('AdminChecklist Failed to Update');
+                }
+            }).catch( err => {
+                this.toast.displayError(err.body ? err.body.message : err.message);
+            });
+
+
+            updateRecords({ objectName: 'AdminPO__c', records: adminPOData.toUpdate }).then(isSuccess => {
+                if(isSuccess) {
+                    this.toast.displaySuccess('AdminPOs Updated Succesfully!');
+                }else {
+                    this.toast.displayError('AdminPOs Failed to Update');
+                }
+            }).catch( err => {
+                this.toast.displayError(err.body ? err.body.message : err.message);
+            });
+
+
+            insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
+                if(isSuccess) {
+                    this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
+                }else {
+                    this.toast.displayError('AdminPOs Failed to Insert');
+                }
+            }).catch( err => {
+                this.toast.displayError(err.body ? err.body.message : err.message);
+            });            
+        }else {
+            insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: adminData }).then(isSuccess => {
+                if(isSuccess) {
+                    this.toast.displaySuccess('AdminChecklist Inserted Succesfully!');
+                }else {
+                    this.toast.displayError('AdminChecklist Failed to Insert');
+                }
+            }).catch( err => {
+                this.toast.displayError(err.body ? err.body.message : err.message);
+            });
+
+
+            insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
+                if(isSuccess) {
+                    this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
+                }else {
+                    this.toast.displayError('AdminPOs Failed to Insert');
+                }
+            }).catch(err => {
+                this.toast.displayError(err.body ? err.body.message : err.message);
+            });
+        }
+    }
+
+    handleClick_PrintQuote() {
+        this.handleClick_SaveQuote();
+
+
+        let adminData = this.getAdminDataFromElements();
+        let adminPOData = this.getAdminPOsFromElements();
+
+
+        downloadAdmin({ fieldValuePairs: adminData }).then(content => {
+            let byteContent = atob(content);
+            let buf = new Array(byteContent.length);
+
+            for(var i = 0; i != byteContent.length; i++) {
+                buf[i] = byteContent.charCodeAt(i);
+            }
+
+            const view = new Uint8Array(buf);
+
+            let b = new Blob([view], {type: 'application/pdf'});
+
+            console.log(b);
+
+            let fileName = '';
+            if(this.view.getAttribute('whoWhat_AdminName', 'value') && this.view.getAttribute('whoWhat_AdminName', 'value') != '') {
+                fileName += 'Admin_' + this.view.getAttribute('whoWhat_AdminName', 'value');
+            }else {
+                fileName += 'Admin_' + this.view.getAttribute('whoWhat_Body_Series_Name', 'value');
+            }
+
+            blobToPDF(b, fileName + '.pdf');
+        }).catch(err => {
+            this.toast.displayError(err.body ? err.body.message : err.message);
+        });
     }
 
 

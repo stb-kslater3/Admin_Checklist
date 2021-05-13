@@ -1,4 +1,4 @@
-<apex:page controller="AdminChecklist_Controller" renderAs="pdf">
+<apex:page controller="AdminChecklist_Downloader" renderAs="pdf">
     <apex:stylesheet value="{!$Resource.AdminChecklist_CSS}"/>
 
     <apex:pageBlock>
@@ -50,11 +50,13 @@
             </div>
         </div>
         
-
+        
         <div class="SectionDiv">
             <table>
                 <tr>
                     <td>
+                        <p>WILL PUT THE ADMIN TABLE IN HERE AFTER A COUPLE OTHER THINGS FIRST</p>
+                        <!--
                         <table>
                             <tr>
                                 <td class="Bold">
@@ -202,6 +204,7 @@
                                 </td>
                             </tr> 
                         </table>
+                        -->
                     </td>
 
                     <td>
@@ -209,16 +212,17 @@
                             <b>Profit Amount:</b> {!profit_amount}
                         </div>
 
+                        <!--
                         <div>
                             <b>Profit Percent:</b> {!profit_percent}
                         </div>
-
+                        -->
 
                         <div style="margin-top: 10px">
                             <b>Dealer Pack:</b> {!dealer_pack}
                         </div>
 
-
+                        <!--
                         <div style="margin-top: 10px">
                             <b>Gross After Comission:</b> {!gross_after_com_amount}
                         </div>
@@ -226,28 +230,31 @@
                         <div>
                             <b>Gross After Comission %:</b> {!gross_after_com_percent}
                         </div>
-
-
+                        
                         <div style="margin-top: 10px">
                             <b>Subtotal After Profit:</b> {!subtotal_after_profit}
                         </div>
-
+                    -->
 
                         <div style="margin-top: 10px">
                             <b>F.E.T. Applies:</b> {!fet_applies}
                         </div>
 
+                        <!--
                         <div>
                             <b>12% F.E.T.:</b> {!fet_12_percent}
                         </div>
+                        -->
 
                         <div>
                             <b>Minus Tire F.E.T.:</b> {!minus_tire_fet}
                         </div>
 
+                        <!--
                         <div>
                             <b>Total F.E.T.:</b> {!total_fet}
                         </div>
+                        -->
 
 
                         <div style="margin-top: 10px">
@@ -266,9 +273,11 @@
                             <b>Deposit:</b> {!deposit}
                         </div>
 
+                        <!--
                         <div style="margin-top: 10px">
                             <b>Total:</b> {!total}
                         </div>
+                        -->
                     </td>
                 </tr>
             </table>

@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="slds-align_absolute-center slds-m-top_xsmall">
-                        <lightning-input type="text" label="Admin Name" data-id="whoWhat_AdminName" data-track="true">
+                        <lightning-input type="text" label="Admin Name" data-id="whoWhat_AdminName" data-admin="true" data-apiname="Name__c" data-track="true">
                         </lightning-input>
                     </div>
 
@@ -33,7 +33,9 @@
 
                                 <lightning-input-field
                                     field-name="Salesman__c"
-                                    data-id="whoWhat_Salesman" data-track="true">
+                                    data-id="whoWhat_Salesman" data-track="true"
+                                    data-admin="true"
+                                    data-apiname="Salesman__c">
 
                                 </lightning-input-field>
 
@@ -41,38 +43,38 @@
                         </div>
     
                         <div class="slds-float_left">
-                            <lightning-input label="Customer Name" data-id="whoWhat_Customer" data-track="true">
+                            <lightning-input label="Customer Name" data-id="whoWhat_Customer" data-admin="true" data-apiname="Customer_Name__c" data-track="true">
                             </lightning-input>
                         </div>
                     </div>
 
                     <div class="slds-align_absolute-center">
-                        <lightning-input type="date" label="Date" data-id="whoWhat_Date" data-track="true">
+                        <lightning-input type="date" label="Date" data-id="whoWhat_Date" data-admin="true" data-apiname="Date__c" data-track="true">
                         </lightning-input>
                     </div>
 
     
                     <div class="slds-clearfix slds-m-top_medium">
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-input label="Chassis Year" data-id="whoWhat_Chassis_Year" data-track="true">
+                            <lightning-input label="Chassis Year" data-id="whoWhat_Chassis_Year" data-admin="true" data-apiname="Chassis_Year__c" data-track="true">
                             </lightning-input>
 
-                            <lightning-input label="Chassis VIN" data-id="whoWhat_Chassis_VIN" data-track="true">
+                            <lightning-input label="Chassis VIN" data-id="whoWhat_Chassis_VIN" data-admin="true" data-apiname="Chassis_VIN__c" data-track="true">
                             </lightning-input>
                         </div>
                         
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-input label="Chassis Make" data-id="whoWhat_Chassis_Make" data-track="true">
+                            <lightning-input label="Chassis Make" data-id="whoWhat_Chassis_Make" data-admin="true" data-apiname="Chassis_Make__c" data-track="true">
                             </lightning-input>
 
-                            <lightning-input label="Chassis Model" data-id="whoWhat_Chassis_Model" data-track="true">
+                            <lightning-input label="Chassis Model" data-id="whoWhat_Chassis_Model" data-admin="true" data-apiname="Chassis_Model__c" data-track="true">
                             </lightning-input>
                         </div>
                     </div>
 
 
                     <div class="slds-align_absolute-center slds-m-right_medium">
-                        <lightning-input label="Body Series" data-id="whoWhat_Body_Series_Name" data-track="true">
+                        <lightning-input label="Body Series" data-id="whoWhat_Body_Series_Name" data-admin="true" data-apiname="Body_Series_Name__c" data-track="true">
                         </lightning-input>
                     </div>
                 </div>
@@ -90,17 +92,17 @@
                             <template for:each={poDynamicList} for:item="poDynamic">
                                 <div key={poDynamic.index} class=" slds-clearfix slds-m-bottom_small slds-box slds-box-xx_small slds-theme_shade">
                                     <div class="slds-align_absolute-center">
-                                        <lightning-formatted-text data-id={poDynamic.dataIdType} value={poDynamic.type} data-track="true" data-index={poDynamic.index}>
+                                        <lightning-formatted-text data-id={poDynamic.dataIdType} value={poDynamic.type} data-adminpo="true" data-apiname="Type__c" data-apiid={poDynamic.apiId} data-track="true" data-index={poDynamic.index}>
                                         </lightning-formatted-text>
                                     </div>
 
                                     <div class="slds-align_absolute-center">
-                                        <lightning-input type="number" formatter="currency" step=".01" label="Cost" data-id={poDynamic.dataIdCost} value={poDynamic.cost} data-track="true" data-index={poDynamic.index} disabled={poDynamic.disabled} onfocusout={handleModifyFinances}>
+                                        <lightning-input type="number" formatter="currency" step=".01" label="Cost" data-id={poDynamic.dataIdCost} value={poDynamic.cost} data-adminpo="true" data-apiname="Cost__c" data-apiid={poDynamic.apiId} data-track="true" data-isnumber="true" data-index={poDynamic.index} disabled={poDynamic.disabled} onfocusout={handleModifyFinances}>
                                         </lightning-input>
                                     </div>
 
                                     <div class="slds-align_absolute-center">
-                                        <lightning-textarea label="Description" data-id={poDynamic.dataIdDescription} value={poDynamic.description} data-track="true" data-index={poDynamic.index}>
+                                        <lightning-textarea label="Description" data-id={poDynamic.dataIdDescription} value={poDynamic.description} data-adminpo="true" data-apiname="Description__c"  data-apiid={poDynamic.apiId} data-track="true" data-index={poDynamic.index}>
                                         </lightning-textarea>
                                     </div>
 
@@ -166,7 +168,7 @@
                     </div>
 
                     <div class="slds-m-left_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Profit Amount" data-id="finances_Profit_Amount" data-track="true" onfocusout={handleModifyFinances}>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Profit Amount" data-id="finances_Profit_Amount" data-admin="true" data-isnumber="true" data-apiname="Profit_Amount__c" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -179,7 +181,7 @@
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Dealer Pack" data-id="finances_Dealer_Pack" data-track="true" onfocusout={handleModifyFinances}>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Dealer Pack" data-id="finances_Dealer_Pack" data-admin="true" data-isnumber="true" data-apiname="Dealer_Pack__c" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -227,7 +229,11 @@
                         <lightning-input
                             type="checkbox"
                             label="Apply F.E.T."
-                            data-id="finances_FET_Checkbox" data-track="true" onclick={handleModifyFinances}>
+                            data-id="finances_FET_Checkbox"
+                            data-admin="true"
+                            data-apiname="ApplyFET__c"
+                            data-track="true"
+                            onclick={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -247,7 +253,7 @@
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_xx-small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Minus Tire F.E.T." data-id="finances_Minus_Tire_FET" data-track="true" onfocusout={handleModifyFinances}>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Minus Tire F.E.T." data-id="finances_Minus_Tire_FET" data-admin="true" data-isnumber="true" data-apiname="Minus_Tire_FET__c" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -264,18 +270,18 @@
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Extended Warranty" data-id="finances_Extended_Warranty" data-track="true" onfocusout={handleModifyFinances}>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Extended Warranty" data-id="finances_Extended_Warranty" data-admin="true" data-isnumber="true" data-apiname="Extended_Warranty__c" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Other Fees" data-id="finances_Other_Fees" data-track="true" onfocusout={handleModifyFinances}>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Other Fees" data-id="finances_Other_Fees" data-admin="true" data-apiname="Other_Fees__c" data-isnumber="true" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
 
                     <div class="slds-m-left_small slds-m-top_small">
-                        <lightning-input type="number" formatter="currency" step=".01" label="Documentation Fee" data-id="finances_Documentation_Fee" data-track="true" onfocusout={handleModifyFinances}>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Documentation Fee" data-id="finances_Documentation_Fee" data-admin="true" data-apiname="Documentation_Fee__c" data-isnumber="true" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -284,7 +290,7 @@
                         <lightning-helptext class="slds-float_left" content="Sum of Deposit and Net Trade Allowance">
                         </lightning-helptext>
 
-                        <lightning-input type="number" formatter="currency" step=".01" label="Deposit" data-id="finances_Deposit" data-track="true" onfocusout={handleModifyFinances}>
+                        <lightning-input type="number" formatter="currency" step=".01" label="Deposit" data-id="finances_Deposit" data-admin="true" data-apiname="Deposit__c" data-isnumber="true" data-track="true" onfocusout={handleModifyFinances}>
                         </lightning-input>
                     </div>
 
@@ -315,22 +321,22 @@
     
                     <div class="slds-clearfix">
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-input label="Trade In Make" data-id="tradeIn_Make" data-track="true">
+                            <lightning-input label="Trade In Make" data-admin="true" data-apiname="TradeIn_Make__c" data-id="tradeIn_Make" data-track="true">
                             </lightning-input>
                         
-                            <lightning-input label="Trade In Model" data-id="tradeIn_Model" data-track="true">
+                            <lightning-input label="Trade In Model" data-id="tradeIn_Model" data-admin="true" data-apiname="TradeIn_Model__c" data-track="true">
                             </lightning-input>
                         </div>
                     
                         <div class="slds-float_left">
-                            <lightning-input label="Trade In Year" data-id="tradeIn_Year" data-track="true">
+                            <lightning-input label="Trade In Year" data-id="tradeIn_Year" data-admin="true" data-apiname="TradeIn_Year__c"  data-track="true">
                             </lightning-input>
                         </div>
                     </div>
     
                     <div>
                         <div>
-                            <lightning-input label="Trade In Unit Number" data-id="tradeIn_Unit_Number" data-track="true">
+                            <lightning-input label="Trade In Unit Number" data-id="tradeIn_Unit_Number" data-admin="true" data-apiname="TradeIn_Unit_Number__c" data-track="true">
                             </lightning-input>
                         </div>
                     </div>
@@ -338,15 +344,15 @@
     
                     <div class="slds-clearfix">
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-input type="number" formatter="currency" step=".01" label="Actual Cash Value" data-id="tradeIn_Actual_Cash_Value" data-track="true">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Actual Cash Value" data-id="tradeIn_Actual_Cash_Value" data-admin="true" data-apiname="TradeIn_Actual_Cash_Value__c" data-isnumber="true" data-track="true">
                             </lightning-input>
                         </div>
     
                         <div class="slds-float_left slds-m-right_large">
-                            <lightning-input type="number" formatter="currency" step=".01" label="Trade In Billing Amount" data-id="tradeIn_Billing_Amount" data-track="true">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Trade In Billing Amount" data-id="tradeIn_Billing_Amount" data-admin="true" data-apiname="TradeIn_Billing_Amount__c" data-isnumber="true" data-track="true">
                             </lightning-input>
 
-                            <lightning-input type="number" formatter="currency" step=".01" label="Payoff Remaining" data-id="tradeIn_Payoff" data-track="true">
+                            <lightning-input type="number" formatter="currency" step=".01" label="Payoff Remaining" data-id="tradeIn_Payoff" data-admin="true" data-apiname="TradeIn_Payoff__c" data-isnumber="true" data-track="true">
                             </lightning-input>
                         </div>
                     </div>
@@ -368,22 +374,22 @@
                             </div>
     
                             <div>
-                                <lightning-input label="Front Tire Description" data-id="fetCredit_FET_Front_Description" data-track="true">
+                                <lightning-input label="Front Tire Description" data-id="fetCredit_FET_Front_Description" data-admin="true" data-apiname="FET_Front_Description__c" data-track="true">
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input label="Front Tire Size" data-id="fetCredit_FET_Front_Size" data-track="true">
+                                <lightning-input label="Front Tire Size" data-id="fetCredit_FET_Front_Size" data-admin="true" data-apiname="FET_Front_Size__c" data-track="true">
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" formatter="currency" step=".01" label="Front Tire Cost" data-id="fetCredit_FET_Front_Cost" data-track="true" onfocusout={calculateFETTotals}>
+                                <lightning-input type="number" formatter="currency" step=".01" label="Front Tire Cost" data-id="fetCredit_FET_Front_Cost" data-admin="true" data-apiname="FET_Front_Cost__c" data-isnumber="true" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" label="Front Tire Quantity" data-id="fetCredit_FET_Front_Quantity" data-track="true" onfocusout={calculateFETTotals}>
+                                <lightning-input type="number" label="Front Tire Quantity" data-id="fetCredit_FET_Front_Quantity" data-admin="true" data-apiname="FET_Front_Quantity__c" data-isnumber="true" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
@@ -405,22 +411,22 @@
                             </div>
     
                             <div>
-                                <lightning-input label="Rear Tire Description" data-id="fetCredit_FET_Rear_Description" data-track="true">
+                                <lightning-input label="Rear Tire Description" data-id="fetCredit_FET_Rear_Description" data-admin="true" data-apiname="FET_Rear_Description__c" data-track="true">
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input label="Rear Tire Size" data-id="fetCredit_FET_Rear_Size" data-track="true">
+                                <lightning-input label="Rear Tire Size" data-id="fetCredit_FET_Rear_Size" data-admin="true" data-apiname="FET_Rear_Size__c" data-track="true">
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" formatter="currency" step=".01" label="Rear Tire Cost" data-id="fetCredit_FET_Rear_Cost" data-track="true" onfocusout={calculateFETTotals}>
+                                <lightning-input type="number" formatter="currency" step=".01" label="Rear Tire Cost" data-id="fetCredit_FET_Rear_Cost" data-admin="true" data-apiname="FET_Rear_Cost__c" data-isnumber="true" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
                             <div class="slds-m-top_small">
-                                <lightning-input type="number" label="Rear Tire Quantity" data-id="fetCredit_FET_Rear_Quantity" data-track="true" onfocusout={calculateFETTotals}>
+                                <lightning-input type="number" label="Rear Tire Quantity" data-id="fetCredit_FET_Rear_Quantity" data-admin="true" data-apiname="FET_Rear_Quantity__c" data-isnumber="true" data-track="true" onfocusout={calculateFETTotals}>
                                 </lightning-input>
                             </div>
     
