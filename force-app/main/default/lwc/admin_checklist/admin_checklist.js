@@ -404,8 +404,6 @@ export default class Admin_checklist extends LightningElement {
 
 
     loadAdminFromOpportunity(record) {
-        this.opportunityId = record['Id'];
-
         this.view.setAttribute('whoWhat_AdminName', 'value', record['Name']);
         this.view.setAttribute('whoWhat_AdminName', 'disabled', true);
 
@@ -465,6 +463,10 @@ export default class Admin_checklist extends LightningElement {
                     this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
 
                     this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = 'From Opportunity Product';
+                }else {
+                    this.poDynamicList[correspondant]['disabled'] = true;
+
+                    this.poDynamicList[correspondant]['lineDescription'] = 'From Opportunity Product';
                 }
 
                 break;
@@ -535,17 +537,33 @@ export default class Admin_checklist extends LightningElement {
 
 
     loadPOsFromPOLines(poMap) {
+        // Used to hold index of AdminPOs match if already put there by AdminPOs
+        let correspondant;
+
+
         // First put the Chassis if there is one
         if(poMap['Chassis']) {
             // Make sure list isn't empty, it has been before
             if(poMap['Chassis'].length > 0) {
+                // First see if Chassis is already Present from AdminPOs, if so then just disable the cost and remove, otherwise
+                // go ahead an add the Chassis PO
+                // Used to hold index when checking if a matching one already exists or not
                 let record = poMap['Chassis'][0];
 
-                this.addToPOList('Chassis', record.rstk__poline_amtreq__c, '');
+                correspondant = this.findCorrespondingPO('Chassis', record.rstk__poline_amtreq__c);
 
-                this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+                if(correspondant < 0) {
+                    this.addToFrontOfPOList('Chassis', record.rstk__poline_amtreq__c, '');
 
-                this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = record.rstk__poline_longdescr__c;
+                    this.poDynamicList[0]['disabled'] = true;
+
+                    this.poDynamicList[0]['lineDescription'] = record.rstk__poline_longdescr__c;
+                }else {
+                    // If we do find a match from AdminPO already there, then go ahead and disable that field
+                    this.poDynamicList[correspondant]['disabled'] = true;
+
+                    this.poDynamicList[correspondant]['lineDescription'] = record.rstk__poline_longdescr__c;
+                }
             }
         }
 
@@ -559,28 +577,105 @@ export default class Admin_checklist extends LightningElement {
                 // This is the nature of Rootstock
                 let maxIndex = 0;
 
+                // Holds the Indices of the aorders, freights, etc. within record
+                let aOrders = [];
+                let freights = [];
+
+                // Holds the indeices of what wasn't caught by the above within record
+                let others = [];
+
+
+                // Find the Body, and find the Aorders and the Freights
                 for(let i in records) {
-                    this.addToPOList('Other', records[i].rstk__poline_amtreq__c, '');
-
-                    this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                    this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[i].rstk__poline_longdescr__c;
+                    if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
+                        freights.push(i);
+                    }else if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
+                        aOrders.push(i);
+                    }else {
+                        others.push(i);
+                    }
 
                     if(records[i].rstk__poline_amtreq__c > records[maxIndex].rstk__poline_amtreq__c) {
                         maxIndex = i;
                     }
+                }
 
-                    // If this is a Freight, put it in the Type, or an AOrder, and so on
-                    if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
-                        this.poDynamicList[this.poDynamicList.length - 1].type = 'Freight';
-                    }else if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
-                        this.poDynamicList[this.poDynamicList.length - 1].type = 'A Order';
+
+                // remove Body from Others, which is Max Index
+                let bodyOther = others.find(element => Number(element) === Number(maxIndex));
+
+                if(bodyOther) {
+                    others.splice(bodyOther, 1);
+                }
+
+                // Do the Body
+                correspondant = this.findCorrespondingPO('Body', records[maxIndex].rstk__poline_amtreq__c);
+                
+                if(correspondant < 0) {
+                    this.addToPOList('Body', records[maxIndex].rstk__poline_amtreq__c, '');
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
+                }else {
+                    this.poDynamicList[correspondant]['disabled'] = true;
+
+                    this.poDynamicList[correspondant]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
+                }
+
+
+                // Then Do The A Orders
+                for(let i in aOrders) {
+                    correspondant = this.findCorrespondingPO('A Order', records[aOrders[i]].rstk__poline_amtreq__c);
+               
+                    if(correspondant < 0) {
+                        this.addToPOList('A Order', records[aOrders[i]].rstk__poline_amtreq__c, '');
+
+                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
+                    }else {
+                        this.poDynamicList[correspondant]['disabled'] = true;
+
+                        this.poDynamicList[correspondant]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
                     }
                 }
 
-                // I have to change the Type for the Body in the PODynamic list because rendered callback, and in order
-                // to get to the right one in the PODynamic List I have to calculate this index in a funky way
-                this.poDynamicList[this.poDynamicList.length - records.length + maxIndex].type = 'Body';
+
+                // Then the Freights
+                for(let i in freights) {
+                    correspondant = this.findCorrespondingPO('Freight', records[freights[i]].rstk__poline_amtreq__c);
+                
+                    if(correspondant < 0) {
+                        this.addToPOList('Freight', records[freights[i]].rstk__poline_amtreq__c, '');
+
+                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
+                    }else {
+                        this.poDynamicList[correspondant]['disabled'] = true;
+
+                        this.poDynamicList[correspondant]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
+                    }
+                }
+
+
+                // Then the Others
+                for(let i in others) {
+                    correspondant = this.findCorrespondingPO('Other', records[others[i]].rstk__poline_amtreq__c);
+                
+                    if(correspondant < 0) {
+                        this.addToPOList('Other', records[others[i]].rstk__poline_amtreq__c, '');
+
+                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
+                    }else {
+                        this.poDynamicList[correspondant]['disabled'] = true;
+
+                        this.poDynamicList[correspondant]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
+                    }
+                }
             }
         }
     }
@@ -599,112 +694,63 @@ export default class Admin_checklist extends LightningElement {
     }
 
 
-    handleAdminChosen() {
+    handleAdminChosen(event) {
+        // This happens when a searched admin is Selected, since it is a child component it passes the value 
+        // through the event
+        if(event.detail.value) {
+            this.adminChosen = event.detail.value;
+        }
+
         this.poDynamicList = [];
 
         this.queryAdminChosen().then(records => {
             if(records) {
                 if(records.length > 0) {
                     this.loadAdminFromRecord(records[0]);
-                    let adminData = records[0];
-console.log(adminData);
+
+
+                    this.queryOpportunity().then(records => {
+                        if(records) {
+                            if(records.length > 0) {
+                                this.loadAdminFromOpportunity(records[0]);
+                                this.opportunityId = records[0].Id;
+                                 
+                                
+                                this.queryProducts().then(records => {
+                                    if(records) {
+                                        if(records.length > 0) {
+                                            let productsData = records;
+
+                                            this.loadAdminFromProducts(productsData);
+                                            
+
+                                            getPOs({ lineItems: productsData }).then(poMap => {
+                                                if(poMap) {
+                                                    if(Object.keys(poMap).length > 0) {
+                                                        this.loadPOsFromPOLines(poMap);
+                                                    }
+                                                }
+                                            }).catch(err => {
+                                                this.toast.displayError(err.body ? err.body.message : err.message);
+                                            });
+                                        }
+                                    }
+                                }).catch(err => {
+                                    this.toast.displayError(err.body ? err.body.message : err.message);
+                                });
+                            }
+                        }
+                    }).catch(err => {
+                        this.toast.displayError(err.body ? err.body.message : err.message);
+                    });
+
+
                     this.queryAdminPOs().then(records => {
                         if(records) {
                             if(records.length > 0) {
-                                // clear out the default POs and put in the ones that exist
-                                this.poDynamicList = [];
-
-                                //this.loadAdminPOsFromRecords(records);
-                                let adminPOData = records;
-console.log(adminPOData);
-                                
+                                this.loadAdminPOsFromRecords(records);
                             }
                         }
-
-
-                        this.queryOpportunity().then(records => {
-                            if(records) {
-                                if(records.length > 0) {
-                                    let opportunityData = records[0];
-console.log(opportunityData);                                            
-                                    this.queryProducts().then(records => {
-                                        if(records) {
-                                            if(records.length > 0) {
-                                                let productsData = records;
-console.log(productsData);
-                                                getPOs({ lineItems: productsData }).then(poMap => {
-console.log(poMap);
-                                                    if(poMap) {
-                                                        if(Object.keys(poMap).length > 0) {
-                                                        
-                                                        // Run in order working your way down
-                                                            this.loadPOsFromPOLines(poMap);
-
-                                                            this.loadAdminFromProducts(productsData);
-
-                                                            this.loadAdminFromOpportunity(opportunityData);
-
-                                                            this.loadAdminPOsFromRecords(adminPOData);
-
-                                                            this.loadAdminFromRecord(adminData);
-                                                        }else {
-                                                            // Run in order working your way down without PO Lines
-                                                                this.loadAdminFromProducts(productsData);
-
-                                                                this.loadAdminFromOpportunity(opportunityData);
-
-                                                                this.loadAdminPOsFromRecords(adminPOData);
-
-                                                                this.loadAdminFromRecord(adminData);
-                                                        }
-                                                    }else {
-                                                        // Run in order working your way down without PO Lines
-                                                            this.loadAdminFromProducts(productsData);
-
-                                                            this.loadAdminFromOpportunity(opportunityData);
-
-                                                            this.loadAdminPOsFromRecords(adminPOData);
-
-                                                            this.loadAdminFromRecord(adminData);
-                                                    }
-
-                                                }).catch(err => {
-                                                    this.toast.displayError(err.body ? err.body.message : err.message);
-                                                });
-                                            }else {
-                                                // Run in order working your way down without Products
-                                                    this.loadAdminFromOpportunity(opportunityData);
-
-                                                    this.loadAdminPOsFromRecords(adminPOData);
-
-                                                    this.loadAdminFromRecord(adminData);
-                                            }
-                                        }else {
-                                            // Run in order working your way down without Products
-                                                this.loadAdminFromOpportunity(opportunityData);
-
-                                                this.loadAdminPOsFromRecords(adminPOData);
-
-                                                this.loadAdminFromRecord(adminData);
-                                        }
-                                    }).catch(err => {
-                                        this.toast.displayError(err.body ? err.body.message : err.message);
-                                    });
-                                }else {
-                                // Run in order working your way down without the Opportunity
-                                    this.loadAdminPOsFromRecords(adminPOData);
-
-                                    this.loadAdminFromRecord(adminData);
-                                }
-                            }else {
-                            // Run in order working your way down without the Opportunity
-                                this.loadAdminPOsFromRecords(adminPOData);
-
-                                this.loadAdminFromRecord(adminData);
-                            }
-                        }).catch(err => {
-                            this.toast.displayError(err.body ? err.body.message : err.message);
-                        });
                     }).catch(err => {
                         this.toast.displayError(err.body ? err.body.message : err.message);
                     });
