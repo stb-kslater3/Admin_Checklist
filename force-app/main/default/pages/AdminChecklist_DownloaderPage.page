@@ -55,156 +55,22 @@
             <table>
                 <tr>
                     <td>
-                        <p>WILL PUT THE ADMIN TABLE IN HERE AFTER A COUPLE OTHER THINGS FIRST</p>
-                        <!--
-                        <table>
-                            <tr>
-                                <td class="Bold">
-                                    Item
-                                </td>
+                        <apex:dataTable value="{!poDataIndices}" var="index" border="1">
+                            <apex:column>
+                                <apex:facet name="header">Type</apex:facet>
+                                <apex:outputText value="{!poDataType[index]}"></apex:outputText>
+                            </apex:column>
 
-                                <td class="Bold">
-                                    Cost
-                                </td>
-    
-                                <td class="Bold">
-                                    Description
-                                </td>
-                            </tr>
-    
-                            <tr>
-                                <td>
-                                    Chassis
-                                </td>
-
-                                <td class="DataCell MediumCell">
-                                    {!po1_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po1_description}
-                                </td>
-                            </tr>
-            
-                            <tr>    
-                                <td>
-                                    Body
-                                </td>
-
-                                <td class="DataCell MediumCell">
-                                    {!po2_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po2_description}
-                                </td>
-                            </tr>
-            
-                            <tr>
-                                <td>
-                                    Freight
-                                </td>
-
-                                <td class="DataCell MediumCell">
-                                    {!po3_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po3_description}
-                                </td>
-                            </tr>
-            
-                            <tr>
-                                <td>
-                                    AOrder
-                                </td>
-
-                                <td class="DataCell MediumCell">
-                                    {!po4_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po4_description}
-                                </td>
-                            </tr>
-            
-                            <tr>
-                                <td>
-                                    Other 1
-                                </td>
-
-                                <td class="DataCell MediumCell">
-                                    {!po5_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po5_description}
-                                </td>
-                            </tr>
-            
-                            <tr>
-                                <td>
-                                    Other 2
-                                </td>
-                                
-                                <td class="DataCell MediumCell">
-                                    {!po6_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po6_description}
-                                </td>
-                            </tr>
-            
-                            <tr>
-                                <td>
-                                    Other 3
-                                </td>
-                                
-                                <td class="DataCell MediumCell">
-                                    {!po7_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po7_description}
-                                </td>
-                            </tr>
-            
-                            <tr>
-                                <td>
-                                    Other 4
-                                </td>
-                                
-                                <td class="DataCell MediumCell">
-                                    {!po8_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po8_description}
-                                </td>
-                            </tr>
-            
-                            <tr>
-                                <td>
-                                    Other 5
-                                </td>
-                                
-                                <td class="DataCell MediumCell">
-                                    {!po9_cost}
-                                </td>
-            
-                                <td class="DataCell DescriptionCell">
-                                    {!po9_description}
-                                </td>
-                            </tr>
-    
-                            <tr>
-                                <td colspan="100">
-                                    <b>Subtotal Before Profit:</b>  {!subtotal_before_profit}
-                                </td>
-                            </tr> 
-                        </table>
-                        -->
+                            <apex:column>
+                                <apex:facet name="header">Cost</apex:facet>
+                                <apex:outputText value="{!poDataCost[index]}"></apex:outputText>
+                            </apex:column>
+                            
+                            <apex:column>
+                                <apex:facet name="header">Description</apex:facet>
+                                <apex:outputText value="{!poDataDescription[index]}"></apex:outputText>
+                            </apex:column>
+                        </apex:dataTable>
                     </td>
 
                     <td>

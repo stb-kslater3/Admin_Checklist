@@ -19,32 +19,10 @@ public with sharing class AdminChecklist_Downloader {
     public String body_series {get; set;}
 
 
-    public String po1_cost {get; set;}
-    public String po1_description {get; set;}
-
-    public String po2_cost {get; set;}
-    public String po2_description {get; set;}
-
-    public String po3_cost {get; set;}
-    public String po3_description {get; set;}
-
-    public String po4_cost {get; set;}
-    public String po4_description {get; set;}
-
-    public String po5_cost {get; set;}
-    public String po5_description {get; set;}
-
-    public String po6_cost {get; set;}
-    public String po6_description {get; set;}
-
-    public String po7_cost {get; set;}
-    public String po7_description {get; set;}
-
-    public String po8_cost {get; set;}
-    public String po8_description {get; set;}
-
-    public String po9_cost {get; set;}
-    public String po9_description {get; set;}
+    public List<Integer> poDataIndices {get; set;}
+    public List<String> poDataType {get; set;}
+    public List<String> poDataCost {get; set;}
+    public List<String> poDataDescription {get; set;}
 
     public String subtotal_before_profit {get; set;}
 
@@ -199,131 +177,21 @@ public with sharing class AdminChecklist_Downloader {
         }
 
 
-        /*
-        if(adminData.containsKey('Chassis_Cost__c')) {
-            po1_cost = this.formatMoney(adminData.get('Chassis_Cost__c'));
-        }else {
-            po1_cost = '_';
-        }
-        
-        if(adminData.containsKey('Chassis_Description__c')) {
-            po1_description = adminData.get('Chassis_Description__c');
-        }else {
-            po1_description = '_';
-        }
-        
-        
-        if(adminData.containsKey('Body_Cost__c')) {
-            po2_cost = this.formatMoney(adminData.get('Body_Cost__c'));
-        }else {
-            po2_cost = '_';
-        }
-        
-        if(adminData.containsKey('Body_Description__c')) {
-            po2_description = adminData.get('Body_Description__c');
-        }else {
-            po2_description = '_';
-        }
 
-        
-        if(adminData.containsKey('Freight_Cost__c')) {
-            po3_cost = this.formatMoney(adminData.get('Freight_Cost__c'));
-        }else {
-            po3_cost = '_';
-        }
-        
-        if(adminData.containsKey('Freight_Description__c')) {
-            po3_description = adminData.get('Freight_Description__c');
-        }else {
-            po3_description = '_';
-        }
+        poDataIndices = new List<Integer>();
+        poDataType = new List<String>();
+        poDataCost = new List<String>();
+        poDataDescription = new List<String>();
 
-        
-        if(adminData.containsKey('AOrder_Cost__c')) {
-            po4_cost = this.formatMoney(adminData.get('AOrder_Cost__c'));
-        }else {
-            po4_cost = '_';
-        }
-        
-        if(adminData.containsKey('AOrder_Description__c')) {
-            po4_description = adminData.get('AOrder_Description__c');
-        }else {
-            po4_description = '_';
-        }
+        Integer poCount = Integer.valueOf(adminData.get('poCount'));
 
-        
-        if(adminData.containsKey('Other_1_Cost__c')) {
-            po5_cost = this.formatMoney(adminData.get('Other_1_Cost__c'));
-        }else {
-            po5_cost = '_';
-        }
-        
-        if(adminData.containsKey('Other_1_Description__c')) {
-            po5_description = adminData.get('Other_1_Description__c');
-        }else {
-            po5_description = '_';
-        }
+        for(Integer i = 0; i < poCount; i++) {
+            poDataIndices.add(i);
 
-        
-        if(adminData.containsKey('Other_2_Cost__c')) {
-            po6_cost = this.formatMoney(adminData.get('Other_2_Cost__c'));
-        }else {
-            po6_cost = '_';
+            poDataType.add( adminData.get('type_' + String.valueOf(i)) );
+            poDataCost.add( this.formatMoney(adminData.get('cost_' + String.valueOf(i))) );
+            poDataDescription.add( adminData.get('description_' + String.valueOf(i)) );
         }
-        
-        if(adminData.containsKey('Other_2_Description__c')) {
-            po6_description = adminData.get('Other_2_Description__c');
-        }else {
-            po6_description = '_';
-        }
-
-        
-        if(adminData.containsKey('Other_3_Cost__c')) {
-            po7_cost = this.formatMoney(adminData.get('Other_3_Cost__c'));
-        }else {
-            po7_cost = '_';
-        }
-        
-        if(adminData.containsKey('Other_3_Description__c')) {
-            po7_description = adminData.get('Other_3_Description__c');
-        }else {
-            po7_description = '_';
-        }
-
-        
-        if(adminData.containsKey('Other_4_Cost__c')) {
-            po8_cost = this.formatMoney(adminData.get('Other_4_Cost__c'));
-        }else {
-            po8_cost = '_';
-        }
-        
-        if(adminData.containsKey('Other_4_Description__c')) {
-            po8_description = adminData.get('Other_4_Description__c');
-        }else {
-            po8_description = '_';
-        }
-
-        
-        if(adminData.containsKey('Other_5_Cost__c')) {
-            po9_cost = this.formatMoney(adminData.get('Other_5_Cost__c'));
-        }else {
-            po9_cost = '_';
-        }
-        
-        if(adminData.containsKey('Other_5_Description__c')) {
-            po9_description = adminData.get('Other_5_Description__c');
-        }else {
-            po9_description = '_';
-        }
-        */
-
-        /*
-        if(adminData.containsKey('subtotal_before_profit')) {
-            subtotal_before_profit = this.formatMoney(adminData.get('subtotal_before_profit'));   
-        }else {
-            subtotal_before_profit = '_';
-        }
-        */
 
 
         if(adminData.containsKey('Profit_Amount__c')) {

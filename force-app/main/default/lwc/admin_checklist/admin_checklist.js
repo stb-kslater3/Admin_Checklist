@@ -1,6 +1,8 @@
 
 import { LightningElement, track } from 'lwc';
 
+import { NavigationMixin } from 'lightning/navigation'
+
 import { LWC_Toast } from "c/lwc_generic_prototype";
 
 import queryFromString from "@salesforce/apex/Apex_Generic_Prototype.queryFromString";
@@ -19,7 +21,7 @@ import {blobToPDF} from 'c/lwc_blob_handler';
 
 
 
-export default class Admin_checklist extends LightningElement {
+export default class Admin_checklist extends NavigationMixin(LightningElement) {
     @track poDynamicList;
 
     adminChosen;
@@ -729,7 +731,23 @@ export default class Admin_checklist extends LightningElement {
                             if(records.length > 0) {
                                 this.loadAdminFromOpportunity(records[0]);
                                 this.opportunityId = records[0].Id;
-                                 
+                                let opportunityName = records[0].Name; 
+
+                                this[NavigationMixin.GenerateUrl]({
+                                    type: 'standard__recordPage',
+                                    attributes: {
+                                        recordId: this.opportunityId,
+                                        actionName: 'view'
+                                    }
+                                }).then(url => {
+                                    url = window.location.host + url;
+
+                                    this.view.setAttribute('whoWhat_OpportunityLink', 'label', opportunityName);
+                                    this.view.setAttribute('whoWhat_OpportunityLink', 'value', url);
+                                }).catch(err => {
+                                    console.log(err.body ? err.body.message : err.message);
+                                });
+
                                 
                                 this.queryProducts().then(records => {
                                     if(records) {
@@ -864,9 +882,6 @@ export default class Admin_checklist extends LightningElement {
     handleClick_SaveQuote() {
         let adminData = this.getAdminDataFromElements();
         let adminPOData = this.getAdminPOsFromElements();
-
-        console.log(adminData);
-        console.log(adminPOData);
         
         if(this.adminChosen) {
             updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: adminData }).then(isSuccess => {
@@ -880,26 +895,30 @@ export default class Admin_checklist extends LightningElement {
             });
 
 
-            updateRecords({ objectName: 'AdminPO__c', records: adminPOData.toUpdate }).then(isSuccess => {
-                if(isSuccess) {
-                    this.toast.displaySuccess('AdminPOs Updated Succesfully!');
-                }else {
-                    this.toast.displayError('AdminPOs Failed to Update');
-                }
-            }).catch( err => {
-                this.toast.displayError(err.body ? err.body.message : err.message);
-            });
+            if(adminPOData.toUpdate.length > 0) {
+                updateRecords({ objectName: 'AdminPO__c', records: adminPOData.toUpdate }).then(isSuccess => {
+                    if(isSuccess) {
+                        this.toast.displaySuccess('AdminPOs Updated Succesfully!');
+                    }else {
+                        this.toast.displayError('AdminPOs Failed to Update');
+                    }
+                }).catch( err => {
+                    this.toast.displayError(err.body ? err.body.message : err.message);
+                });
+            }
 
 
-            insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
-                if(isSuccess) {
-                    this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
-                }else {
-                    this.toast.displayError('AdminPOs Failed to Insert');
-                }
-            }).catch( err => {
-                this.toast.displayError(err.body ? err.body.message : err.message);
-            });            
+            if(adminPOData.toInsert.length > 0) {
+                insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
+                    if(isSuccess) {
+                        this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
+                    }else {
+                        this.toast.displayError('AdminPOs Failed to Insert');
+                    }
+                }).catch( err => {
+                    this.toast.displayError(err.body ? err.body.message : err.message);
+                });
+            }            
         }else {
             insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: adminData }).then(isSuccess => {
                 if(isSuccess) {
@@ -931,8 +950,23 @@ export default class Admin_checklist extends LightningElement {
         let adminData = this.getAdminDataFromElements();
         let adminPOData = this.getAdminPOsFromElements();
 
+        let bothPOs = adminPOData.toInsert.concat(adminPOData.toUpdate);
 
-        downloadAdmin({ fieldValuePairs: adminData }).then(content => {
+        let pdfParameters = adminData;
+
+        pdfParameters.poCount = bothPOs.length;
+
+        for(let i = 0; i < bothPOs.length; i++) {
+            pdfParameters['type_' + i] = bothPOs[i]['Type__c'];
+            pdfParameters['cost_' + i] = bothPOs[i]['Cost__c'];
+
+            if(!bothPOs[i]['Description__c']) {
+                bothPOs[i]['Description__c'] = "";
+            }
+            pdfParameters['description_' + i] = bothPOs[i]['Description__c'];
+        }
+        
+        downloadAdmin({ fieldValuePairs: pdfParameters }).then(content => {
             let byteContent = atob(content);
             let buf = new Array(byteContent.length);
 

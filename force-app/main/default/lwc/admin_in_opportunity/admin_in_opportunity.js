@@ -1,11 +1,13 @@
 import { LightningElement, api } from 'lwc';
 
+/*
 import {LWC_Toast, LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
 
 import updateRecordFromId from '@salesforce/apex/ApexDataInterface.updateRecordFromId';
 import queryFromString from '@salesforce/apex/ApexDataInterface.queryFromString';
 
 import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
+*/
 
 
 export default class Admin_in_opportunity extends LightningElement {
@@ -25,14 +27,15 @@ export default class Admin_in_opportunity extends LightningElement {
     adminName;
 
 
-    newAdminButton;
-    editAdminButton;
+    //newAdminButton;
+    //editAdminButton;
 
 
     adminNavAttr;
     adminNavState;
 
 
+    /*
     createLWCElements() {
         if(!this.newAdminButton) {
             this.newAdminButton = new LWC_Element(
@@ -70,6 +73,7 @@ export default class Admin_in_opportunity extends LightningElement {
             );
         }
     }
+    */
 
 
     initializeRecordData() {
@@ -96,7 +100,7 @@ export default class Admin_in_opportunity extends LightningElement {
         this.toastHandler = new LWC_Toast(this);
 
 
-        this.createLWCElements();
+        //this.createLWCElements();
 
         this.adminNavAttr = {
             apiName: 'Admin_Checklist'
