@@ -313,6 +313,35 @@
             </div>
 
 
+            <div class="slds-m-top_large slds-clearfix slds-align_absolute-center">
+                <div>
+                    <div class="slds-float_left slds-m-right_medium slds-m-top_small">
+                        <lightning-button
+                            variant="brand"
+                            label="Save"
+                            onclick={handleClick_SaveQuote}>
+                        </lightning-button>
+                    </div>
+    
+                    <div class="slds-float_left slds-m-right_medium slds-m-top_small">
+                        <lightning-button
+                            variant="brand"
+                            label="Download"
+                            onclick={handleClick_PrintQuote}>
+                        </lightning-button>
+                    </div>
+
+                    <div class="slds-float_left slds-m-right_medium slds-m-top_small">
+                        <lightning-button
+                            variant="brand"
+                            label="Snapshot"
+                            onclick={handleClick_Snapshot}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+
+
             <div class="slds-align_absolute-center">
                 <div class="slds-float_left slds-m-top_large slds-box slds-box_xx-small">
                     <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
@@ -453,27 +482,6 @@
                             <lightning-formatted-number format-style="currency" currency-code="USD" data-id="fetCredit_FET_Total" data-track="true">
                             </lightning-formatted-number>
                         </b>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="slds-m-top_large slds-clearfix slds-align_absolute-center">
-                <div>
-                    <div class="slds-float_left slds-m-right_medium slds-m-top_small">
-                        <lightning-button
-                            variant="brand"
-                            label="Save"
-                            onclick={handleClick_SaveQuote}>
-                        </lightning-button>
-                    </div>
-    
-                    <div class="slds-float_left slds-m-right_medium slds-m-top_small">
-                        <lightning-button
-                            variant="brand"
-                            label="Download"
-                            onclick={handleClick_PrintQuote}>
-                        </lightning-button>
                     </div>
                 </div>
             </div>

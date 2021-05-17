@@ -201,14 +201,12 @@ public with sharing class AdminChecklist_Downloader {
         }
 
 
-        /*
         if(adminData.containsKey('profit_percent')) {
             Decimal percentAmount = (Decimal.valueOf(adminData.get('profit_percent')) * 100.0).setScale(2);
             profit_percent =  percentAmount.format() + '%';   
         }else {
             profit_percent = '_';
         }
-        */
 
 
         if(adminData.containsKey('Dealer_Pack__c')) {
@@ -218,7 +216,6 @@ public with sharing class AdminChecklist_Downloader {
         }
 
 
-        /*
         if(adminData.containsKey('gross_amount')) {
             gross_after_com_amount = this.formatMoney(adminData.get('gross_amount'));
         }else {
@@ -238,7 +235,6 @@ public with sharing class AdminChecklist_Downloader {
         }else {
             subtotal_after_profit = '_';
         }
-        */
 
 
         if(adminData.containsKey('ApplyFET__c')) {
@@ -247,13 +243,11 @@ public with sharing class AdminChecklist_Downloader {
             fet_applies = '_';
         }
 
-        /*
         if(adminData.containsKey('12_fet')) {
             fet_12_percent = this.formatMoney(adminData.get('12_fet'));
         }else {
             fet_12_percent = '_';
         }
-        */
 
         if(adminData.containsKey('Minus_Tire_FET__c')) {
             minus_tire_fet = this.formatMoney(adminData.get('Minus_Tire_FET__c'));
@@ -261,13 +255,11 @@ public with sharing class AdminChecklist_Downloader {
             minus_tire_fet = '_';
         }
 
-        /*
         if(adminData.containsKey('total_fet')) {
             total_fet = this.formatMoney(adminData.get('total_fet'));
         }else {
             total_fet = '_';
         }
-        */
 
 
         if(adminData.containsKey('Extended_Warranty__c')) {
@@ -298,13 +290,11 @@ public with sharing class AdminChecklist_Downloader {
         }
 
 
-        /*
         if(adminData.containsKey('total')) {
             total = this.formatMoney(adminData.get('total'));
         }else {
             total = '_';
         }
-        */
 
 
         if(adminData.containsKey('TradeIn_Make__c')) {
@@ -458,4 +448,30 @@ public with sharing class AdminChecklist_Downloader {
         return EncodingUtil.base64Encode(getDownloadPage().getContentAsPDF());
     }
 
+
+
+    @AuraEnabled(cacheable=false)
+    public static Boolean saveSnapshot(String name, Map<String, String> fieldValuePairs){
+        Boolean isSuccess = false;
+
+        adminData = new Map<String, String>();
+
+        for (String key : fieldValuePairs.keySet()) {
+            adminData.put(key, fieldValuePairs.get(key));
+        }
+
+        Document doc = new Document();
+        doc.Name = name;
+        doc.Type = 'pdf';
+        doc.ContentType = 'application/pdf';
+        doc.Body = getDownloadPage().getContentAsPDF();
+
+        Database.SaveResult isInserted = Database.insert(doc);
+
+        if(isInserted.isSuccess()) {
+            isSuccess = true;
+        }
+
+        return isSuccess;
+    }
 }

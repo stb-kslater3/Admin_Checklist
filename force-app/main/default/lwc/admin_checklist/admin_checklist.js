@@ -1,7 +1,7 @@
 
-import { LightningElement, track } from 'lwc';
-
+import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation'
+import { CurrentPageReference } from 'lightning/navigation';
 
 import { LWC_Toast } from "c/lwc_generic_prototype";
 
@@ -16,6 +16,7 @@ import getPOs from '@salesforce/apex/AdminChecklist_Controller.getPOs';
 import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
 
 import downloadAdmin from '@salesforce/apex/AdminChecklist_Downloader.downloadAdmin';
+import saveSnapshot from '@salesforce/apex/AdminChecklist_Downloader.saveSnapshot';
 
 import {blobToPDF} from 'c/lwc_blob_handler';
 
@@ -32,6 +33,11 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     view;
 
     @track typeOptions;
+
+    gotURLParams;
+
+    @wire(CurrentPageReference)
+    currentPageReference;
 
 
     constructor() {
@@ -264,32 +270,6 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
             'value',
             this.view.getAttribute('fetCredit_FET_Front_Subtotal', 'value') + this.view.getAttribute('fetCredit_FET_Rear_Subtotal', 'value')
         );
-    }
-
-    
-    getAdminInURL() {
-        let urlParamAdmin = null;
-
-        try {
-            let page_url = new URL(window.location.href);
-            
-            urlParamAdmin = page_url.searchParams.get("c__AdminChosen");
-        }catch(err) {
-            this.toast.displayError(err.message);
-        }
-
-
-        return urlParamAdmin;
-    }
-
-    
-    connectedCallback() {
-        let urlParamAdmin = this.getAdminInURL();
-        if (urlParamAdmin) {
-            this.adminChosen = urlParamAdmin;
-
-            this.handleAdminChosen();
-        }
     }
 
 
@@ -716,7 +696,6 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
             }
         }
 
-
         this.poDynamicList = [];
 
 
@@ -965,6 +944,20 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
             }
             pdfParameters['description_' + i] = bothPOs[i]['Description__c'];
         }
+
+
+        pdfParameters['profit_percent'] = this.view.getAttribute('finances_Profit_Percent', 'value');
+
+        pdfParameters['gross_amount'] = this.view.getAttribute('finances_Gross_Amount', 'value');
+        pdfParameters['gross_percent'] = this.view.getAttribute('finances_Gross_Percent', 'value');
+
+        pdfParameters['subtotal_after_profit'] = this.view.getAttribute('finances_Subtotal_After_Profit', 'value');
+
+        pdfParameters['12_fet'] = this.view.getAttribute('finances_12_FET', 'value');
+        pdfParameters['total_fet'] = this.view.getAttribute('finances_Total_FET', 'value');
+
+        pdfParameters['total'] = this.view.getAttribute('finances_Total', 'value');
+
         
         downloadAdmin({ fieldValuePairs: pdfParameters }).then(content => {
             let byteContent = atob(content);
@@ -994,10 +987,74 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     }
 
 
+    handleClick_Snapshot() {
+        this.handleClick_SaveQuote();
+
+
+        let adminData = this.getAdminDataFromElements();
+        let adminPOData = this.getAdminPOsFromElements();
+
+        let bothPOs = adminPOData.toInsert.concat(adminPOData.toUpdate);
+
+        let pdfParameters = adminData;
+
+        pdfParameters.poCount = bothPOs.length;
+
+        for(let i = 0; i < bothPOs.length; i++) {
+            pdfParameters['type_' + i] = bothPOs[i]['Type__c'];
+            pdfParameters['cost_' + i] = bothPOs[i]['Cost__c'];
+
+            if(!bothPOs[i]['Description__c']) {
+                bothPOs[i]['Description__c'] = "";
+            }
+            pdfParameters['description_' + i] = bothPOs[i]['Description__c'];
+        }
+
+
+        pdfParameters['profit_percent'] = this.view.getAttribute('finances_Profit_Percent', 'value');
+
+        pdfParameters['gross_amount'] = this.view.getAttribute('finances_Gross_Amount', 'value');
+        pdfParameters['gross_percent'] = this.view.getAttribute('finances_Gross_Percent', 'value');
+
+        pdfParameters['subtotal_after_profit'] = this.view.getAttribute('finances_Subtotal_After_Profit', 'value');
+
+        pdfParameters['12_fet'] = this.view.getAttribute('finances_12_FET', 'value');
+        pdfParameters['total_fet'] = this.view.getAttribute('finances_Total_FET', 'value');
+
+        pdfParameters['total'] = this.view.getAttribute('finances_Total', 'value');
+
+
+        saveSnapshot({ name: 'TESTNAME', fieldValuePairs: pdfParameters }).then(isSuccess => {
+            if(isSuccess) {
+                this.toast.displaySuccess('Snapshot saved succesfully');
+            }else {
+                this.toast.displayError('Failed to save Snapshot, something went wrong');
+            }
+        }).catch(err => {
+            this.toast.displayError(err.body ? err.body.message : err.message);
+        });
+    }
+
+
     renderedCallback() {
         this.view.updateNodes( this.template.querySelectorAll("[data-track='true']") );
 
         this.updateFinanceCalculations();
         this.calculateFETTotals();
+
+        if(!this.gotURLParams) {
+            // regardless of whether it has params or not, this needs to run within rendered callback but only once.
+            // Constructor is too early and can't run handleAdminChosen, and Connected Callback just doesn't get called
+            // all together when coming from Edit Admin button for whatever reason
+            this.gotURLParams = true;
+
+            let urlParamAdmin = this.currentPageReference.state.c__AdminChosen;
+
+            if (urlParamAdmin) {
+                this.adminChosen = urlParamAdmin;
+
+                this.handleAdminChosen();
+            }
+        }
     }
 }

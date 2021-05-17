@@ -1,4 +1,12 @@
 import { LightningElement, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+
+import { LWC_Toast } from "c/lwc_generic_prototype";
+
+import updateRecordFromId from '@salesforce/apex/Apex_Generic_Prototype.updateRecordFromId';
+import queryFromString from '@salesforce/apex/Apex_Generic_Prototype.queryFromString';
+
+import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
 
 /*
 import {LWC_Toast, LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
@@ -10,17 +18,19 @@ import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecor
 */
 
 
-export default class Admin_in_opportunity extends LightningElement {
+export default class Admin_in_opportunity extends NavigationMixin(LightningElement) {
     @api recordId;
     
     recordData;
 
     toastHandler;
 
+    /*
     arbitraryAttributeHandler;
     numberAttributeHandler;
     currencyAttributeHandler;
     percentAttributeHandler;
+    */
 
 
     admin;
@@ -90,14 +100,15 @@ export default class Admin_in_opportunity extends LightningElement {
     constructor() {
         super();
 
-
+        /*
         this.arbitraryAttributeHandler = new Attribute_Handler('arbitrary');
         this.numberAttributeHandler = new Attribute_Handler('number');
         this.currencyAttributeHandler = new Attribute_Handler('currency');
         this.percentAttributeHandler = new Attribute_Handler('percent');
+        */
 
 
-        this.toastHandler = new LWC_Toast(this);
+        this.toastHandler = new LWC_Toast(this.template);
 
 
         //this.createLWCElements();
@@ -118,7 +129,7 @@ export default class Admin_in_opportunity extends LightningElement {
                 this.admin = this.recordData.AdminChecklist__c;
                 this.adminName = this.recordData.AdminChecklist__r.Name;
 
-                this.initializeLWC_Elements();
+                // this.initializeLWC_Elements(); // OLD
             }
         }).catch(err => {
             this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to then of initializeRecordData within the Constructor', err);
@@ -126,16 +137,19 @@ export default class Admin_in_opportunity extends LightningElement {
     }
 
 
+    // OLD
+    /*
     initializeLWC_Elements() {
         this.newAdminButton.initialize();
 
 
         this.editAdminButton.initialize();
     }
+    */
 
 
     renderedCallback() {
-        this.initializeLWC_Elements();
+        //this.initializeLWC_Elements(); //OLD
     }
 
 
@@ -162,7 +176,15 @@ export default class Admin_in_opportunity extends LightningElement {
                 if(isSuccess) {
                     // When this.admin = id; above it sets admin which changes the template to if:true={admin}
                     // So I need the editAdminButtonInstead because it switches real quick
-                    this.editAdminButton.domElement.navigate();
+                    // this.editAdminButton.domElement.navigate(); // OLD From previous approach
+
+                    this[NavigationMixin.Navigate]({
+                        type: 'standard__navItemPage',
+
+                        attributes: this.adminNavAttr,
+
+                        state: this.adminNavState
+                    });
                 }else {
                     console.log('(admin_in_opportunity) updateRecordFromId came back as unsuccessful');
                 }
@@ -176,8 +198,18 @@ export default class Admin_in_opportunity extends LightningElement {
 
 
     handleClick_EditAdmin() {
+console.log('In Opportunity: ' + this.adminNavState.c__AdminChosen);
         try {
-            this.editAdminButton.domElement.navigate();
+            this[NavigationMixin.Navigate]({
+                type: 'standard__navItemPage',
+
+                attributes: this.adminNavAttr,
+
+                state: this.adminNavState
+            });
+
+
+            //this.editAdminButton.domElement.navigate(); // OLD
         }catch(e) {
             this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to editAdminButton.Navigate', e);
         }
