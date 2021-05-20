@@ -20,6 +20,97 @@ import saveSnapshot from '@salesforce/apex/AdminChecklist_Downloader.saveSnapsho
 
 import {blobToPDF} from 'c/lwc_blob_handler';
 
+import { loadScript } from 'lightning/platformResourceLoader';
+import AWS_SDK from '@salesforce/resourceUrl/aws_sdk';
+
+import getAWS from '@salesforce/apex/CredentialManager.getAWS';
+
+
+
+class AdminS3 {
+    _s3;
+
+    _bucket;
+
+    // Used so that I can make the minimal amount of queries needed, when this is set to true then in renderedCallback it will make queries
+    _active;
+
+
+    constructor(s3) {
+        this._s3 = s3;
+
+        if(s3) {
+            this._active = true;
+        }else {
+            this._active = false;
+
+            console.log('S3 passed to AdminS3 constructor is Falsy');
+        }
+
+        this._bucket = 'admin-snapshots';
+    }
+
+
+    // See _active above
+    isActive() {
+        return this._active;
+    }
+
+    // See _active above
+    activate() {
+        this._active = true;
+    }
+
+    // See _active above
+    deactivate() {
+        this._active = false;
+    }
+
+
+    // If all goes well it will return True, otherwise it will return False
+    addFolder(key) {
+        // The _active approach is providing a safeguard to minimize the number of requests made to Amazon as much as possible
+        if(this._active) {
+            return new Promise((resolve, reject) => {
+                let result = false;
+
+                this._s3.putObject(
+                    {
+                        Bucket: this._bucket,
+
+                        Key: key
+                    },
+
+                    (err, data) => {
+                        if(err) {
+                            console.log('Error with S3 request to add folder . . .');
+                            console.log(err.body ? err.body.message : err.message);
+                            console.log('. . .');
+
+                            reject(err);
+                        }else {
+                            if(data['x-amz-request-charged']) {
+                                result = true;
+                            }else {
+                                result = false;
+
+                                console.log('Request to add folder to S3 failed, but no error');
+                            }
+                        }
+                    }
+                );
+
+                resolve(result);
+            });
+        }else {
+            console.log('Cannot add folder to S3, because S3 is not active');
+        }
+
+
+        return result;
+    }
+}
+
 
 
 export default class Admin_checklist extends NavigationMixin(LightningElement) {
@@ -38,6 +129,9 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
     @wire(CurrentPageReference)
     currentPageReference;
+
+    awsIsInitialized;
+    s3;
 
 
     constructor() {
@@ -687,6 +781,30 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     }
 
 
+
+    initializeAWS(accessKeyId, secretAccessKey) {
+        loadScript(this, AWS_SDK).then(() => {
+console.log(AWS);
+
+            AWS.config.update({
+                accessKeyId: accessKeyId,
+
+                secretAccessKey: secretAccessKey,
+
+                region: 'us-east-2'
+            });
+
+            let awsS3 = new AWS.S3({
+                apiVersion: '2006-03-01'
+            });
+
+            this.s3 = new AdminS3(awsS3);
+        }).catch(err => {
+            console.log(err.body ? err.body.message : err.message);
+        });
+    }
+
+
     handleAdminChosen(event) {
         // This happens when a searched admin is Selected, since it is a child component it passes the value 
         // through the event
@@ -697,6 +815,21 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         }
 
         this.poDynamicList = [];
+
+
+        if(!this.awsIsInitialized) {
+            this.awsIsInitialized = true;
+
+            getAWS().then(credentials => {
+                if(credentials['accessKeyId'] && credentials['secretAccessKey']) {
+                    this.initializeAWS(credentials['accessKeyId'], credentials['secretAccessKey']);   
+                }else {
+                    this.displayError('Problem with AWS Access Keys');
+                }
+            }).catch(err => {
+                this.displayError(err.body ? err.body.message : err.message);
+            });
+        }
 
 
         this.queryAdminChosen().then(records => {
@@ -988,6 +1121,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
 
     handleClick_Snapshot() {
+        /*
         this.handleClick_SaveQuote();
 
 
@@ -1024,15 +1158,65 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         pdfParameters['total'] = this.view.getAttribute('finances_Total', 'value');
 
 
-        saveSnapshot({ name: 'TESTNAME', fieldValuePairs: pdfParameters }).then(isSuccess => {
-            if(isSuccess) {
-                this.toast.displaySuccess('Snapshot saved succesfully');
-            }else {
-                this.toast.displayError('Failed to save Snapshot, something went wrong');
+        downloadAdmin({ fieldValuePairs: pdfParameters }).then(content => {
+            let byteContent = atob(content);
+            let buf = new Array(byteContent.length);
+
+            for(var i = 0; i != byteContent.length; i++) {
+                buf[i] = byteContent.charCodeAt(i);
             }
+
+            const view = new Uint8Array(buf);
+
+            let b = new Blob([view], {type: 'application/pdf'});
+
+            console.log(b);
+
+            let fileName = '';
+            if(this.view.getAttribute('whoWhat_AdminName', 'value') && this.view.getAttribute('whoWhat_AdminName', 'value') != '') {
+                fileName += 'Admin_' + this.view.getAttribute('whoWhat_AdminName', 'value');
+            }else {
+                fileName += 'Admin_' + this.view.getAttribute('whoWhat_Body_Series_Name', 'value');
+            }
+
+
+
+            saveSnapshot({ name: 'TESTNAME', fieldValuePairs:  }).then(isSuccess => {
+                if(isSuccess) {
+                    this.toast.displaySuccess('Snapshot saved succesfully');
+                }else {
+                    this.toast.displayError('Failed to save Snapshot, something went wrong');
+                }
+            }).catch(err => {
+                this.toast.displayError(err.body ? err.body.message : err.message);
+            });
+
+
+            //blobToPDF(b, fileName + '.pdf');
         }).catch(err => {
             this.toast.displayError(err.body ? err.body.message : err.message);
         });
+        */
+        // QUICK TESTING OF S3 THEN I WILL MOVE THIS TO THE APPROPIATE PLACE ABOVE
+        if(this.s3.isActive()) {
+            let salesmanId = this.view.getAttribute('whoWhat_Salesman', 'value');
+
+            if(salesmanId) {
+                salesmanId += '/';
+                
+                this.s3.addFolder(salesmanId).then(result => {
+                    if(result) {
+                        this.toast.displaySuccess('Snapshot Saved Successfully!');
+                    }else {
+                        this.toast.displayWarning('Snapshot failed to Save, no error was given.');
+                    }
+                }).catch(err => {
+                    console.log(err.body ? err.body.message : err.message);
+                });
+            }else {
+                this.toast.displayError('Must select a Salesman before you can take a Snapshot');
+            }
+        }
     }
 
 
@@ -1054,6 +1238,31 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 this.adminChosen = urlParamAdmin;
 
                 this.handleAdminChosen();
+            }
+        }
+
+
+        if(this.s3) {
+            if(this.s3.isActive()) {
+
+
+                // OLD, new using my S3 Interface Implementation
+                /*
+                this.s3.listObjects({Bucket: 'admin-snapshots'}, (err, data) => {
+                    if(err) {
+                        this.toast.displayError(err.body ? err.body.message : err.message);
+                        console.log(err);
+                    }else {
+                        console.log('Objects . . .');
+        
+                        for(let i = 0; i < data.Objects.length; i++) {
+                            console.log(data.Objects[i].Name);
+                        }
+        
+                        console.log('. . .');
+                    }
+                });
+                */
             }
         }
     }
