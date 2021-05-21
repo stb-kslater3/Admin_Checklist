@@ -1,0 +1,17 @@
+<template>
+    <div class="slds-">
+        <template if:true={hasSnapshots}>
+            <div style="max-height: 500px" class="slds-scrollable_y slds-box slds-box-xx_small slds-theme_default">
+                <div>
+                    <template for:each= for:item=>
+                        <div key= class="slds-clearfix slds-m-bottom_small slds-box slds-box-xx_small slds-theme_shade">
+                            <div>
+                                stuff in here
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

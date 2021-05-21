@@ -450,6 +450,9 @@ public with sharing class AdminChecklist_Downloader {
 
 
 
+    // OLD, not sure what I wanted to do with that, will be removed once I am sure that it needs to be
+    // I think that I was originally going to try and put the Document in Salesforce
+    /*
     @AuraEnabled(cacheable=false)
     public static Boolean saveSnapshot(String name, Map<String, String> fieldValuePairs){
         Boolean isSuccess = false;
@@ -474,4 +477,5 @@ public with sharing class AdminChecklist_Downloader {
 
         return isSuccess;
     }
+    */
 }

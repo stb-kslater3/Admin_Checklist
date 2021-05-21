@@ -16,7 +16,7 @@ import getPOs from '@salesforce/apex/AdminChecklist_Controller.getPOs';
 import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
 
 import downloadAdmin from '@salesforce/apex/AdminChecklist_Downloader.downloadAdmin';
-import saveSnapshot from '@salesforce/apex/AdminChecklist_Downloader.saveSnapshot';
+//import saveSnapshot from '@salesforce/apex/AdminChecklist_Downloader.saveSnapshot';
 
 import {blobToPDF} from 'c/lwc_blob_handler';
 
@@ -25,91 +25,8 @@ import AWS_SDK from '@salesforce/resourceUrl/aws_sdk';
 
 import getAWS from '@salesforce/apex/CredentialManager.getAWS';
 
+import { AdminS3 } from 'c/admin_s3';
 
-
-class AdminS3 {
-    _s3;
-
-    _bucket;
-
-    // Used so that I can make the minimal amount of queries needed, when this is set to true then in renderedCallback it will make queries
-    _active;
-
-
-    constructor(s3) {
-        this._s3 = s3;
-
-        if(s3) {
-            this._active = true;
-        }else {
-            this._active = false;
-
-            console.log('S3 passed to AdminS3 constructor is Falsy');
-        }
-
-        this._bucket = 'admin-snapshots';
-    }
-
-
-    // See _active above
-    isActive() {
-        return this._active;
-    }
-
-    // See _active above
-    activate() {
-        this._active = true;
-    }
-
-    // See _active above
-    deactivate() {
-        this._active = false;
-    }
-
-
-    // If all goes well it will return True, otherwise it will return False
-    addFolder(key) {
-        // The _active approach is providing a safeguard to minimize the number of requests made to Amazon as much as possible
-        if(this._active) {
-            return new Promise((resolve, reject) => {
-                let result = false;
-
-                this._s3.putObject(
-                    {
-                        Bucket: this._bucket,
-
-                        Key: key
-                    },
-
-                    (err, data) => {
-                        if(err) {
-                            console.log('Error with S3 request to add folder . . .');
-                            console.log(err.body ? err.body.message : err.message);
-                            console.log('. . .');
-
-                            reject(err);
-                        }else {
-                            if(data['x-amz-request-charged']) {
-                                result = true;
-                            }else {
-                                result = false;
-
-                                console.log('Request to add folder to S3 failed, but no error');
-                            }
-                        }
-                    }
-                );
-
-                resolve(result);
-            });
-        }else {
-            console.log('Cannot add folder to S3, because S3 is not active');
-        }
-
-
-        return result;
-    }
-}
 
 
 
@@ -784,8 +701,6 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
     initializeAWS(accessKeyId, secretAccessKey) {
         loadScript(this, AWS_SDK).then(() => {
-console.log(AWS);
-
             AWS.config.update({
                 accessKeyId: accessKeyId,
 
@@ -1121,7 +1036,6 @@ console.log(AWS);
 
 
     handleClick_Snapshot() {
-        /*
         this.handleClick_SaveQuote();
 
 
@@ -1168,19 +1082,57 @@ console.log(AWS);
 
             const view = new Uint8Array(buf);
 
-            let b = new Blob([view], {type: 'application/pdf'});
+            let blubber = new Blob([view], {type: 'application/pdf'});
 
-            console.log(b);
 
-            let fileName = '';
-            if(this.view.getAttribute('whoWhat_AdminName', 'value') && this.view.getAttribute('whoWhat_AdminName', 'value') != '') {
-                fileName += 'Admin_' + this.view.getAttribute('whoWhat_AdminName', 'value');
-            }else {
-                fileName += 'Admin_' + this.view.getAttribute('whoWhat_Body_Series_Name', 'value');
+            if(this.s3.isActive()) {
+                let salesmanKey = this.view.getAttribute('whoWhat_Salesman', 'value');
+    
+                if(salesmanKey) {
+                    salesmanKey += '/';
+    
+    
+                    let adminKey = this.adminChosen;
+    
+                    if(adminKey) {
+                        adminKey = salesmanKey + adminKey +  '/';
+    
+                        let snapshotMap = {
+                            AdminChecklist__c: this.adminChosen,
+
+                            Salesman__c: this.view.getAttribute('whoWhat_Salesman', 'value')
+                        };
+                        insertRecord({ objectName: 'AdminSnapshot__c', fieldValuePairs: snapshotMap }).then(snapshotId => {
+                            let snapshotKey = snapshotId;
+
+                            if(snapshotKey) {
+                                snapshotKey = adminKey + snapshotKey + '.pdf';
+
+                                this.s3.putSnapshot(snapshotKey, blubber).then(result => {
+                                    if(result) {
+                                        this.toast.displaySuccess('Snapshot Saved Successfully!');
+                                    }else {
+                                        this.toast.displayWarning('Snapshot failed to Save, no error was given.');
+                                    }
+                                }).catch(err => {
+                                    console.log(err.body ? err.body.message : err.message);
+                                });
+                            }
+                        }).catch(err => {
+                            console.error(err.body ? err.body.message : err.message);
+
+                            this.toast.displayError('Something went wrong during or after generating the Record for the Snapshot Object');
+                        });   
+                    }else {
+                        this.toast.displayError('Admin is Unknown: Either this is a brand new Admin that hasn\'t been saved for the first time yet, or something else went wrong');
+                    }
+                }else {
+                    this.toast.displayError('Must select a Salesman before you can take a Snapshot');
+                }
             }
 
-
-
+            // OLD will be removed when I am certain that I don't need it anymore
+            /*
             saveSnapshot({ name: 'TESTNAME', fieldValuePairs:  }).then(isSuccess => {
                 if(isSuccess) {
                     this.toast.displaySuccess('Snapshot saved succesfully');
@@ -1190,33 +1142,44 @@ console.log(AWS);
             }).catch(err => {
                 this.toast.displayError(err.body ? err.body.message : err.message);
             });
+            */
 
 
             //blobToPDF(b, fileName + '.pdf');
         }).catch(err => {
             this.toast.displayError(err.body ? err.body.message : err.message);
         });
-        */
+        /*
         // QUICK TESTING OF S3 THEN I WILL MOVE THIS TO THE APPROPIATE PLACE ABOVE
         if(this.s3.isActive()) {
-            let salesmanId = this.view.getAttribute('whoWhat_Salesman', 'value');
+            let salesmanKey = this.view.getAttribute('whoWhat_Salesman', 'value');
 
-            if(salesmanId) {
-                salesmanId += '/';
-                
-                this.s3.addFolder(salesmanId).then(result => {
-                    if(result) {
-                        this.toast.displaySuccess('Snapshot Saved Successfully!');
-                    }else {
-                        this.toast.displayWarning('Snapshot failed to Save, no error was given.');
-                    }
-                }).catch(err => {
-                    console.log(err.body ? err.body.message : err.message);
-                });
+            if(salesmanKey) {
+                salesmanKey += '/';
+
+
+                let adminKey = this.adminChosen;
+
+                if(adminKey) {
+                    adminKey = salesmanKey + adminKey +  '/';
+
+                    this.s3.addFolder(adminKey).then(result => {
+                        if(result) {
+                            this.toast.displaySuccess('Snapshot Saved Successfully!');
+                        }else {
+                            this.toast.displayWarning('Snapshot failed to Save, no error was given.');
+                        }
+                    }).catch(err => {
+                        console.log(err.body ? err.body.message : err.message);
+                    });   
+                }else {
+                    this.toast.displayError('Admin is Unknown: Either this is a brand new Admin that hasn\'t been saved for the first time yet, or something else went wrong');
+                }
             }else {
                 this.toast.displayError('Must select a Salesman before you can take a Snapshot');
             }
         }
+        */
     }
 
 
