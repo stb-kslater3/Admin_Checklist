@@ -1,17 +1,51 @@
 <template>
-    <div class="slds-">
-        <template if:true={hasSnapshots}>
-            <div style="max-height: 500px" class="slds-scrollable_y slds-box slds-box-xx_small slds-theme_default">
-                <div>
-                    <template for:each= for:item=>
-                        <div key= class="slds-clearfix slds-m-bottom_small slds-box slds-box-xx_small slds-theme_shade">
-                            <div>
-                                stuff in here
+    <div class="slds-box slds-box_xxsmall">
+        <div class="slds-align_absolute-center slds-text-heading_medium">
+            Snapshots
+        </div>
+
+        <div class="slds-align_absolute-center slds-text-body_regular">
+            Click to Download
+        </div>
+
+
+        <div>
+            <template if:true={snapshots}>
+                <div style="max-height: 200px" class="slds-scrollable_y slds-box slds-box-xx_small slds-theme_default">
+                    <div>
+                        <template for:each={snapshots} for:item="snapshot">
+                            <div key={snapshot.id} onclick={handleSnapshotClicked} data-index={snapshot.index} class="Selection slds-clearfix slds-m-bottom_small slds-box slds-box-xx_small slds-theme_shade">
+                                <div>
+                                    <div class="slds-text-heading_small">
+                                        Name:
+                                    </div>
+
+                                    <div clss="sdls-body_text-regular">
+                                        {snapshot.name}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="slds-text-heading_small">
+                                        Date:
+                                    </div>
+
+                                    <div clss="sdls-body_text-regular">
+                                        {snapshot.date}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </template>
+                        </template>
+                    </div>
                 </div>
-            </div>
-        </template>
+            </template>
+
+
+            <template if:false={snapshots}>
+                <div class="slds-text-heading_small">
+                    No snapshots to show.
+                </div>
+            </template>
+        </div>
     </div>
 </template>

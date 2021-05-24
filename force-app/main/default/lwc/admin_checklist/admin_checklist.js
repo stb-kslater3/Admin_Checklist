@@ -720,13 +720,39 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     }
 
 
-    handleAdminChosen(event) {
-        // This happens when a searched admin is Selected, since it is a child component it passes the value 
-        // through the event
+
+    handleAdminSelected(event) {
         if(event) {
             if(event.detail.value) {
                 this.adminChosen = event.detail.value;
             }
+        }
+
+        try {
+            let newPageReference = Object.assign({}, this.currentPageReference, {
+                state: Object.assign({}, this.currentPageReference.state, {c__AdminChosen: this.adminChosen})
+            });
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            this[NavigationMixin.Navigate](newPageReference, true);
+        }catch(err) {
+            console.error(err.body ? err.body.message : err.message);
+        }
+
+        this.handleAdminChosen();
+    }
+
+
+    handleAdminChosen() {
+        // Needed because of asynchronous timing when adminchosen is set the Snapshots are not updated reactively, so manually do it here 
+        try {
+            if(this.view.getElementToCall("Snapshots")) {
+                this.view.getElementToCall("Snapshots").updateAdminId(this.adminChosen);
+            }
+        } catch(err) {
+            console.error(err.message);
         }
 
         this.poDynamicList = [];
@@ -1015,9 +1041,9 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 buf[i] = byteContent.charCodeAt(i);
             }
 
-            const view = new Uint8Array(buf);
+            const viewBuf = new Uint8Array(buf);
 
-            let b = new Blob([view], {type: 'application/pdf'});
+            let b = new Blob([viewBuf], {type: 'application/pdf'});
 
             console.log(b);
 
@@ -1080,9 +1106,9 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 buf[i] = byteContent.charCodeAt(i);
             }
 
-            const view = new Uint8Array(buf);
+            const viewBuf = new Uint8Array(buf);
 
-            let blubber = new Blob([view], {type: 'application/pdf'});
+            let blubber = new Blob([viewBuf], {type: 'application/pdf'});
 
 
             if(this.s3.isActive()) {
@@ -1110,6 +1136,15 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
                                 this.s3.putSnapshot(snapshotKey, blubber).then(result => {
                                     if(result) {
+                                        // Needed because of asynchronous timing when adminchosen is set the Snapshots are not updated reactively, so manually do it here 
+                                        try {
+                                            if(this.view.getElementToCall("Snapshots")) {
+                                                this.view.getElementToCall("Snapshots").updateAdminId(this.adminChosen);
+                                            }
+                                        } catch(err) {
+                                            console.error(err.message);
+                                        }
+
                                         this.toast.displaySuccess('Snapshot Saved Successfully!');
                                     }else {
                                         this.toast.displayWarning('Snapshot failed to Save, no error was given.');

@@ -8,6 +8,8 @@ import queryFromString from '@salesforce/apex/Apex_Generic_Prototype.queryFromSt
 
 import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
 
+import { View } from "c/lwc_mvc_prototype2";
+
 /*
 import {LWC_Toast, LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
 
@@ -118,6 +120,9 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
         };
 
         this.adminNavState = {};
+
+
+        this.view = new View();
     }
 
 
@@ -149,6 +154,20 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
 
 
     renderedCallback() {
+        this.view.updateNodes( this.template.querySelectorAll("[data-track='true']") );
+
+        // Since Calling Child with a string has no good solution, I will have a method on View where I can be given the DOM Element
+        // so that I can call methods on it. Unfortunately that defeats all the attempts at encapsulation I made, but whatever.c/admin_checklist
+        try {
+            if(this.view.getElementToCall("Snapshots")) {
+                this.view.getElementToCall("Snapshots").updateAdminId(this.admin);
+            }
+        } catch(err) {
+            console.error(err.message);
+        }
+
+        //this.view.callChild("Snapshots", "updateAdminId", [this.adminId]);
+
         //this.initializeLWC_Elements(); //OLD
     }
 
@@ -198,7 +217,6 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
 
 
     handleClick_EditAdmin() {
-console.log('In Opportunity: ' + this.adminNavState.c__AdminChosen);
         try {
             this[NavigationMixin.Navigate]({
                 type: 'standard__navItemPage',

@@ -39,6 +39,67 @@ class AdminS3 {
     }
 
 
+    downloadSnapshot(key) {
+        let result = null;
+
+        // The _active approach is providing a safeguard to minimize the number of requests made to Amazon as much as possible
+        if(this._active) {
+            if(key) {
+                return new Promise((resolve, reject) => {
+                    this._s3.getObject(
+                        {
+                            Bucket: this._bucket,
+    
+                            Key: key
+                        },
+
+                        (err, data) => {
+                            if(err){
+                                console.error('Error with S3 request to get object \n' + (err.body ? err.body.message : err.message));
+
+                                reject(err);
+                            }else {
+console.log(data);
+                                resolve(data.Body);
+                            }
+                        }
+                    );
+                    /*
+                    this._s3.putObject(
+                        {
+                            Bucket: this._bucket,
+
+                            Body: body,
+
+                            ContentType: 'application/pdf',
+    
+                            Key: key
+                        },
+    
+                        (err, data) => {
+                            if(err) {
+                                console.error('Error with S3 request to put object \n' + (err.body ? err.body.message : err.message));
+    
+                                reject(err);
+                            }else {
+                                resolve(true);
+                            }
+                        }
+                    );
+                    */
+                });
+            }else {
+                console.error('Invalid S3 Key, currently a Falsy value');
+            }
+        }else {
+            console.log('Cannot download Snapshot, because S3 is not active');
+        }
+
+
+        return result;
+    }
+
+
     // If all goes well it will return True, otherwise False, and then I can use that to let the User know whats going on
     putSnapshot(key, body) {
         // The _active approach is providing a safeguard to minimize the number of requests made to Amazon as much as possible
@@ -59,9 +120,7 @@ class AdminS3 {
     
                         (err, data) => {
                             if(err) {
-                                console.log('Error with S3 request to put object . . .');
-                                console.log(err.body ? err.body.message : err.message);
-                                console.log('. . .');
+                                console.error('Error with S3 request to put object \n' + (err.body ? err.body.message : err.message));
     
                                 reject(err);
                             }else {

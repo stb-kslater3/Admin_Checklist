@@ -28,10 +28,6 @@
 
         <template if:true={admin}>
             <div class="slds-clearfix">
-                <div>
-                    Admin Name: {adminName}
-                </div>
-
                 <div class="slds-align_absolute-center slds-m-top_medium">
                     <!--
                     <c-lwc_navigator variant="button" label="Edit Admin" type="standard__navItemPage" attributes={adminNavAttr} state={adminNavState} onclick={handleClick_EditAdmin} data-id="Edit_Admin_Button"></c-lwc_navigator>
@@ -39,6 +35,11 @@
 
                     <lightning-button variant="brand" label="Edit Admin" onclick={handleClick_EditAdmin} data-id="Edit_Admin_Button">
                     </lightning-button>
+                </div>
+
+                <div class="slds-align_absolute-center slds-m-top_medium">
+                    <c-admin_snapshots data-id="Snapshots" data-track="true">
+                    </c-admin_snapshots>
                 </div>
             </div>
         </template>

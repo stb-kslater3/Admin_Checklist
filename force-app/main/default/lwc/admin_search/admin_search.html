@@ -53,7 +53,7 @@
                     <div style="max-height: 500px" class="slds-scrollable_y">
                         <div class="search_result">
                             <template for:each={searchResults} for:item="record">
-                                <div key={record.id} class="slds-m-top_small undo_search_result" onclick={handleSearchSelection} data-id={record.id}>
+                                <div key={record.id} class="Selection slds-m-top_small undo_search_result" onclick={handleSearchSelection} data-id={record.id}>
                                     <lightning-card title={record.name} variant="Narrow" icon-name="standard:job_profile">
                                         <p>Date: {record.date}</p>
                                         <br/>

@@ -1,12 +1,12 @@
 <template>
     <div class="slds-align_absolute-center">
-        <c-admin_search onadminchosen={handleAdminChosen}></c-admin_search>
+        <c-admin_search onadminchosen={handleAdminSelected}></c-admin_search>
     </div>
 
 
     <div class="slds-align_absolute-center slds-m-top_xx-large">
         <div class="slds-theme_shade slds-box slds-clearfix">
-            <div class="slds-text-heading_medium slds-align_absolute-center">
+            <div class="slds-text-heading_large slds-align_absolute-center">
                 Admin
             </div>
 
@@ -342,9 +342,16 @@
             </div>
 
 
+            <div class="slds-align_absolute-center slds-m-top_medium">
+                <!-- Apparently not reactive because asynchronous timing of when adminChosen is set so give it a data-id and track it so that you can set it manually within handle admin chosen when the admin will actually be known -->
+                <c-admin_snapshots data-id="Snapshots" data-track="true">
+                </c-admin_snapshots>
+            </div>
+
+
             <div class="slds-align_absolute-center">
                 <div class="slds-float_left slds-m-top_large slds-box slds-box_xx-small">
-                    <div class="slds-m-bottom_small slds-text-heading_x-small slds-align_absolute-center">
+                    <div class="slds-m-bottom_small slds-text-heading_medium slds-align_absolute-center">
                         Trade In
                     </div>
     
@@ -391,7 +398,7 @@
 
             <div class="slds-align_absolute-center">
                 <div class="slds-float_left slds-m-top_large slds-box slds-box_xx-small">
-                    <div class="slds-text-heading_x-small slds-align_absolute-center">
+                    <div class="slds-text-heading_medium slds-align_absolute-center">
                         F.E.T. Tire Tax Credits
                     </div>
     
