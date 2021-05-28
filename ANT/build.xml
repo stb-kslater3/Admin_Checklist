@@ -61,9 +61,36 @@
 
 		
 		<runTest>AdminChecklist_Controller_TEST</runTest>
+		<runTest>AdminChecklist_Downloader_TEST</runTest>
 		<runTest>Unique_Admin_Opportunity_TEST</runTest>
 
 		</sf:deploy>
+	</target>
+
+
+
+
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! LWC !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+	<target name="retrieve_lwc">
+		<sf:retrieve
+			username="${sf.rspilot.username}"
+			password="${sf.rspilot.password}"
+			serverurl="${sf.rspilot.serverurl}"
+            retrieveTarget="lwc"
+			unpackaged="lwc/package.xml"
+        />
+	</target>
+
+	<target name="deploy_lwc">
+		<sf:deploy
+			username="${sf.production.username}"
+			password="${sf.production.password}"
+			serverurl="${sf.production.serverurl}"
+			deployroot="lwc"
+		/>
 	</target>
 
 

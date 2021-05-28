@@ -543,7 +543,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     loadPOsFromPOLines(poMap) {
         // Used to hold index of AdminPOs match if already put there by AdminPOs
         let correspondant;
-
+        
 
         // First put the Chassis if there is one
         if(poMap['Chassis']) {

@@ -10,15 +10,6 @@ import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecor
 
 import { View } from "c/lwc_mvc_prototype2";
 
-/*
-import {LWC_Toast, LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
-
-import updateRecordFromId from '@salesforce/apex/ApexDataInterface.updateRecordFromId';
-import queryFromString from '@salesforce/apex/ApexDataInterface.queryFromString';
-
-import insertRecord from '@salesforce/apex/AdminChecklist_Controller.insertRecord';
-*/
-
 
 export default class Admin_in_opportunity extends NavigationMixin(LightningElement) {
     @api recordId;

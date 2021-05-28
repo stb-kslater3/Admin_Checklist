@@ -3,10 +3,15 @@
     <types>
         <members>AdminChecklist_Controller</members>
         <members>AdminChecklist_Controller_TEST</members>
+        <members>AdminChecklist_Downloader</members>
+        <members>AdminChecklist_Downloader_TEST</members>
         <members>Unique_Admin_Opportunity_TEST</members>
         <name>ApexClass</name>
     </types>
-
+    <types>
+        <members>AdminChecklist_DownloaderPage</members>
+        <name>ApexPage</name>
+    </types>
     <types>
         <members>Unique_Admin_Opportunity</members>
         <name>ApexTrigger</name>

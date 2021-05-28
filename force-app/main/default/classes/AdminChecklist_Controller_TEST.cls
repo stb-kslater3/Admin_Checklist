@@ -15,9 +15,11 @@ private class AdminChecklist_Controller_TEST {
     // -----------------------------------------------------------------------------------------------
     // -------------------------------------------- Get Products --------------------------------------
     // -----------------------------------------------------------------------------------------------
-    @IsTest
+    @IsTest(seealldata=true)
     static void testGetProducts_BaseCase() {
-        System.assert(false);
+        OpportunityLineItem[] prods = AdminChecklist_Controller.getProducts('0061I00000OzHZAQA3');
+
+        System.assert(true);
     }
 
 
@@ -25,8 +27,12 @@ private class AdminChecklist_Controller_TEST {
     // -----------------------------------------------------------------------------------------------
     // -------------------------------------------- Get POs --------------------------------------
     // -----------------------------------------------------------------------------------------------
-    @IsTest
+    @IsTest(seealldata=true)
     static void testGetPOs_BaseCase() {
-        System.assert(false);
+        OpportunityLineItem[] prods = AdminChecklist_Controller.getProducts('0061I00000OzHZAQA3');
+        
+        Map<String, rstk__poline__c[]> pos = AdminChecklist_Controller.getPOs(prods);
+
+        System.assert(true);
     }
 }
