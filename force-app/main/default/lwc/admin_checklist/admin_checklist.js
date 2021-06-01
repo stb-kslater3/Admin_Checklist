@@ -544,6 +544,9 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         // Used to hold index of AdminPOs match if already put there by AdminPOs
         let correspondant;
         
+console.log('poMap . . .');
+console.log(poMap);
+console.log('. . .');
 
         // First put the Chassis if there is one
         if(poMap['Chassis']) {
@@ -604,11 +607,10 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                     }
                 }
 
-
                 // remove Body from Others, which is Max Index
-                let bodyOther = others.find(element => Number(element) === Number(maxIndex));
+                let bodyOther = others.findIndex(element => Number(element) === Number(maxIndex));
 
-                if(bodyOther) {
+                if(bodyOther >= 0) {
                     others.splice(bodyOther, 1);
                 }
 
@@ -933,66 +935,70 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     }
 
     handleClick_SaveQuote() {
-        let adminData = this.getAdminDataFromElements();
-        let adminPOData = this.getAdminPOsFromElements();
-        
-        if(this.adminChosen) {
-            updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: adminData }).then(isSuccess => {
-                if(isSuccess) {
-                    this.toast.displaySuccess('AdminChecklist Updated Succesfully!');
-                }else {
-                    this.toast.displayError('AdminChecklist Failed to Update');
-                }
-            }).catch( err => {
-                this.toast.displayError(err.body ? err.body.message : err.message);
-            });
-
-
-            if(adminPOData.toUpdate.length > 0) {
-                updateRecords({ objectName: 'AdminPO__c', records: adminPOData.toUpdate }).then(isSuccess => {
+        try {
+            let adminData = this.getAdminDataFromElements();
+            let adminPOData = this.getAdminPOsFromElements();
+            
+            if(this.adminChosen) {
+                updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: adminData }).then(isSuccess => {
                     if(isSuccess) {
-                        this.toast.displaySuccess('AdminPOs Updated Succesfully!');
+                        this.toast.displaySuccess('AdminChecklist Updated Succesfully!');
                     }else {
-                        this.toast.displayError('AdminPOs Failed to Update');
+                        this.toast.displayError('AdminChecklist Failed to Update');
                     }
                 }).catch( err => {
                     this.toast.displayError(err.body ? err.body.message : err.message);
                 });
-            }
 
 
-            if(adminPOData.toInsert.length > 0) {
+                if(adminPOData.toUpdate.length > 0) {
+                    updateRecords({ objectName: 'AdminPO__c', records: adminPOData.toUpdate }).then(isSuccess => {
+                        if(isSuccess) {
+                            this.toast.displaySuccess('AdminPOs Updated Succesfully!');
+                        }else {
+                            this.toast.displayError('AdminPOs Failed to Update');
+                        }
+                    }).catch( err => {
+                        this.toast.displayError(err.body ? err.body.message : err.message);
+                    });
+                }
+
+
+                if(adminPOData.toInsert.length > 0) {
+                    insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
+                        if(isSuccess) {
+                            this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
+                        }else {
+                            this.toast.displayError('AdminPOs Failed to Insert');
+                        }
+                    }).catch( err => {
+                        this.toast.displayError(err.body ? err.body.message : err.message);
+                    });
+                }            
+            }else {
+                insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: adminData }).then(isSuccess => {
+                    if(isSuccess) {
+                        this.toast.displaySuccess('AdminChecklist Inserted Succesfully!');
+                    }else {
+                        this.toast.displayError('AdminChecklist Failed to Insert');
+                    }
+                }).catch( err => {
+                    this.toast.displayError(err.body ? err.body.message : err.message);
+                });
+
+
                 insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
                     if(isSuccess) {
                         this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
                     }else {
                         this.toast.displayError('AdminPOs Failed to Insert');
                     }
-                }).catch( err => {
+                }).catch(err => {
                     this.toast.displayError(err.body ? err.body.message : err.message);
                 });
-            }            
-        }else {
-            insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: adminData }).then(isSuccess => {
-                if(isSuccess) {
-                    this.toast.displaySuccess('AdminChecklist Inserted Succesfully!');
-                }else {
-                    this.toast.displayError('AdminChecklist Failed to Insert');
-                }
-            }).catch( err => {
-                this.toast.displayError(err.body ? err.body.message : err.message);
-            });
-
-
-            insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
-                if(isSuccess) {
-                    this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
-                }else {
-                    this.toast.displayError('AdminPOs Failed to Insert');
-                }
-            }).catch(err => {
-                this.toast.displayError(err.body ? err.body.message : err.message);
-            });
+            }
+        }catch(err) {
+            console.error(err.body ? err.body.message : err.message);
         }
     }
 
