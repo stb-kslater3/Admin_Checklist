@@ -64,7 +64,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
         this.view = new View();
 
-        this.toast = new LWC_Toast(this.template);
+        this.toast = new LWC_Toast(this);
 
         this.poDynamicList = [];
 
@@ -543,10 +543,6 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     loadPOsFromPOLines(poMap) {
         // Used to hold index of AdminPOs match if already put there by AdminPOs
         let correspondant;
-        
-console.log('poMap . . .');
-console.log(poMap);
-console.log('. . .');
 
         // First put the Chassis if there is one
         if(poMap['Chassis']) {
