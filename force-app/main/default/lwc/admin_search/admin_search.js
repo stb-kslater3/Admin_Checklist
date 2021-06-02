@@ -211,7 +211,7 @@ export default class Admin_search extends LightningElement {
                 this.hasSearchResults = false;
             }
         }).catch(err => {
-            this.toastHandler.displayError('Error in call to queryFromString for SearchAdmin!', '(admin_in_opportunity) See console log for more details', err);
+            console.log(err.body ? err.body.message : err.message);
         });
     }
 
@@ -223,7 +223,7 @@ export default class Admin_search extends LightningElement {
             let adminChosen = new CustomEvent('adminchosen', {detail: {value: admin}});
             this.dispatchEvent(adminChosen);
         }catch(err) {
-            this.toastHandler.displayError('Error in handleSearchSelection!', '(admin_in_opportunity) See console log for more details', err);
+            console.log(err.body ? err.body.message : err.message);
         }
     }
 
