@@ -195,13 +195,14 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
         this.view.setAttribute('finances_Gross_Amount', 'value', sum);
 
-        this.view.setAttribute(
-            'finances_Gross_Percent',
+        sum = sum / ( Number(this.view.getAttribute('finances_POSubtotal', 'value')) + Number(this.view.getAttribute('finances_Profit_Amount', 'value')) );
 
-            'value',
-
-            sum / ( Number(this.view.getAttribute('finances_POSubtotal', 'value')) + Number(this.view.getAttribute('finances_Profit_Amount', 'value')) )
-        );
+        if(sum) {
+            this.view.setAttribute('finances_Gross_Percent', 'value', sum);
+        }else {
+            this.view.setAttribute('finances_Gross_Percent', 'value', 0);
+        }
+        
     }
 
 
