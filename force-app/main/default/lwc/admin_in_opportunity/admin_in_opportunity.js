@@ -85,7 +85,7 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
                 this.recordData = records[0];
             }
         }).catch(err => {
-            this.toastHandler.displayError('Something Went Wrong!', 'Error in call to queryFromString in initializeRecordData for this Opportunity', err);
+            console.error(err.body ? err.body.message : err.message);
         });
     }
 
@@ -101,7 +101,7 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
         */
 
 
-        this.toastHandler = new LWC_Toast(this.template);
+        this.toastHandler = new LWC_Toast(this);
 
 
         //this.createLWCElements();
@@ -128,7 +128,7 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
                 // this.initializeLWC_Elements(); // OLD
             }
         }).catch(err => {
-            this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to then of initializeRecordData within the Constructor', err);
+            console.error(err.body ? err.body.message : err.message);
         });
     }
 
@@ -170,7 +170,7 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
         updateRecordFromId({ objectName: 'Opportunity', recordId: this.recordId, fieldValuePairs: {'AdminChecklist__c': event.detail.value}}).then(isSuccess => {
             location.reload();
         }).catch(err => {
-            this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to updateRecordFromId for Opportunity in handleAdminChosen', err);
+            console.error(err.body ? err.body.message : err.message);
         });
     }
 
@@ -199,10 +199,10 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
                     console.log('(admin_in_opportunity) updateRecordFromId came back as unsuccessful');
                 }
             }).catch(err => {
-                this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to updateRecordFromId in insertRecord of handleClick_NewAdmin', err);
+                console.error(err.body ? err.body.message : err.message);
             });
         }).catch(err => {
-            this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to insertRecord for AdminChecklist in handleClick_NewAdmin', err);
+            console.error(err.body ? err.body.message : err.message);
         });
     }
 
@@ -220,7 +220,7 @@ export default class Admin_in_opportunity extends NavigationMixin(LightningEleme
 
             //this.editAdminButton.domElement.navigate(); // OLD
         }catch(e) {
-            this.toastHandler.displayError('Something Went Wrong!', '(admin_in_opportunity) Error in call to editAdminButton.Navigate', e);
+            console.error(err.body ? err.body.message : err.message);
         }
     }
 }

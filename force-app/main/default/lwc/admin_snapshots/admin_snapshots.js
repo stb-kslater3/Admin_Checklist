@@ -135,10 +135,10 @@ export default class Admin_snapshots extends LightningElement {
                         if(credentials['accessKeyId'] && credentials['secretAccessKey']) {
                             this.initializeAWS(credentials['accessKeyId'], credentials['secretAccessKey']);   
                         }else {
-                            this.displayError('Problem with AWS Access Keys');
+                            this.toast.displayError('Problem with AWS Access Keys');
                         }
                     }).catch(err => {
-                        this.displayError(err.body ? err.body.message : err.message);
+                        this.toast.displayError(err.body ? err.body.message : err.message);
                     });
                 }
 

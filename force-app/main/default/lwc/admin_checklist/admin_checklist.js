@@ -176,7 +176,11 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     calculateProfitPercent() {
         let sum = Number(this.view.getAttribute('finances_Profit_Amount', 'value')) / ( Number(this.view.getAttribute('finances_POSubtotal', 'value')) + Number(this.view.getAttribute('finances_Profit_Amount', 'value')) );
 
-        this.view.setAttribute('finances_Profit_Percent', 'value', sum.toFixed(4));
+        if(sum) {
+            this.view.setAttribute('finances_Profit_Percent', 'value', sum.toFixed(4));
+        }else {
+            this.view.setAttribute('finances_Profit_Percent', 'value', 0);
+        }
     }
     calculateProfitAmount() {
         let sum = Number(this.view.getAttribute('finances_POSubtotal', 'value')) * Number(this.view.getAttribute('finances_Profit_Percent', 'value'));
@@ -763,10 +767,10 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 if(credentials['accessKeyId'] && credentials['secretAccessKey']) {
                     this.initializeAWS(credentials['accessKeyId'], credentials['secretAccessKey']);   
                 }else {
-                    this.displayError('Problem with AWS Access Keys');
+                    this.toast.displayError('Problem with AWS Access Keys');
                 }
             }).catch(err => {
-                this.displayError(err.body ? err.body.message : err.message);
+                this.toast.displayError(err.body ? err.body.message : err.message);
             });
         }
 
@@ -1058,6 +1062,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
             blobToPDF(b, fileName + '.pdf');
         }).catch(err => {
+            console.error(err);
             this.toast.displayError(err.body ? err.body.message : err.message);
         });
     }
@@ -1184,6 +1189,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
             //blobToPDF(b, fileName + '.pdf');
         }).catch(err => {
+            console.error(err);
             this.toast.displayError(err.body ? err.body.message : err.message);
         });
         /*
