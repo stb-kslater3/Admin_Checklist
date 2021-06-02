@@ -1,6 +1,7 @@
 import { LightningElement } from 'lwc';
 
-import {LWC_Toast, LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
+import { LWC_Toast } from "c/lwc_generic_prototype";
+import {LWC_Element, Attribute_Handler} from 'c/lwc_js_common';
 
 import Id from '@salesforce/user/Id';
 
