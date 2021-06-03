@@ -29,6 +29,7 @@ export default class Admin_search extends LightningElement {
         if(!this.lookUpAdmin_elements) {
             this.lookUpAdmin_elements = {};
         
+            /*
             this.lookUpAdmin_elements.lookUpAdmin_Salesman = new LWC_Element(
                 // data-id
                 'lookUpAdmin_Salesman',
@@ -47,6 +48,22 @@ export default class Admin_search extends LightningElement {
                         this.handleDOMInput(event);
                     }
                 }
+            );
+            */
+            this.lookUpAdmin_elements.lookUpAdmin_Salesman = new LWC_Element(
+                // data-id
+                'lookUpAdmin_Salesman',
+                
+                // Reference to this context so query dom element can be applied
+                this.template,
+                
+                // This was made to handle the different formatting situations for a given attribute that create problems
+                // when you need to get/set the values and pass them to apex, etc.
+                this.arbitraryAttributeHandler, 
+
+                // This is an object that holds the key-pairs of events as keys where the handler is kept within the given
+                // context by using an arrow function to call it
+                {}
             );
         
 
@@ -115,8 +132,8 @@ export default class Admin_search extends LightningElement {
 
     handleDOMInput(event) {
         switch(event.target.getAttribute("data-id")) {
-            case 'lookUpAdmin_Salesman':
-                break;
+            //case 'lookUpAdmin_Salesman':
+            //    break;
 
             case 'lookUpAdmin_Customer':
                 break;

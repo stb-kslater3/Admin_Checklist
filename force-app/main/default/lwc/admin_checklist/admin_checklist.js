@@ -935,6 +935,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         return adminPOData;
     }
 
+
     handleClick_SaveQuote() {
         try {
             let adminData = this.getAdminDataFromElements();
@@ -1005,7 +1006,6 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
     handleClick_PrintQuote() {
         this.handleClick_SaveQuote();
-
 
         let adminData = this.getAdminDataFromElements();
         let adminPOData = this.getAdminPOsFromElements();
