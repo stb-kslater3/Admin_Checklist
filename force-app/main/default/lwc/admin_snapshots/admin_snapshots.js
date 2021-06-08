@@ -5,6 +5,8 @@ import queryFromString from "@salesforce/apex/Apex_Generic_Prototype.queryFromSt
 import { loadScript } from 'lightning/platformResourceLoader';
 import AWS_SDK from '@salesforce/resourceUrl/aws_sdk';
 
+import { LWC_Toast } from "c/lwc_generic_prototype";
+
 import getAWS from '@salesforce/apex/CredentialManager.getAWS';
 
 import { AdminS3 } from 'c/admin_s3';
@@ -24,6 +26,13 @@ export default class Admin_snapshots extends LightningElement {
 
     s3;
 
+    toast;
+
+    constructor() {
+        super();
+
+        this.toast = new LWC_Toast(this);
+    }
 
     initializeAWS(accessKeyId, secretAccessKey) {
         loadScript(this, AWS_SDK).then(() => {
@@ -138,7 +147,7 @@ export default class Admin_snapshots extends LightningElement {
                             this.toast.displayError('Problem with AWS Access Keys');
                         }
                     }).catch(err => {
-                        this.toast.displayError(err.body ? err.body.message : err.message);
+                        console.error(err.body ? err.body.message : err.message);
                     });
                 }
 
