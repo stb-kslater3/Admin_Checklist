@@ -9,6 +9,8 @@ import queryFromString from "@salesforce/apex/Apex_Generic_Prototype.queryFromSt
 import insertRecords from "@salesforce/apex/Apex_Generic_Prototype.insertRecords";
 import updateRecordFromId from "@salesforce/apex/Apex_Generic_Prototype.updateRecordFromId";
 import updateRecords from "@salesforce/apex/Apex_Generic_Prototype.updateRecords";
+import deleteRecords from "@salesforce/apex/Apex_Generic_Prototype.deleteRecords";
+
 
 import { View } from "c/lwc_mvc_prototype2";
 
@@ -32,6 +34,9 @@ import { AdminS3 } from 'c/admin_s3';
 
 export default class Admin_checklist extends NavigationMixin(LightningElement) {
     @track poDynamicList;
+
+    // Holds Ids of POs that are to be removed, so when a save happens it officially removes them
+    poBlackList;
 
     adminChosen;
     opportunityId;
@@ -67,6 +72,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         this.toast = new LWC_Toast(this);
 
         this.poDynamicList = [];
+        this.poBlackList = [];
 
     // -----------------------------------------------------------------------
     // This will be moved to where this is only added if an admin isn't found, etc. 
@@ -137,6 +143,11 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     }
 
     removeFromPOList(poIndex) {
+        // If this Admin PO was pulled then his Id would have been passed to apiId. So blacklist him only if he was pulled.
+        if(this.poDynamicList[poIndex].apiId) {
+            this.poBlackList.push(this.poDynamicList[poIndex].apiId);
+        }
+
         this.poDynamicList.splice(poIndex, 1);
 
         this.updatePODynamicIndices();
@@ -903,12 +914,15 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         let type, cost, description;
 
         try {
+            // Each AdminPO has 3 DOM Elements, namely 1. Type Picklist, 2. Cost textbox, 3. Description textarea
             for(let i = 0; i < adminPOElements.length/3; i++) {
                 type = adminPOElements[3*i];
                 cost = adminPOElements[3*i + 1];
                 description = adminPOElements[3*i + 2];
 
-                if(type['dataset']['apiid']) {
+                // Turns out that this gave back a string 'undefined' rather than an actual undefined or '', took a while to
+                // figure out so make sure to check for that
+                if(type['dataset']['apiid'] && type['dataset']['apiid'] !== 'undefined') {
                     adminPOData.toUpdate.push({});
 
                     adminPOData.toUpdate[adminPOData.toUpdate.length - 1]['Id'] = type['dataset']['apiid'];
@@ -928,6 +942,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                     adminPOData.toInsert[adminPOData.toInsert.length - 1]['AdminChecklist__c'] = this.adminChosen;
                 }
             }
+
         }catch(err) {
             console.log(err.message);
         }
@@ -976,7 +991,21 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                     }).catch( err => {
                         this.toast.displayError(err.body ? err.body.message : err.message);
                     });
-                }            
+                }
+                
+                
+                // Remove the BlackListed Admin POs
+                if(this.poBlackList.length > 0) {
+                    deleteRecords( { objectName: 'AdminPO__c', toDelete: this.poBlackList } ).then(isSuccess => {
+                        if(isSuccess) {
+                            this.toast.displaySuccess('Succesfully Deleted the AdminPOs');
+                        }else {
+                            this.toast.displayError('Failed to Delete the Removed AdminPOs, something went wrong!');
+                        }
+                    }).catch(err => {
+                        console.error(err.body ? err.body.message : err.message);
+                    });
+                }
             }else {
                 insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: adminData }).then(isSuccess => {
                     if(isSuccess) {
