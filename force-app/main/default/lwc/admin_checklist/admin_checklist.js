@@ -500,6 +500,55 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 this.view.setAttribute('whoWhat_Body_Series_Name', 'value', records[i].Product2.Body_Model__c);
                 this.view.setAttribute('whoWhat_Body_Series_Name', 'disabled', true);
 
+                // If there isn't a Body PODynamic yet then put it in at the front
+                let correspondant = this.findCorrespondingPO('Body', records[i].Total_Product_Cost__c);
+
+                if(correspondant < 0) {
+                    this.addToFrontOfPOList('Body', records[i].Total_Product_Cost__c, '');
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = 'From Opportunity Product';
+                }else {
+                    this.poDynamicList[correspondant]['disabled'] = true;
+
+                    this.poDynamicList[correspondant]['lineDescription'] = 'From Opportunity Product';
+                }
+
+                break;
+
+//                this.view.setAttribute('cost_'..., 'value', records[i].Total_Product_Cost__c);
+//                this.view.setAttribute('cost_'..., 'disabled', true);
+//                this.view.setAttribute('remove_'..., 'hidden', true);
+
+                break;
+            }
+        }
+
+
+        // Find Lube if there
+        for(let i in records) {
+            if(records[i].Product2.RecordType.Name === 'Lube') {
+                this.view.setAttribute('whoWhat_Body_Series_Name', 'value', records[i].Product2.Body_Model__c);
+                this.view.setAttribute('whoWhat_Body_Series_Name', 'disabled', true);
+
+                // If there isn't a Body PODynamic yet then put it in at the front
+                let correspondant = this.findCorrespondingPO('Body', records[i].Total_Product_Cost__c);
+
+                if(correspondant < 0) {
+                    this.addToFrontOfPOList('Body', records[i].Total_Product_Cost__c, '');
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                    this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = 'From Opportunity Product';
+                }else {
+                    this.poDynamicList[correspondant]['disabled'] = true;
+
+                    this.poDynamicList[correspondant]['lineDescription'] = 'From Opportunity Product';
+                }
+
+                break;
+
 //                this.view.setAttribute('cost_'..., 'value', records[i].Total_Product_Cost__c);
 //                this.view.setAttribute('cost_'..., 'disabled', true);
 //                this.view.setAttribute('remove_'..., 'hidden', true);
