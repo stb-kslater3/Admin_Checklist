@@ -4,6 +4,8 @@ public with sharing class AdminChecklist_Downloader {
 
     public String salesman {get; set;}
 
+    public String adminName {get; set;}
+
     public String customer {get; set;}
 
     public String last_modified {get; set;}
@@ -122,6 +124,11 @@ public with sharing class AdminChecklist_Downloader {
             last_modified = '_';
         }
 
+        if(adminData.containsKey('Name__c')) {
+            adminName = adminData.get('Name__c');
+        }else {
+            adminName = '_';
+        }
 
         if(adminData.containsKey('Salesman__c')) {
             User[] salesmanQueried = [

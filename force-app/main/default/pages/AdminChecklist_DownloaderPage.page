@@ -47,6 +47,10 @@
                 <div class="Medium_Box">
                     <b>Body Series:</b> {!body_series}
                 </div>
+
+                <div class="Medium_Box">
+                    <b>Name:</b> {!adminName}
+                </div>
             </div>
         </div>
         
