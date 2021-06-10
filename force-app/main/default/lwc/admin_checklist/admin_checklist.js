@@ -504,7 +504,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 let correspondant = this.findCorrespondingPO('Body', records[i].Total_Product_Cost__c);
 
                 if(correspondant < 0) {
-                    this.addToFrontOfPOList('Body', records[i].Total_Product_Cost__c, '');
+                    this.addToPOList('Body', records[i].Total_Product_Cost__c, '');
 
                     this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
 
@@ -536,7 +536,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 let correspondant = this.findCorrespondingPO('Body', records[i].Total_Product_Cost__c);
 
                 if(correspondant < 0) {
-                    this.addToFrontOfPOList('Body', records[i].Total_Product_Cost__c, '');
+                    this.addToPOList('Body', records[i].Total_Product_Cost__c, '');
 
                     this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
 
@@ -869,11 +869,16 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                                     if(records) {
                                         if(records.length > 0) {
                                             let productsData = records;
-
+console.log('Opportunity Products . . .');
+console.log(productsData);
+console.log('. . .');
                                             this.loadAdminFromProducts(productsData);
                                             
 
                                             getPOs({ lineItems: productsData }).then(poMap => {
+console.log('PO Map . . .');
+console.log(poMap);
+console.log('. . .');
                                                 if(poMap) {
                                                     if(Object.keys(poMap).length > 0) {
                                                         this.loadPOsFromPOLines(poMap);
