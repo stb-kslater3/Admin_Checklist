@@ -79,7 +79,7 @@ public with sharing class AdminChecklist_Controller {
                     productString = '%' + lineItem.Product2.VIN_Last_6__c + '%';
 
                     poLines = [
-                        SELECT rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        SELECT Id, Name, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
                         FROM rstk__poline__c
                         WHERE rstk__poline_div__r.Name LIKE '%STE%'
                         AND rstk__poline_item__r.Name LIKE :productString
@@ -96,7 +96,7 @@ public with sharing class AdminChecklist_Controller {
                     // Also, the STEProject__c set on the Chassis PO Line causes this to find it so make sure when you
                     // do body that it doesn't double dip the chassis by checking the type
                     poLines = [
-                        SELECT Id, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        SELECT Id, Name, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
                         FROM rstk__poline__c
                         WHERE rstk__poline_div__r.Name LIKE '%STE%'
                         AND STEProject__c LIKE :productString
@@ -105,7 +105,7 @@ public with sharing class AdminChecklist_Controller {
                     ];
 
                     otherPOLines = [
-                        SELECT Id, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        SELECT Id, Name, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
                         FROM rstk__poline__c
                         WHERE rstk__poline_div__r.Name LIKE '%STE%'
                         AND rstk__poline_proj__r.Name LIKE :productString
