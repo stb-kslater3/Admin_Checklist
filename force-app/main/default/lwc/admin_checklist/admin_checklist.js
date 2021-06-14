@@ -303,7 +303,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     queryAdminChosen() {
         return queryFromString({
             queryString:
-                "SELECT Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, Profit_Amount__c, Dealer_Pack__c, ApplyFET__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, TradeIn_Payoff__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c" +
+                "SELECT Name__c, Salesman__c, Customer_Name__c, Chassis_Year__c, Chassis_Make__c, Chassis_VIN__c, Chassis_Model__c, Date__c, Body_Series_Name__c, ManagerName__c, DateOfApproval__c, Notes__c, Profit_Amount__c, Dealer_Pack__c, ApplyFET__c, Minus_Tire_FET__c, Extended_Warranty__c, Other_Fees__c, Documentation_Fee__c, Deposit__c, TradeIn_Make__c, TradeIn_Year__c, TradeIn_Model__c, TradeIn_Unit_Number__c, TradeIn_Actual_Cash_Value__c, TradeIn_Billing_Amount__c, TradeIn_Payoff__c, FET_Front_Description__c, FET_Front_Size__c, FET_Front_Cost__c, FET_Front_Quantity__c, FET_Rear_Description__c, FET_Rear_Size__c, FET_Rear_Cost__c, FET_Rear_Quantity__c" +
                 " FROM AdminChecklist__c" +
                 " WHERE Id='" + this.adminChosen + "'"
         });
@@ -371,6 +371,11 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         this.view.setAttribute('whoWhat_Chassis_Make', 'value', record['Chassis_Make__c']);
         this.view.setAttribute('whoWhat_Chassis_Model', 'value', record['Chassis_Model__c']);
         this.view.setAttribute('whoWhat_Body_Series_Name', 'value', record['Body_Series_Name__c']);
+console.log(record);
+        this.view.setAttribute('ManagerName', 'value', record['ManagerName__c']);
+        this.view.setAttribute('DateOfApproval', 'value', record['DateOfApproval__c']);
+
+        this.view.setAttribute('Notes', 'value', record['Notes__c']);
 
         this.view.setAttribute('finances_Profit_Amount', 'value', record['Profit_Amount__c']);
         this.view.setAttribute('finances_Dealer_Pack', 'value', record['Dealer_Pack__c']);
