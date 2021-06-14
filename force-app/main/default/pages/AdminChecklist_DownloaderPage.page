@@ -53,6 +53,31 @@
                 </div>
             </div>
         </div>
+
+        <div class="SectionDiv">
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <b>Manager Name</b>: {!managerName}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <b>Date Of Approval</b>: {!dateOfApproval}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="SectionDiv">
+            <div>
+                <b>Notes and Special Instructions</b>: {!notes}
+            </div>
+        </div>
         
         
         <div class="SectionDiv">
@@ -77,7 +102,7 @@
                         </apex:dataTable>
                     </td>
 
-                    <td>
+                    <td style="border-left: 3px solid black;">
                         <div>
                             <b>Profit Amount:</b> {!profit_amount}
                         </div>

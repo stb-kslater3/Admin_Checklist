@@ -20,6 +20,11 @@ public with sharing class AdminChecklist_Downloader {
 
     public String body_series {get; set;}
 
+    public String managerName {get; set;}
+    public String dateOfApproval {get; set;}
+
+    public String notes {get; set;}
+
 
     public List<Integer> poDataIndices {get; set;}
     public List<String> poDataType {get; set;}
@@ -180,6 +185,26 @@ public with sharing class AdminChecklist_Downloader {
             body_series = adminData.get('Body_Series_Name__c');
         }else {
             body_series = '_';
+        }
+
+        
+        if(adminData.containsKey('ManagerName__c')) {
+            managerName = adminData.get('ManagerName__c');
+        }else {
+            managerName = '_';
+        }
+
+        if(adminData.containsKey('DateOfApproval__c')) {
+            dateOfApproval = adminData.get('DateOfApproval__c');
+        }else {
+            dateOfApproval = '_';
+        }
+
+
+        if(adminData.containsKey('Notes__c')) {
+            notes = adminData.get('Notes__c');
+        }else {
+            notes = '_';
         }
 
 
@@ -427,7 +452,7 @@ public with sharing class AdminChecklist_Downloader {
         }
         
         //System.debug( num1.substring(0, Math.mod(num1.length(), 3)) );
-        moneyString = '$' + wholePart.substring(0, Math.mod(wholePart.length(), 3)) + moneyString + '.' + changePart;
+        moneyString = '$' + wholePart.substring(0, Math.mod(wholePart.length(), 3)) + moneyString + '.' + changePart.substring(0, 2);
 
 
         return moneyString;
