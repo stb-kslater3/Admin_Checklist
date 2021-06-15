@@ -371,7 +371,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         this.view.setAttribute('whoWhat_Chassis_Make', 'value', record['Chassis_Make__c']);
         this.view.setAttribute('whoWhat_Chassis_Model', 'value', record['Chassis_Model__c']);
         this.view.setAttribute('whoWhat_Body_Series_Name', 'value', record['Body_Series_Name__c']);
-console.log(record);
+
         this.view.setAttribute('ManagerName', 'value', record['ManagerName__c']);
         this.view.setAttribute('DateOfApproval', 'value', record['DateOfApproval__c']);
 
@@ -936,7 +936,6 @@ console.log(record);
                 if(records.length > 0) {
                     this.loadAdminFromRecord(records[0]);
 
-
                     this.queryOpportunity().then(records => {
                         if(records) {
                             if(records.length > 0) {
@@ -971,6 +970,7 @@ console.log(record);
                                             getPOs({ lineItems: productsData }).then(poMap => {
                                                 if(poMap) {
                                                     if(Object.keys(poMap).length > 0) {
+console.log(records);
                                                         this.loadPOsFromPOLines(poMap);
                                                     }
                                                 }
@@ -1098,6 +1098,7 @@ console.log(record);
     handleClick_SaveQuote() {
         try {
             let adminData = this.getAdminDataFromElements();
+            let adminPOData = this.getAdminPOsFromElements();
             
             if(this.adminChosen) {
                 updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: adminData }).then(isSuccess => {

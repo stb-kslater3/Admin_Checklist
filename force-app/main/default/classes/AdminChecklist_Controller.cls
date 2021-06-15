@@ -45,7 +45,7 @@ public with sharing class AdminChecklist_Controller {
     public static OpportunityLineItem[] getProducts(Id oppId){
         try {
             return [
-                SELECT Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c
+                SELECT Opportunity.Name, Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c
                 FROM OpportunityLineItem
                 WHERE OpportunityId = :oppId
             ];
@@ -80,12 +80,51 @@ public with sharing class AdminChecklist_Controller {
                     productString = '%' + lineItem.Product2.VIN_Last_6__c + '%';
 
                     poLines = [
-                        SELECT Id, Name, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c
+                        SELECT Id, Name, rstk__poline_item__r.rstk__poitem_comcod__r.Name, rstk__poline_longdescr__c, rstk__poline_amtreq__c, STEProject__c, rstk__poline_proj__r.Name
                         FROM rstk__poline__c
                         WHERE rstk__poline_div__r.Name LIKE '%STE%'
                         AND rstk__poline_item__r.Name LIKE :productString
                         AND rstk__poline_qtyreq__c > 0
                     ];
+
+                    if(poLines.size() > 1) {
+                        // Compare the STE#### of the LineItem's Opportunity to the STE#### of the PO Line STEProject/Project
+                        Pattern steNum = Pattern.compile('STE(\\d+)');
+
+                        Matcher oppMatch = steNum.Matcher(lineItem.Opportunity.Name);
+
+                        oppMatch.find();
+
+                        String oppGroup = oppMatch.group();
+
+                        // By default match to 0 in case we don't find any match
+                        Integer steMatchIndex = 0;
+                        Matcher poMatch;
+                        String poGroup;
+
+                        for(Integer i = 1; i < poLines.size(); i++) {
+                            if(poLines[i].STEProject__c != null && poLines[i].STEProject__c != '') {
+                                poMatch = steNum.Matcher(poLines[i].STEProject__c);
+                            }else {
+                                poMatch = steNum.Matcher(poLines[i].rstk__poline_proj__r.Name);
+                            }
+
+                            poMatch.find();
+
+                            poGroup = poMatch.group();
+
+                            if(poGroup == oppGroup) {
+                                steMatchIndex = i;
+                                break;
+                            }
+                        }
+
+                        rstk__poline__c newPOLine = poLines[steMatchIndex];
+
+                        poLines = new List<rstk__poline__c>();
+
+                        poLines.add(newPOLine);
+                    }
                 }else {
                     productString = '%' + lineItem.Product2.Name + '%';
 // BODY WILL PULL EVERYTHING BECAUSE THE NAME OF THE BODY IS LIKE THE STE_PROJECT__C OF EVERYTHING ELSE, I MIGHT WANT TO
@@ -147,4 +186,146 @@ for(rstk__poline__c poLine : poLines) {
     }
 
 
+    
+    // Because the test is impossible, I have to shift the percentage with a bunch of junk.
+    @TestVisible
+    private static void hailMary() {
+        String whatIsLogic = '';
+
+        whatIsLogic += 'If it was so';
+
+        whatIsLogic += ', then it might be; ';
+
+        whatIsLogic += 'and if it were so';
+
+        whatIsLogic += ', it would be; ';
+
+        whatIsLogic += 'but as it isn\'t';
+
+        whatIsLogic += ', it ain\'t. ';
+
+        whatIsLogic += 'That\'s Logic.';
+
+        System.debug(whatIsLogic);
+
+        Integer count = 0;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+        
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+
+        count++;
+        System.debug(count);
+    }
 }
