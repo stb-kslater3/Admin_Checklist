@@ -964,16 +964,11 @@ console.log(record);
                                     if(records) {
                                         if(records.length > 0) {
                                             let productsData = records;
-console.log('Opportunity Products . . .');
-console.log(productsData);
-console.log('. . .');
+
                                             this.loadAdminFromProducts(productsData);
                                             
 
                                             getPOs({ lineItems: productsData }).then(poMap => {
-console.log('PO Map . . .');
-console.log(poMap);
-console.log('. . .');
                                                 if(poMap) {
                                                     if(Object.keys(poMap).length > 0) {
                                                         this.loadPOsFromPOLines(poMap);
@@ -1103,7 +1098,6 @@ console.log('. . .');
     handleClick_SaveQuote() {
         try {
             let adminData = this.getAdminDataFromElements();
-            let adminPOData = this.getAdminPOsFromElements();
             
             if(this.adminChosen) {
                 updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: adminData }).then(isSuccess => {
@@ -1156,24 +1150,30 @@ console.log('. . .');
                     });
                 }
             }else {
-                insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: adminData }).then(isSuccess => {
-                    if(isSuccess) {
+                insertRecord({ objectName: 'AdminChecklist__c', fieldValuePairs: adminData }).then(adminId => {
+                    if(adminId) {
                         this.toast.displaySuccess('AdminChecklist Inserted Succesfully!');
+
+                        this.adminChosen = adminId;
+
+                        // Note that this must come after the AdminChosen has been set once inserted by the outer
+                        // function, if you try to put this before, then these Admin POs will not have an Admin they
+                        // are tied to
+                        let adminPOData = this.getAdminPOsFromElements();
+
+                        insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
+                            if(isSuccess) {
+                                this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
+                            }else {
+                                this.toast.displayError('AdminPOs Failed to Insert');
+                            }
+                        }).catch(err => {
+                            this.toast.displayError(err.body ? err.body.message : err.message);
+                        });
                     }else {
                         this.toast.displayError('AdminChecklist Failed to Insert');
                     }
                 }).catch( err => {
-                    this.toast.displayError(err.body ? err.body.message : err.message);
-                });
-
-
-                insertRecords({ objectName: 'AdminPO__c', records: adminPOData.toInsert }).then(isSuccess => {
-                    if(isSuccess) {
-                        this.toast.displaySuccess('AdminPOs Inserted Succesfully!');
-                    }else {
-                        this.toast.displayError('AdminPOs Failed to Insert');
-                    }
-                }).catch(err => {
                     this.toast.displayError(err.body ? err.body.message : err.message);
                 });
             }

@@ -8,12 +8,13 @@ public with sharing class AdminChecklist_Controller {
         recordObject = (sObject) Type.forName(objectName).newInstance();
         
         for (String key : fieldValuePairs.keySet()) {
-            if(key.equalsIgnoreCase('date') || key.equalsIgnoreCase('date__c')) {
+            if(key.containsIgnoreCase('date')) {
   System.debug(fieldValuePairs.get(key));
               String originalString = (String) fieldValuePairs.get(key);
               
               originalString = originalString.split('Z')[0];
               originalString = originalString.split('T')[0];
+              originalString = originalString.split(' ')[0];
   
               String[] dateSplit = originalString.split('-');
   
