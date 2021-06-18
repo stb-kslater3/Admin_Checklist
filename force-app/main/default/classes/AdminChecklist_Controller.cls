@@ -9,20 +9,33 @@ public with sharing class AdminChecklist_Controller {
         
         for (String key : fieldValuePairs.keySet()) {
             if(key.containsIgnoreCase('date')) {
-  System.debug(fieldValuePairs.get(key));
-              String originalString = (String) fieldValuePairs.get(key);
-              
-              originalString = originalString.split('Z')[0];
-              originalString = originalString.split('T')[0];
-              originalString = originalString.split(' ')[0];
-  
-              String[] dateSplit = originalString.split('-');
-  
-              String dateString = dateSplit[1];
-              dateString += '/' + dateSplit[2];
-              dateString += '/' + dateSplit[0];
-  System.debug(dateString);
-              recordObject.put(key, Date.parse(dateString));
+                System.debug(fieldValuePairs.get(key));
+            
+                String dateString = '';
+
+                if(fieldValuePairs.get(key) instanceof String) {
+                    String originalString = (String) fieldValuePairs.get(key);
+
+                    originalString = originalString.split('Z')[0];
+                    originalString = originalString.split('T')[0];
+                    originalString = originalString.split(' ')[0];
+
+                    String[] originalSplit = originalString.split('-');
+
+                    dateString = originalSplit[1] + '/' + originalSplit[2] + '/' + originalSplit[0];
+                }else if(fieldValuePairs.get(key) instanceof Date) {
+                    Date d = (Date) fieldValuePairs.get(key);
+
+                    dateString = d.month() + '/' + d.day() + '/' + d.year();
+                }else {
+                    Datetime d = (Datetime) fieldValuePairs.get(key);
+
+                    dateString = d.month() + '/' + d.day() + '/' + d.year();
+                }
+
+                System.debug(dateString);
+
+                recordObject.put(key, Date.parse(dateString));
             }else {
               recordObject.put(key, fieldValuePairs.get(key));
             }
