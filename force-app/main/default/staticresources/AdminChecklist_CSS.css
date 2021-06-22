@@ -18,7 +18,7 @@
 .Medium_Box {
     display: inline-block;
     width: 190px;
-    margin: 5px;
+    margin: 1px;
 }
 
 
@@ -61,7 +61,7 @@ table {
 }
 
 h3 {
-    margin: 2.5px;
+    margin: 0px;
 }
 
 th {

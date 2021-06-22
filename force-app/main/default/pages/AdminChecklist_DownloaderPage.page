@@ -3,7 +3,7 @@
 
     <apex:pageBlock>
         <div id="Title">
-            <h1>Admin Checklist</h1>
+            <h1 style="margin: 0px;">Admin Checklist</h1>
         </div>
 
         <div class="SectionDiv">
@@ -111,11 +111,11 @@
                             <b>Profit Percent:</b> {!profit_percent}
                         </div>
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Dealer Pack:</b> {!dealer_pack}
                         </div>
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Gross After Comission:</b> {!gross_after_com_amount}
                         </div>
 
@@ -123,11 +123,11 @@
                             <b>Gross After Comission %:</b> {!gross_after_com_percent}
                         </div>
                         
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Subtotal After Profit:</b> {!subtotal_after_profit}
                         </div>
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>F.E.T. Applies:</b> {!fet_applies}
                         </div>
 
@@ -144,23 +144,23 @@
                         </div>
 
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Extended Warranty:</b> {!extended_warranty}
                         </div>
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Other Fees:</b> {!other_fees}
                         </div>
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Documentation Fee:</b> {!documentation_fee}
                         </div>
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Deposit:</b> {!deposit}
                         </div>
 
-                        <div style="margin-top: 10px">
+                        <div style="margin-top: 1px">
                             <b>Total:</b> {!total}
                         </div>
                     </td>
