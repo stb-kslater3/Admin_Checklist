@@ -971,6 +971,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                                                 if(poMap) {
                                                     if(Object.keys(poMap).length > 0) {
 console.log(records);
+console.log(poMap);
                                                         this.loadPOsFromPOLines(poMap);
                                                     }
                                                 }
