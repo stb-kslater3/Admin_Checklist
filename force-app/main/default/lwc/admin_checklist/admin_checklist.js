@@ -56,6 +56,9 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     s3;
 
 
+    productsData;
+
+
     constructor() {
         super();
 
@@ -331,7 +334,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
     queryProducts() {
         return queryFromString({
             queryString:
-                "SELECT Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c, Product2.Trade_Allowance__c, Product2.Pay_Off_Amount__c, Total_Product_Cost__c" +
+                "SELECT Trade_In_Allowance__c, Trade_Allowance__c, Is_Trade_In__c, Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c,  Product2.Pay_Off_Amount__c, Total_Product_Cost__c" +
                 " FROM OpportunityLineItem" +
                 " WHERE OpportunityId='" + this.opportunityId + "'"
         });
@@ -493,8 +496,6 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
 
                     this.poDynamicList[correspondant]['lineDescription'] = 'From Opportunity Product';
                 }
-
-                break;
             }
         }
 
@@ -505,13 +506,9 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                 this.view.setAttribute('whoWhat_Body_Series_Name', 'value', records[i].Product2.Body_Model__c);
                 this.view.setAttribute('whoWhat_Body_Series_Name', 'disabled', true);
 
-                break;
-
 //                this.view.setAttribute('cost_'..., 'value', records[i].Total_Product_Cost__c);
 //                this.view.setAttribute('cost_'..., 'disabled', true);
 //                this.view.setAttribute('remove_'..., 'hidden', true);
-
-                break;
             }
         }
 
@@ -525,13 +522,9 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                     this.view.setAttribute('whoWhat_Body_Series_Name', 'disabled', true);
                 }
 
-                break;
-
 //                this.view.setAttribute('cost_'..., 'value', records[i].Total_Product_Cost__c);
 //                this.view.setAttribute('cost_'..., 'disabled', true);
 //                this.view.setAttribute('remove_'..., 'hidden', true);
-
-                break;
             }
         }
 
@@ -539,47 +532,163 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         // Find Used Unit if there
         for(let i in records) {
             if(records[i].Product2.RecordType.Name === 'Used Unit') {
-                this.view.setAttribute('tradeIn_Make', 'value', records[i].Product2.Chassis_Make__c);
-                this.view.setAttribute('tradeIn_Make', 'disabled', true);
+                if(records[i].Is_Trade_In__c) {
+                    this.view.setAttribute('tradeIn_Make', 'value', records[i].Product2.Chassis_Make__c);
+                    this.view.setAttribute('tradeIn_Make', 'disabled', true);
 
-                this.view.setAttribute('tradeIn_Year', 'value', records[i].Product2.Chassis_Year__c);
-                this.view.setAttribute('tradeIn_Year', 'disabled', true);
+                    this.view.setAttribute('tradeIn_Year', 'value', records[i].Product2.Chassis_Year__c);
+                    this.view.setAttribute('tradeIn_Year', 'disabled', true);
 
-                this.view.setAttribute('tradeIn_Model', 'value', records[i].Product2.Chassis_Model__c);
-                this.view.setAttribute('tradeIn_Model', 'disabled', true);
+                    this.view.setAttribute('tradeIn_Model', 'value', records[i].Product2.Chassis_Model__c);
+                    this.view.setAttribute('tradeIn_Model', 'disabled', true);
 
-                this.view.setAttribute('tradeIn_Unit_Number', 'value', records[i].Product2.VIN__c);
-                this.view.setAttribute('tradeIn_Unit_Number', 'disabled', true);
+                    this.view.setAttribute('tradeIn_Unit_Number', 'value', records[i].Product2.VIN__c);
+                    this.view.setAttribute('tradeIn_Unit_Number', 'disabled', true);
 
 
-                if(records[i].Product2.Trade_Allowance__c) {
-                    this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', records[i].Product2.Trade_Allowance__c);
-                }else {
-                    this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', 0);
+                    if(records[i].Trade_In_Allowance__c) {
+                        this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', records[i].Trade_In_Allowance__c);
+                    }else if(records[i].Trade_Allowance__c) {
+                        this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', records[i].Trade_Allowance__c);
+                    }else {
+                        this.view.setAttribute('tradeIn_Actual_Cash_Value', 'value', 0);
+                    }
+                    this.view.setAttribute('tradeIn_Actual_Cash_Value', 'disabled', true);
+
+                    if(records[i].Total_Product_Cost__c) {
+                        this.view.setAttribute('tradeIn_Billing_Amount', 'value', records[i].Total_Product_Cost__c);
+                    }else {
+                        this.view.setAttribute('tradeIn_Billing_Amount', 'value', 0);
+                    }
+                    this.view.setAttribute('tradeIn_Billing_Amount', 'disabled', true);
+
+                    if(records[i].Product2.Pay_Off_Amount__c) {
+                        this.view.setAttribute('tradeIn_Payoff', 'value', records[i].Product2.Pay_Off_Amount__c);
+                    }else {
+                        this.view.setAttribute('tradeIn_Payoff', 'value', 0);
+                    }
+                    this.view.setAttribute('tradeIn_Payoff', 'disabled', true); 
                 }
-                this.view.setAttribute('tradeIn_Actual_Cash_Value', 'disabled', true);
-
-                if(records[i].Total_Product_Cost__c) {
-                    this.view.setAttribute('tradeIn_Billing_Amount', 'value', records[i].Total_Product_Cost__c);
-                }else {
-                    this.view.setAttribute('tradeIn_Billing_Amount', 'value', 0);
-                }
-                this.view.setAttribute('tradeIn_Billing_Amount', 'disabled', true);
-
-                if(records[i].Product2.Pay_Off_Amount__c) {
-                    this.view.setAttribute('tradeIn_Payoff', 'value', records[i].Product2.Pay_Off_Amount__c);
-                }else {
-                    this.view.setAttribute('tradeIn_Payoff', 'value', 0);
-                }
-                this.view.setAttribute('tradeIn_Payoff', 'disabled', true);
-
-                break;
             }
         }
 
 
         // Find Others
         // . . .
+    }
+
+
+    loadNonChassisPO(poMap, productType) {
+        let correspondant;
+
+        let records = poMap[productType];
+        // In order to determine which one is the body I have to find the highest priced PO
+        // This is the nature of Rootstock
+        let maxIndex = 0;
+
+        // Holds the Indices of the aorders, freights, etc. within record
+        let aOrders = [];
+        let freights = [];
+
+        // Holds the indeices of what wasn't caught by the above within record
+        let others = [];
+
+
+        // Find the Body, and find the Aorders and the Freights
+        for(let i in records) {
+            if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
+                freights.push(i);
+            }else if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
+                aOrders.push(i);
+            }else {
+                others.push(i);
+            }
+
+            if(records[i].rstk__poline_amtreq__c > records[maxIndex].rstk__poline_amtreq__c) {
+                maxIndex = i;
+            }
+        }
+
+        // We don't want to mix a lube skid for a body
+        if(!records[maxIndex].rstk__poline_longdescr__c.toUpperCase().includes('LUBE SKID')) {
+            // TODO: Surround this with If there is a Lube Body then do this, otherwise don't
+            // We don't want to put a Lube Skid as a Body     
+            // remove Body from Others, which is Max Index
+            let bodyOther = others.findIndex(element => Number(element) === Number(maxIndex));
+
+            if(bodyOther >= 0) {
+                others.splice(bodyOther, 1);
+            }
+
+            // Do the Body
+            correspondant = this.findCorrespondingPO('Body', records[maxIndex].rstk__poline_amtreq__c);
+            
+            if(correspondant < 0) {
+                this.addToPOList('Body', records[maxIndex].rstk__poline_amtreq__c, '');
+
+                this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
+            }else {
+                this.poDynamicList[correspondant]['disabled'] = true;
+
+                this.poDynamicList[correspondant]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
+            }
+        }
+
+
+        // Then Do The A Orders
+        for(let i in aOrders) {
+            correspondant = this.findCorrespondingPO('A Order', records[aOrders[i]].rstk__poline_amtreq__c);
+        
+            if(correspondant < 0) {
+                this.addToPOList('A Order', records[aOrders[i]].rstk__poline_amtreq__c, '');
+
+                this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
+            }else {
+                this.poDynamicList[correspondant]['disabled'] = true;
+
+                this.poDynamicList[correspondant]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
+            }
+        }
+
+
+        // Then the Freights
+        for(let i in freights) {
+            correspondant = this.findCorrespondingPO('Freight', records[freights[i]].rstk__poline_amtreq__c);
+        
+            if(correspondant < 0) {
+                this.addToPOList('Freight', records[freights[i]].rstk__poline_amtreq__c, '');
+
+                this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
+            }else {
+                this.poDynamicList[correspondant]['disabled'] = true;
+
+                this.poDynamicList[correspondant]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
+            }
+        }
+
+
+        // Then the Others
+        for(let i in others) {
+            correspondant = this.findCorrespondingPO('Other', records[others[i]].rstk__poline_amtreq__c);
+        
+            if(correspondant < 0) {
+                this.addToPOList('Other', records[others[i]].rstk__poline_amtreq__c, '');
+
+                this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
+
+                this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
+            }else {
+                this.poDynamicList[correspondant]['disabled'] = true;
+
+                this.poDynamicList[correspondant]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
+            }
+        }
     }
 
 
@@ -617,110 +726,7 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         if(poMap['Service Body']) {
             // Make sure list isn't empty, it has been before
             if(poMap['Service Body'].length > 0) {
-                let records = poMap['Service Body'];
-
-                // In order to determine which one is the body I have to find the highest priced PO
-                // This is the nature of Rootstock
-                let maxIndex = 0;
-
-                // Holds the Indices of the aorders, freights, etc. within record
-                let aOrders = [];
-                let freights = [];
-
-                // Holds the indeices of what wasn't caught by the above within record
-                let others = [];
-
-
-                // Find the Body, and find the Aorders and the Freights
-                for(let i in records) {
-                    if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
-                        freights.push(i);
-                    }else if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
-                        aOrders.push(i);
-                    }else {
-                        others.push(i);
-                    }
-
-                    if(records[i].rstk__poline_amtreq__c > records[maxIndex].rstk__poline_amtreq__c) {
-                        maxIndex = i;
-                    }
-                }
-
-                // remove Body from Others, which is Max Index
-                let bodyOther = others.findIndex(element => Number(element) === Number(maxIndex));
-
-                if(bodyOther >= 0) {
-                    others.splice(bodyOther, 1);
-                }
-
-                // Do the Body
-                correspondant = this.findCorrespondingPO('Body', records[maxIndex].rstk__poline_amtreq__c);
-                
-                if(correspondant < 0) {
-                    this.addToPOList('Body', records[maxIndex].rstk__poline_amtreq__c, '');
-
-                    this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                    this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
-                }else {
-                    this.poDynamicList[correspondant]['disabled'] = true;
-
-                    this.poDynamicList[correspondant]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
-                }
-
-
-                // Then Do The A Orders
-                for(let i in aOrders) {
-                    correspondant = this.findCorrespondingPO('A Order', records[aOrders[i]].rstk__poline_amtreq__c);
-               
-                    if(correspondant < 0) {
-                        this.addToPOList('A Order', records[aOrders[i]].rstk__poline_amtreq__c, '');
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
-                    }else {
-                        this.poDynamicList[correspondant]['disabled'] = true;
-
-                        this.poDynamicList[correspondant]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
-                    }
-                }
-
-
-                // Then the Freights
-                for(let i in freights) {
-                    correspondant = this.findCorrespondingPO('Freight', records[freights[i]].rstk__poline_amtreq__c);
-                
-                    if(correspondant < 0) {
-                        this.addToPOList('Freight', records[freights[i]].rstk__poline_amtreq__c, '');
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
-                    }else {
-                        this.poDynamicList[correspondant]['disabled'] = true;
-
-                        this.poDynamicList[correspondant]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
-                    }
-                }
-
-
-                // Then the Others
-                for(let i in others) {
-                    correspondant = this.findCorrespondingPO('Other', records[others[i]].rstk__poline_amtreq__c);
-                
-                    if(correspondant < 0) {
-                        this.addToPOList('Other', records[others[i]].rstk__poline_amtreq__c, '');
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
-                    }else {
-                        this.poDynamicList[correspondant]['disabled'] = true;
-
-                        this.poDynamicList[correspondant]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
-                    }
-                }
+                this.loadNonChassisPO(poMap, 'Service Body');
             }
         }
 
@@ -729,114 +735,26 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
         if(poMap['Lube']) {
             // Make sure list isn't empty, it has been before
             if(poMap['Lube'].length > 0) {
-                let records = poMap['Lube'];
-
-                // In order to determine which one is the body I have to find the highest priced PO
-                // This is the nature of Rootstock
-                let maxIndex = 0;
-
-                // Holds the Indices of the aorders, freights, etc. within record
-                let aOrders = [];
-                let freights = [];
-
-                // Holds the indeices of what wasn't caught by the above within record
-                let others = [];
+                this.loadNonChassisPO(poMap, 'Lube');
+            }
+        }
 
 
-                // Find the Body, and find the Aorders and the Freights
-                for(let i in records) {
-                    if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('freight')) {
-                        freights.push(i);
-                    }else if(records[i].rstk__poline_longdescr__c.toLowerCase().includes('a order')) {
-                        aOrders.push(i);
-                    }else {
-                        others.push(i);
-                    }
-
-                    if(records[i].rstk__poline_amtreq__c > records[maxIndex].rstk__poline_amtreq__c) {
-                        maxIndex = i;
-                    }
-                }
-
-                // We don't want to mix a lube skid for a body
-                if(!records[maxIndex].rstk__poline_longdescr__c.toUpperCase().includes('LUBE SKID')) {
-                    // TODO: Surround this with If there is a Lube Body then do this, otherwise don't
-                    // We don't want to put a Lube Skid as a Body     
-                    // remove Body from Others, which is Max Index
-                    let bodyOther = others.findIndex(element => Number(element) === Number(maxIndex));
-
-                    if(bodyOther >= 0) {
-                        others.splice(bodyOther, 1);
-                    }
-
-                    // Do the Body
-                    correspondant = this.findCorrespondingPO('Body', records[maxIndex].rstk__poline_amtreq__c);
-                    
-                    if(correspondant < 0) {
-                        this.addToPOList('Body', records[maxIndex].rstk__poline_amtreq__c, '');
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
-                    }else {
-                        this.poDynamicList[correspondant]['disabled'] = true;
-
-                        this.poDynamicList[correspondant]['lineDescription'] = records[maxIndex].rstk__poline_longdescr__c;
-                    }
-                }
+        // Then put the Body and its associated POs
+        if(poMap['Complete Unit']) {
+            // Make sure list isn't empty, it has been before
+            if(poMap['Complete Unit'].length > 0) {
+                this.loadNonChassisPO(poMap, 'Complete Unit');
+            }
+        }
 
 
-                // Then Do The A Orders
-                for(let i in aOrders) {
-                    correspondant = this.findCorrespondingPO('A Order', records[aOrders[i]].rstk__poline_amtreq__c);
-               
-                    if(correspondant < 0) {
-                        this.addToPOList('A Order', records[aOrders[i]].rstk__poline_amtreq__c, '');
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
-                    }else {
-                        this.poDynamicList[correspondant]['disabled'] = true;
-
-                        this.poDynamicList[correspondant]['lineDescription'] = records[aOrders[i]].rstk__poline_longdescr__c;
-                    }
-                }
-
-
-                // Then the Freights
-                for(let i in freights) {
-                    correspondant = this.findCorrespondingPO('Freight', records[freights[i]].rstk__poline_amtreq__c);
-                
-                    if(correspondant < 0) {
-                        this.addToPOList('Freight', records[freights[i]].rstk__poline_amtreq__c, '');
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
-                    }else {
-                        this.poDynamicList[correspondant]['disabled'] = true;
-
-                        this.poDynamicList[correspondant]['lineDescription'] = records[freights[i]].rstk__poline_longdescr__c;
-                    }
-                }
-
-
-                // Then the Others
-                for(let i in others) {
-                    correspondant = this.findCorrespondingPO('Other', records[others[i]].rstk__poline_amtreq__c);
-                
-                    if(correspondant < 0) {
-                        this.addToPOList('Other', records[others[i]].rstk__poline_amtreq__c, '');
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['disabled'] = true;
-
-                        this.poDynamicList[this.poDynamicList.length - 1]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
-                    }else {
-                        this.poDynamicList[correspondant]['disabled'] = true;
-
-                        this.poDynamicList[correspondant]['lineDescription'] = records[others[i]].rstk__poline_longdescr__c;
-                    }
+        if(!this.productsData.Is_Trade_In__c) {
+            // Then put the Body and its associated POs
+            if(poMap['Used Unit']) {
+                // Make sure list isn't empty, it has been before
+                if(poMap['Used Unit'].length > 0) {
+                    this.loadNonChassisPO(poMap, 'Used Unit');
                 }
             }
         }
@@ -962,12 +880,12 @@ export default class Admin_checklist extends NavigationMixin(LightningElement) {
                                 this.queryProducts().then(records => {
                                     if(records) {
                                         if(records.length > 0) {
-                                            let productsData = records;
+                                            this.productsData = records;
 
-                                            this.loadAdminFromProducts(productsData);
+                                            this.loadAdminFromProducts(this.productsData);
                                             
 
-                                            getPOs({ lineItems: productsData }).then(poMap => {
+                                            getPOs({ lineItems: this.productsData }).then(poMap => {
                                                 if(poMap) {
                                                     if(Object.keys(poMap).length > 0) {
 console.log(records);
@@ -1037,6 +955,14 @@ console.log(poMap);
                         }else {
                             adminData[element['dataset']['apiname']] = element['value'];
                         }
+                    }else {
+                        // Must Check if I have a number because apex won't insert/update if string is passed
+                        if(element['dataset']['isnumber']) {
+                            adminData[element['dataset']['apiname']] = 0;
+                        }else if(!element['dataset']['apiname'].toLowerCase().includes('date')) {
+                            // Make sure it isn't a date or it will break
+                            adminData[element['dataset']['apiname']] = '';
+                        }
                     }
                 }
             });
@@ -1104,7 +1030,7 @@ console.log(poMap);
             if(this.adminChosen) {
                 updateRecordFromId({ objectName: 'AdminChecklist__c', recordId: this.adminChosen, fieldValuePairs: adminData }).then(isSuccess => {
                     if(isSuccess) {
-                        this.toast.displaySuccess('AdminChecklist Updated Succesfully!');
+                        this.toast.displaySuccess('AdminChecklist Updated Successfully!');
                     }else {
                         this.toast.displayError('AdminChecklist Failed to Update');
                     }

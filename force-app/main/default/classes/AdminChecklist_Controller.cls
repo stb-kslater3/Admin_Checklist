@@ -58,7 +58,7 @@ public with sharing class AdminChecklist_Controller {
     public static OpportunityLineItem[] getProducts(Id oppId){
         try {
             return [
-                SELECT Opportunity.Name, Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Sales_Price_w_o_FET__c
+                SELECT Opportunity.Name, Product2.Name, Product2.VIN__c, Product2.VIN_Last_6__c, Product2.RecordType.Name, Product2.Year__c, Product2.Chassis_Make__c, Product2.Chassis_Model__c, Product2.Body_Model__c, Is_Trade_In__c, Product2.Trade_Allowance__c, Sales_Price_w_o_FET__c 
                 FROM OpportunityLineItem
                 WHERE OpportunityId = :oppId
             ];
